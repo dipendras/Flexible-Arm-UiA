@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+  <GVL Name="Safety" Id="{5432cd01-b34f-4bdf-916d-8bcdf55bdd0a}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	TS_Q_Safety_GroupPort_ErrAck AT %Q* : BOOL;
+	TS_Q_Safety_EStopRestart AT %Q* : BOOL;
+	TS_Q_Safety_GroupPort_RunStop AT %Q* : BOOL := TRUE;
+	
+	TS_Q_Safety_Drive_Axis_ErrReset AT %Q* : BOOL;
+		
+	TS_I_Safety_EStopOK AT %I* : BOOL;
+	TS_I_Safety_EStopError AT %I* : BOOL;
+	
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

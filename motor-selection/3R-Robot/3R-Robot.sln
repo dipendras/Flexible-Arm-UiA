@@ -1,0 +1,12 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{7D049A34-F7A8-47F4-AF65-57433FD83A7E}") = "3R-Robot", "3R-Robot.tcmdproj", "{71CCB646-F97F-48F2-94C8-B072DE6DC72D}"
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

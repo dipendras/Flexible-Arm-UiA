@@ -1,0 +1,515 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcMDProject Version="1.3.0.0">
+	<GUID>d67c289c-4448-4068-9edd-abd47b1b23be</GUID>
+	<ProjectName>3R-Robot</ProjectName>
+	<Description>3R-Robot</Description>
+	<ResourceFiles />
+	<ReportExtension />
+	<DClinks>
+		<TcMDDClink Version="1.3.0.0">
+			<GUID>5d0941e5-713c-4932-8a5f-9a0969a78c0d</GUID>
+			<Name>DC link 1</Name>
+			<Properties>
+				<Name>Properties</Name>
+				<Parameter>
+					<PropertyName>UMain</PropertyName>
+					<Value>
+						<FloatingNumberNode>
+							<Content>240</Content>
+						</FloatingNumberNode>
+					</Value>
+					<Unit>V</Unit>
+				</Parameter>
+				<Parameter>
+					<PropertyName>PowerSupplyType</PropertyName>
+					<Value>1 Phase AC</Value>
+				</Parameter>
+				<Parameter>
+					<PropertyName>DriveGroup</PropertyName>
+					<Value>AX5000</Value>
+				</Parameter>
+				<Parameter>
+					<PropertyName>VoltageTolerance</PropertyName>
+					<Value>
+						<FloatingNumberNode>
+							<Content>0.05</Content>
+						</FloatingNumberNode>
+					</Value>
+					<Unit />
+				</Parameter>
+				<Parameter>
+					<PropertyName>ChopperThreshold</PropertyName>
+					<Value>
+						<FloatingNumberNode>
+							<Content>840</Content>
+						</FloatingNumberNode>
+					</Value>
+					<Unit>V</Unit>
+				</Parameter>
+				<Parameter>
+					<PropertyName>BrakeResistanceOption</PropertyName>
+					<Value>Internal</Value>
+				</Parameter>
+			</Properties>
+			<Axes>
+				<TcMDAxis Version="1.3.0.0">
+					<GUID>14fce89e-6f03-46f2-ae80-2ec3676ef22d</GUID>
+					<Name>Axis 1</Name>
+					<OverallGearRatio>1*4</OverallGearRatio>
+					<Feedconstant>1/(1*4)*(360)</Feedconstant>
+					<LoadcaseBlock>
+						<GeneralLoadcase Configuration="Horizontal">
+							<Name>General loadcase</Name>
+							<Parameter>
+								<PropertyName>Inertia</PropertyName>
+								<Value>
+									<IntegerNumberNode>
+										<Content>13</Content>
+									</IntegerNumberNode>
+								</Value>
+								<Unit>kgm²</Unit>
+							</Parameter>
+							<Parameter>
+								<PropertyName>Efficiency</PropertyName>
+								<Value>
+									<IntegerNumberNode>
+										<Content>100</Content>
+									</IntegerNumberNode>
+								</Value>
+								<Unit>%</Unit>
+							</Parameter>
+						</GeneralLoadcase>
+					</LoadcaseBlock>
+					<TrajectoryBlock>
+						<Name>Trajectory</Name>
+						<Parameter>
+							<PropertyName>InitialValue</PropertyName>
+							<Value>
+								<IntegerNumberNode>
+									<Content>0</Content>
+								</IntegerNumberNode>
+							</Value>
+							<Unit>°</Unit>
+						</Parameter>
+						<Sections>
+							<ThirdRule GroupType="H2HPosDur">
+								<Name>Motion section</Name>
+								<Parameter>
+									<PropertyName>PositionMode</PropertyName>
+									<Value>Relative</Value>
+								</Parameter>
+								<Parameter>
+									<PropertyName>Position</PropertyName>
+									<Value>
+										<IntegerNumberNode>
+											<Content>90</Content>
+										</IntegerNumberNode>
+									</Value>
+									<Unit>°</Unit>
+								</Parameter>
+								<Parameter>
+									<PropertyName>Duration</PropertyName>
+									<Value>
+										<FloatingNumberNode>
+											<Content>1</Content>
+										</FloatingNumberNode>
+									</Value>
+									<Unit>s</Unit>
+								</Parameter>
+							</ThirdRule>
+						</Sections>
+					</TrajectoryBlock>
+					<ForceBlock>
+						<Name>ForceGenerator</Name>
+						<Sections>
+							<ForceFcnSection>
+								<Name>Force section</Name>
+								<Parameter>
+									<PropertyName>Force</PropertyName>
+									<Value>
+										<NegationNode>
+											<Content>neg</Content>
+											<IntegerNumberNode>
+												<Content>90</Content>
+											</IntegerNumberNode>
+										</NegationNode>
+									</Value>
+									<Unit>Nm</Unit>
+								</Parameter>
+								<Parameter>
+									<PropertyName>Duration</PropertyName>
+									<Value>
+										<FloatingNumberNode>
+											<Content>1</Content>
+										</FloatingNumberNode>
+									</Value>
+									<Unit>s</Unit>
+								</Parameter>
+							</ForceFcnSection>
+						</Sections>
+					</ForceBlock>
+					<MassBlock>
+						<Name>MassGenerator</Name>
+						<Sections />
+					</MassBlock>
+					<MotorAddData>
+						<OrderCode>AM8021-xBxx-0000</OrderCode>
+						<UniqueOrderCode>AM8021-0B10-0000</UniqueOrderCode>
+						<OrderCodeConfiguration>
+							<Name>OrderCode</Name>
+							<Parameter>
+								<PropertyName>ShaftDefinition</PropertyName>
+								<Value>Not defined</Value>
+							</Parameter>
+							<Parameter>
+								<PropertyName>FeedbackSystem</PropertyName>
+								<Value>Not defined</Value>
+							</Parameter>
+							<Parameter>
+								<PropertyName>BrakingOption</PropertyName>
+								<Value>Holding brake</Value>
+							</Parameter>
+						</OrderCodeConfiguration>
+					</MotorAddData>
+					<Gearbox>
+						<OrderCode>AG3400-+NPT005S-MF1-4-0B1-AM802x</OrderCode>
+						<UniqueOrderCode>AG3400-+NPT005S-MF1-4-0B1-AM802x</UniqueOrderCode>
+					</Gearbox>
+					<Drive>
+						<OrderCode>AX5101-0000-02xx</OrderCode>
+						<UniqueOrderCode>AX5101-0000-02xx</UniqueOrderCode>
+						<OrderCodeConfiguration>
+							<Name>OrderCode</Name>
+							<Parameter>
+								<PropertyName>DualUseOption</PropertyName>
+								<Value>Not defined</Value>
+							</Parameter>
+							<Parameter>
+								<PropertyName>FirmwareOption</PropertyName>
+								<Value>Not defined</Value>
+							</Parameter>
+						</OrderCodeConfiguration>
+					</Drive>
+					<MotorGearboxFilter>
+						<IsOptimizerActive>false</IsOptimizerActive>
+						<IsGearboxUsed>true</IsGearboxUsed>
+						<NomSafetyFactor>1</NomSafetyFactor>
+						<MaxSafetyFactor>1</MaxSafetyFactor>
+						<GearboxFilter>
+							<SuitableGearboxesOnly>false</SuitableGearboxesOnly>
+							<DesignType>1</DesignType>
+							<OutputGeometry>2</OutputGeometry>
+							<VelocityUtilizationWeight>0</VelocityUtilizationWeight>
+							<VelocityUtilizationValue>0.7</VelocityUtilizationValue>
+							<TorqueUtilizationWeight>0</TorqueUtilizationWeight>
+							<TorqueUtilizationValue>0.7</TorqueUtilizationValue>
+							<VendorFilter>
+								<Element>Beckhoff Automation GmbH &amp; Co. KG</Element>
+								<Children>
+									<Child>
+										<Element>AG3400-+NPT</Element>
+										<Children>
+											<Child>
+												<Element>AG3400-+NPT005</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG3400-+NPT015</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG3400-+NPT025</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG3400-+NPT035</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG3400-+NPT045</Element>
+												<Children />
+											</Child>
+										</Children>
+									</Child>
+								</Children>
+							</VendorFilter>
+							<StageRatioFilter>
+								<Element>1</Element>
+								<Children>
+									<Child>
+										<Element>3</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>4</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>5</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>7</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>10</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>8</Element>
+										<Children />
+									</Child>
+								</Children>
+							</StageRatioFilter>
+							<StageRatioFilter>
+								<Element>2</Element>
+								<Children>
+									<Child>
+										<Element>9</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>12</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>15</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>16</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>20</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>25</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>30</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>35</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>40</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>70</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>100</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>50</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>32</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>64</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>28</Element>
+										<Children />
+									</Child>
+								</Children>
+							</StageRatioFilter>
+						</GearboxFilter>
+						<MotorFilter>
+							<SuitableMotorsOnly>false</SuitableMotorsOnly>
+							<GearboxFit>true</GearboxFit>
+							<HygienicDesignNeeded>false</HygienicDesignNeeded>
+							<FanAllowed>false</FanAllowed>
+							<WithBrake>true</WithBrake>
+							<Force400VMotors>false</Force400VMotors>
+							<SelectedFeedbacks>2052</SelectedFeedbacks>
+							<SelectedShafts>15</SelectedShafts>
+							<VelocityUtilizationWeight>0</VelocityUtilizationWeight>
+							<VelocityUtilizationValue>0.7</VelocityUtilizationValue>
+							<TorqueUtilizationWeight>0</TorqueUtilizationWeight>
+							<TorqueUtilizationValue>0.7</TorqueUtilizationValue>
+							<InertiaRatioWeight>0</InertiaRatioWeight>
+							<InertiaRatioValue>1</InertiaRatioValue>
+							<PowerWeight>0</PowerWeight>
+							<PriceWeight>0</PriceWeight>
+							<VendorFilter>
+								<Element>Beckhoff Automation GmbH &amp; Co. KG</Element>
+								<Children>
+									<Child>
+										<Element>AM80xx</Element>
+										<Children>
+											<Child>
+												<Element>AM801x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM802x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM803x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM804x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM805x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM806x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM807x</Element>
+												<Children />
+											</Child>
+										</Children>
+									</Child>
+									<Child>
+										<Element>AM81xx</Element>
+										<Children>
+											<Child>
+												<Element>AM811x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM812x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM813x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM814x</Element>
+												<Children />
+											</Child>
+										</Children>
+									</Child>
+									<Child>
+										<Element>AM85xx</Element>
+										<Children>
+											<Child>
+												<Element>AM853x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM854x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM855x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM856x</Element>
+												<Children />
+											</Child>
+										</Children>
+									</Child>
+									<Child>
+										<Element>AM88xx</Element>
+										<Children>
+											<Child>
+												<Element>AM883x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM884x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM885x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM886x</Element>
+												<Children />
+											</Child>
+										</Children>
+									</Child>
+								</Children>
+							</VendorFilter>
+						</MotorFilter>
+					</MotorGearboxFilter>
+					<EmergencyBrakeParameter>
+						<Name>EmergencyProperties</Name>
+						<Parameter>
+							<PropertyName>EmergencyTorque</PropertyName>
+							<Value>
+								<FloatingNumberNode>
+									<Content>0</Content>
+								</FloatingNumberNode>
+							</Value>
+							<Unit>Nm</Unit>
+						</Parameter>
+					</EmergencyBrakeParameter>
+				</TcMDAxis>
+			</Axes>
+			<AxisModules>
+				<Axis>
+					<DriveModule>
+						<OrderCode>AX5101-0000-02xx</OrderCode>
+						<UniqueOrderCode>AX5101-0000-02xx</UniqueOrderCode>
+						<OrderCodeConfiguration>
+							<Name>OrderCode</Name>
+							<Parameter>
+								<PropertyName>DualUseOption</PropertyName>
+								<Value>Not defined</Value>
+							</Parameter>
+							<Parameter>
+								<PropertyName>FirmwareOption</PropertyName>
+								<Value>Not defined</Value>
+							</Parameter>
+						</OrderCodeConfiguration>
+					</DriveModule>
+					<Channels>
+						<Channel>
+							<ChannelIdx>0</ChannelIdx>
+							<Name>Axis 1</Name>
+							<GUID>14fce89e-6f03-46f2-ae80-2ec3676ef22d</GUID>
+						</Channel>
+					</Channels>
+				</Axis>
+			</AxisModules>
+		</TcMDDClink>
+	</DClinks>
+	<Customer>
+		<Name />
+		<Company />
+		<Department />
+		<Street />
+		<ZipCode />
+		<City />
+		<Country />
+		<Telephone />
+		<Email />
+	</Customer>
+	<User>
+		<Name>tordaso</Name>
+		<Company>MCINT</Company>
+		<Department />
+		<Street />
+		<ZipCode />
+		<City />
+		<Country />
+		<Telephone />
+		<Email />
+	</User>
+</TcMDProject>

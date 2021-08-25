@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+  <POU Name="FB_Robot3R" Id="{ac314762-16df-47a2-b7b8-44cc8c775bfa}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Robot3R
+VAR_INPUT
+	Ts : LREAL := 0.01;
+	bReset : BOOL;
+	bEnable : BOOL;
+	eRobotModeCmd : E_RobotMode;
+	fVelInput : ARRAY [0..2] OF LREAL;
+	fPosInput : ARRAY [0..2] OF LREAL;
+	
+END_VAR
+VAR_OUTPUT
+	eRobotMode : E_RobotMode;
+	
+	// Robot feedback
+	q : ARRAY [0..2] OF LREAL;
+	q_t : ARRAY [0..2] OF LREAL;
+	tau : ARRAY [0..2] OF LREAL;
+	
+END_VAR
+VAR
+	bStop: BOOL;//Soft stop -> Ramp down first and then disables power
+	bVelocityMode : BOOL;
+	bPositionMode : BOOL;
+	bPositionModeExecute : BOOL;
+
+	// Setpoints
+	qRef : ARRAY [0..2] OF LREAL;
+	qRef_t : ARRAY [0..2] OF LREAL;
+	qRef_tt : ARRAY [0..2] OF LREAL;	
+	
+
+	i : USINT;
+	j : USINT;
+	k : USINT;
+	joints : ARRAY [0..2] OF FB_Joint;
+	
+	bAnyJointActive : BOOL;
+	
+	//Velcity of last timestamp
+	fVelInputOld : ARRAY [0..2] OF LREAL;
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+
+
+
+
+IF eRobotModeCmd <> eRobotMode THEN
+	CASE eRobotModeCmd OF
+		 E_RobotMode.STOP:
+		 
+		 	bVelocityMode := FALSE;
+			bPositionMode := FALSE;
+			bPositionModeExecute := FALSE;
+			
+		 	eRobotMode := E_RobotMode.STOP;
+			
+		 E_RobotMode.ESTOP:
+		 	
+
+			bVelocityMode := FALSE;
+			bPositionMode := FALSE;
+			bPositionModeExecute := FALSE;
+		 
+		 	eRobotMode := E_RobotMode.ESTOP;
+		 
+		 E_RobotMode.POSITION:
+		 	
+			bVelocityMode := FALSE;
+			bPositionMode := TRUE;
+		 
+		 	eRobotMode := E_RobotMode.POSITION;
+		 
+		 E_RobotMode.VELOCITY:
+		 
+			bVelocityMode := TRUE;
+			bPositionMode := FALSE;
+			bPositionModeExecute := FALSE;
+		 	
+		 	eRobotMode := E_RobotMode.VELOCITY;
+	
+	END_CASE	
+END_IF
+
+
+IF bReset THEN
+	bEnable := FALSE;
+END_IF
+
+// E-stop mode
+IF(eRobotMode = E_RobotMode.ESTOP OR NOT Safety.TS_I_Safety_EStopOK) THEN
+	bEnable := FALSE;
+	bReset := TRUE;	//to avoid error: the axis loss the enable signal while doing something
+END_IF
+
+// soft stop mode
+IF(eRobotMode = E_RobotMode.STOP OR bStop) THEN
+	bAnyJointActive := joints[0].bActive;
+	FOR k:= 1 TO 2 DO
+		bAnyJointActive := bAnyJointActive OR joints[k].bActive;	
+	END_FOR
+	
+	IF NOT bAnyJointActive AND bStop THEN
+		bEnable := FALSE;
+	END_IF
+END_IF
+
+// position mode
+IF(eRobotMode = E_RobotMode.POSITION) THEN
+	positionMode();
+// velocity mode
+ELSIF(eRobotMode = E_RobotMode.VELOCITY) THEN
+	velocityMode();
+END_IF
+
+
+
+
+// Execute joints
+FOR j:= 0 TO 2 DO
+	IF j = 2 THEN //Uncomment IF you want to use only joint 3
+		joints[j](
+			bReset:=bReset,
+			bEnable:=bEnable,
+			bStop:=bStop,
+			bVelocityMode:=bVelocityMode,
+			bPositionMode:=bPositionMode,
+			bPositionModeExecute := bPositionModeExecute,
+			qRef:=qRef[j],
+			qRef_t := qRef_t[j],
+			qRef_tt:=qRef_tt[j],	
+			);
+	END_IF; // Uncomment IF you want to use only joint 3
+	
+
+	// Assign feedback data from joints
+	q[j] := joints[j].q;
+	q_t[j] := joints[j].q_t;
+	tau[j] := joints[j].tau;
+	
+END_FOR
+
+
+]]></ST>
+    </Implementation>
+    <Method Name="positionMode" Id="{f9d459a6-0feb-4986-b627-22787cb88f98}">
+      <Declaration><![CDATA[METHOD PRIVATE positionMode : BOOL
+VAR_INPUT
+	
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+FOR i:= 0 TO 2 DO
+	IF joints[i].bActive THEN		
+		// Set input based on velocity input u
+		qRef[i] := fPosInput[i];
+		qRef_t[i] := fVelInput[i];
+		
+	END_IF
+	
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="velocityMode" Id="{125ad195-c68c-497a-bc79-95830c09961a}">
+      <Declaration><![CDATA[METHOD PRIVATE velocityMode : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// Integrate position
+
+FOR i:= 0 TO 2 DO
+	qRef[i] := joints[i].q;
+	IF joints[i].bActive THEN		
+		// Set input based on velocity input u
+		qRef[i] := qRef[i] + fVelInput[i]*Ts;
+		qRef_t[i] := fVelInput[i];
+		qRef_tt[i] := (fVelInput[i]-fVelInputOld[i])/(Ts);
+		// Update old variable
+		fVelInputOld[i] := fVelInput[i];
+		
+//	ELSE
+//		qRef[i] := joints[i].q;
+//		qRef_t[i] := 0;
+//		qRef_tt[i] := 0;	
+	END_IF
+	
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_Robot3R">
+      <LineId Id="299" Count="7" />
+      <LineId Id="543" Count="0" />
+      <LineId Id="539" Count="0" />
+      <LineId Id="541" Count="0" />
+      <LineId Id="307" Count="0" />
+      <LineId Id="542" Count="0" />
+      <LineId Id="309" Count="2" />
+      <LineId Id="548" Count="0" />
+      <LineId Id="545" Count="2" />
+      <LineId Id="312" Count="0" />
+      <LineId Id="544" Count="0" />
+      <LineId Id="313" Count="3" />
+      <LineId Id="551" Count="1" />
+      <LineId Id="317" Count="3" />
+      <LineId Id="553" Count="0" />
+      <LineId Id="556" Count="1" />
+      <LineId Id="554" Count="0" />
+      <LineId Id="321" Count="0" />
+      <LineId Id="323" Count="3" />
+      <LineId Id="496" Count="0" />
+      <LineId Id="328" Count="3" />
+      <LineId Id="527" Count="0" />
+      <LineId Id="501" Count="3" />
+      <LineId Id="500" Count="0" />
+      <LineId Id="528" Count="0" />
+      <LineId Id="517" Count="9" />
+      <LineId Id="332" Count="0" />
+      <LineId Id="532" Count="3" />
+      <LineId Id="333" Count="1" />
+      <LineId Id="600" Count="0" />
+      <LineId Id="456" Count="0" />
+      <LineId Id="505" Count="0" />
+      <LineId Id="515" Count="0" />
+      <LineId Id="335" Count="3" />
+      <LineId Id="652" Count="0" />
+      <LineId Id="663" Count="9" />
+      <LineId Id="651" Count="0" />
+      <LineId Id="369" Count="0" />
+      <LineId Id="352" Count="8" />
+      <LineId Id="368" Count="0" />
+      <LineId Id="42" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Robot3R.positionMode">
+      <LineId Id="7" Count="1" />
+      <LineId Id="10" Count="3" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="21" Count="1" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Robot3R.velocityMode">
+      <LineId Id="9" Count="9" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="26" Count="4" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="21" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,27 @@
+# SolidWorks
+~$*.SLDPRT
+~$*.SLDASM
+~$*.SLDDRW
+
+# Simulink Code Generation
+slprj/
+sccprj/
+plcsrc/
+*.slxc
+
+# Windows default autosave extension
+*.asv
+
+# OSX / *nix default autosave extension
+*.m~
+
+# Compiled MEX binaries (all platforms)
+*.mex*
+
+# Simulink autosave extension
+*.autosave
+*_ert_rtw/
+*_ert_rtw
+*_gen
+*.sh
+*.tgz

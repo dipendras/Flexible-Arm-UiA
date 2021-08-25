@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+  <POU Name="AxisStop" Id="{a9881278-d5ed-4d9b-9900-ed55b9cce11c}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM AxisStop
+VAR
+	fbAxisStop_Joint1 : MC_Stop;
+	fbAxisStop_Joint2 : MC_Stop;
+	fbAxisStop_Joint3 : MC_Stop;
+	
+	fDeceleration_Joint1 :LREAL := 100;//Max Acc/Dec: 229.7017  degree/sec^2 
+	fDeceleration_Joint2 :LREAL := 150;//Max Acc/Dec:  389.1295  degree/sec^2
+	fDeceleration_Joint3 :LREAL := 400;//Max Acc/Dec: 865.8881 degree/sec^2
+	
+	fJerk_Joint1 :LREAL := 300;//Max Jerk: 689.1052 degree/sec^3 
+	fJerk_Joint2 :LREAL := 550;//Max Jerk: 1167.3887  degree/sec^3
+	fJerk_Joint3 :LREAL := 1250;//Max Jerk: 2597.6643 degree/sec^3
+	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+fbAxisStop_Joint1(	Axis:=Control.Axis_Joint1,
+					Execute:=Control.bStop_Joint1,
+					Deceleration:=fDeceleration_Joint1,
+					Jerk:= fJerk_Joint1,
+					Options:=,
+					Done=>,Busy=>,Active=>,CommandAborted=>,Error=>,ErrorID=>);
+					
+fbAxisStop_Joint2(	Axis:=Control.Axis_Joint2,
+					Execute:=Control.bStop_Joint2,
+					Deceleration:=fDeceleration_Joint2,
+					Jerk:= fJerk_Joint2,
+					Options:=,
+					Done=>,Busy=>,Active=>,CommandAborted=>,Error=>,ErrorID=>);
+					
+//fbAxisStop_Joint3(	Axis:=Control.Axis_Joint3,
+//					Execute:=Control.bStop_Joint3,
+//					Deceleration:=fDeceleration_Joint3,
+//					Jerk:= fJerk_Joint3,
+//					Options:=,
+//					Done=>,Busy=>,Active=>,CommandAborted=>,Error=>,ErrorID=>);]]></ST>
+    </Implementation>
+    <LineIds Name="AxisStop">
+      <LineId Id="19" Count="5" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="26" Count="5" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="33" Count="5" />
+      <LineId Id="32" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

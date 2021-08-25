@@ -1,0 +1,336 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+  <POU Name="FB_Joint" Id="{66b8c442-7a21-4eed-a901-9982c98a5f83}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Joint
+VAR_INPUT
+	bReset : BOOL;
+	bEnable : BOOL;//e-stop can use this
+	bStop : BOOL;//soft stop
+	
+	//type of control
+	bVelocityMode : BOOL;
+	bPositionMode : BOOL;
+	bPositionModeExecute : BOOL;
+
+	
+	qRef : LREAL;
+	qRef_t : LREAL;
+	qRef_tt : LREAL;
+	
+	
+END_VAR
+VAR_OUTPUT
+	bActive : BOOL;
+	bAxisStopped :BOOL;
+	
+	// Joint feedback
+	q : LREAL;
+	q_t : LREAL;
+	tau : LREAL;
+	
+END_VAR
+VAR
+	// Drive axis stuff
+	axis : AXIS_REF;
+	fbPower : MC_Power;
+	fbReset : MC_Reset;
+	
+	//SoftStop
+	fbStop : MC_Stop;	
+	fDeceleration :LREAL := 100;
+	fJerk :LREAL := 300;
+
+	
+	
+	// External setpoint	
+	fbExtSetPointGenEnable : MC_ExtSetPointGenEnable;
+	fbExtSetPointGenDisable : MC_ExtSetPointGenDisable;
+	fbReadParameterSet : MC_ReadParameterSet;
+	stAxisParameterSet : ST_AxisParameterSet;
+	
+	//move to position
+	fbAxisMoveAbsolute : MC_MoveAbsolute;
+	
+
+	
+	//read actual torque feedback
+	fbSoEReadTorqueFeedback : FB_SoERead;
+	fbSoEReadChannelPeakTorque : FB_SoERead;
+	bReadTorqueFeedback    : BOOL := TRUE;
+	bReadChannelPeakTorque : BOOL := TRUE;
+	nIdnTorqueFeedback     : WORD := S_0_IDNs + 84;
+	nIdnChannelPeakTorque  : WORD := P_0_IDNs + 94;
+	nReadTorqueFeedback : INT; //Torque/force feedback value S-0-0084  per thousand; one-tenth of a per cent (‰)   //16bit and 1 decimal point
+	nReadChannelPeakTorque : UDINT; //IDN P-0-0094 (Configured channel peak torque) in Nm           //32bit and 2 decimal points
+	
+	fActTorque : LREAL := 0.5;
+	nGEAR_RATIO : UINT := 35;
+	
+
+		
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF NOT fbReadParameterSet.Busy AND NOT fbReadParameterSet.Error THEN
+	fbReadParameterSet(
+		Axis := axis,
+		Parameter := stAxisParameterSet,
+		Execute := TRUE
+	);
+	
+ELSE
+	fbReadParameterSet(
+		Axis := axis,
+		Parameter := stAxisParameterSet,
+		Execute := FALSE
+	);
+	
+END_IF
+
+
+
+// Power and reset logic
+fbPower(
+	Axis := axis,
+	Enable := (bEnable AND NOT bReset AND NOT bAxisStopped),
+	Enable_Positive := (bEnable AND NOT bReset AND NOT bAxisStopped),
+	Enable_Negative := (bEnable AND NOT bReset AND NOT bAxisStopped)
+);
+
+IF bReset THEN
+	fbReset(
+		Execute:=TRUE,
+		Axis:=axis
+	);
+	bEnable := FALSE;
+ELSE
+	fbReset(
+		Execute:=FALSE,
+		Axis:=axis
+	);
+END_IF
+
+//soft stop
+IF NOT fbExtSetPointGenEnable.Enabled THEN //motion comands are not allowed for external setpoint generated axis
+	fbStop(Axis := axis,
+			Execute:= bStop,
+			Deceleration := fDeceleration,
+			Jerk := fJerk
+			);
+END_IF
+
+IF bStop AND axis.Status.NotMoving AND NOT fbExtSetPointGenEnable.Enabled THEN
+	bAxisStopped := TRUE;	
+ELSE
+	bAxisStopped := FALSE;		
+END_IF
+
+
+
+
+// Read power status
+bActive := fbPower.Status;
+
+//velocity control
+IF NOT bStop AND bActive AND bVelocityMode AND NOT bPositionMode THEN
+	// Enable external setpoint when on
+	fbExtSetPointGenDisable(
+		Axis := axis,
+		Execute := FALSE);
+	
+	fbExtSetPointGenEnable(
+		Axis := axis,
+		Execute := TRUE);
+			
+ELSE
+	
+	fbExtSetPointGenDisable(
+		Axis := axis,
+		Execute := TRUE);
+	
+	fbExtSetPointGenEnable(
+		Axis := axis,
+		Execute := FALSE);		
+	
+END_IF
+
+
+IF bActive AND fbExtSetPointGenEnable.Enabled THEN		
+	//Feed extrernal setpoints to axis interface
+	MC_ExtSetPointGenFeed(
+		Axis := axis,
+		Position := LIMIT(stAxisParameterSet.fEncSoftEndMin, qRef, stAxisParameterSet.fEncSoftEndMax),
+		Velocity := qRef_t,
+		Acceleration := qRef_tt,
+		Direction := getDirection(qRef_t, qRef_tt)
+			);
+END_IF
+
+
+//position control
+IF NOT bStop AND bActive AND NOT bVelocityMode AND  bPositionMode THEN
+	fbAxisMoveAbsolute(Axis:=axis,
+		Execute:=bPositionModeExecute,
+		Position:=qRef,
+		Velocity:=qRef_t
+		);
+		
+END_IF
+
+
+// Update axis data
+axis();
+
+
+// read actual torque feedback----------------------------------------------
+
+IF bReadTorqueFeedback THEN
+    fbSoEReadTorqueFeedback(
+        Axis    := Axis,
+        Idn     := nIdnTorqueFeedback,
+        Element := 16#40,
+        pDstBuf := ADR(nReadTorqueFeedback),
+        BufLen  := SIZEOF(nReadTorqueFeedback),
+        Execute := TRUE,
+        Timeout := DEFAULT_ADS_TIMEOUT,
+    );
+    IF NOT fbSoEReadTorqueFeedback.Busy THEN
+        fbSoEReadTorqueFeedback(Axis := axis, Execute := FALSE);
+//        bReadTorqueFeedback := FALSE;
+    END_IF
+END_IF
+
+IF bReadChannelPeakTorque THEN
+    fbSoEReadChannelPeakTorque(
+        Axis    := Axis,
+        Idn     := nIdnChannelPeakTorque,
+        Element := 16#40,
+        pDstBuf := ADR(nReadChannelPeakTorque),
+        BufLen  := SIZEOF(nReadChannelPeakTorque),
+        Execute := TRUE,
+        Timeout := DEFAULT_ADS_TIMEOUT,
+    );
+    IF NOT fbSoEReadChannelPeakTorque.Busy THEN
+        fbSoEReadChannelPeakTorque(Axis := axis, Execute := FALSE);
+        bReadChannelPeakTorque := FALSE;
+    END_IF
+END_IF
+
+fActTorque := ((INT_TO_LREAL(nReadTorqueFeedback)/10)/100)*(UDINT_TO_LREAL(nReadChannelPeakTorque)/100)*UINT_TO_LREAL(nGEAR_RATIO);
+
+//----------------------------------------------------------------------------------
+
+q := axis.NcToPlc.ActPos;
+q_t := axis.NcToPlc.ActVelo;
+//tau := axis.NcToPlc.ActTorque;
+tau := fActTorque;
+
+
+
+	
+]]></ST>
+    </Implementation>
+    <Method Name="getDirection" Id="{14240053-4bfe-4208-8932-d2fa94688482}">
+      <Declaration><![CDATA[METHOD PRIVATE getDirection : DINT
+VAR_INPUT
+	fTargetVelocity : LREAL;
+	fTargetAcceleration : LREAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF fTargetVelocity = 0.0 AND fTargetAcceleration = 0.0 THEN
+	// Standstill
+	getDirection := 0;
+	
+ELSIF fTargetVelocity >= 0.0 THEN
+	// Positive motion
+	getDirection := 1;
+	
+ELSE
+	// Negative motion
+	getDirection := -1;
+	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_Joint">
+      <LineId Id="727" Count="14" />
+      <LineId Id="725" Count="1" />
+      <LineId Id="385" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="106" Count="4" />
+      <LineId Id="104" Count="0" />
+      <LineId Id="118" Count="0" />
+      <LineId Id="111" Count="0" />
+      <LineId Id="115" Count="0" />
+      <LineId Id="117" Count="0" />
+      <LineId Id="116" Count="0" />
+      <LineId Id="113" Count="0" />
+      <LineId Id="121" Count="0" />
+      <LineId Id="119" Count="0" />
+      <LineId Id="365" Count="2" />
+      <LineId Id="364" Count="0" />
+      <LineId Id="120" Count="0" />
+      <LineId Id="514" Count="0" />
+      <LineId Id="185" Count="0" />
+      <LineId Id="523" Count="0" />
+      <LineId Id="517" Count="2" />
+      <LineId Id="515" Count="0" />
+      <LineId Id="522" Count="0" />
+      <LineId Id="516" Count="0" />
+      <LineId Id="186" Count="1" />
+      <LineId Id="228" Count="2" />
+      <LineId Id="184" Count="0" />
+      <LineId Id="183" Count="0" />
+      <LineId Id="176" Count="0" />
+      <LineId Id="159" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="308" Count="0" />
+      <LineId Id="141" Count="0" />
+      <LineId Id="140" Count="0" />
+      <LineId Id="241" Count="9" />
+      <LineId Id="457" Count="0" />
+      <LineId Id="253" Count="6" />
+      <LineId Id="261" Count="0" />
+      <LineId Id="239" Count="0" />
+      <LineId Id="267" Count="2" />
+      <LineId Id="286" Count="6" />
+      <LineId Id="285" Count="0" />
+      <LineId Id="266" Count="0" />
+      <LineId Id="575" Count="3" />
+      <LineId Id="603" Count="3" />
+      <LineId Id="669" Count="1" />
+      <LineId Id="572" Count="0" />
+      <LineId Id="975" Count="0" />
+      <LineId Id="294" Count="0" />
+      <LineId Id="399" Count="0" />
+      <LineId Id="296" Count="0" />
+      <LineId Id="803" Count="1" />
+      <LineId Id="401" Count="0" />
+      <LineId Id="841" Count="0" />
+      <LineId Id="806" Count="0" />
+      <LineId Id="808" Count="12" />
+      <LineId Id="805" Count="0" />
+      <LineId Id="824" Count="14" />
+      <LineId Id="823" Count="0" />
+      <LineId Id="843" Count="0" />
+      <LineId Id="842" Count="0" />
+      <LineId Id="909" Count="0" />
+      <LineId Id="839" Count="0" />
+      <LineId Id="400" Count="0" />
+      <LineId Id="295" Count="0" />
+      <LineId Id="297" Count="1" />
+      <LineId Id="821" Count="0" />
+      <LineId Id="396" Count="1" />
+      <LineId Id="293" Count="0" />
+      <LineId Id="147" Count="0" />
+      <LineId Id="76" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Joint.getDirection">
+      <LineId Id="6" Count="11" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
