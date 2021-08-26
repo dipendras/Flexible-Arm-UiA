@@ -1582,58 +1582,6 @@ External Setpoint Generation:
 			</Relations>
 		</DataType>
 		<DataType>
-			<Name GUID="{08AF3DC4-091E-9D2E-162D-D348FC75C632}" Namespace="Tc2_SerialCom" AutoDeleteType="true">EL6inData22B</Name>
-			<Comment><![CDATA[ This data type is corresponding to the
-   KL-6xxx data structure used in the
-   TwinCAT SystemManager
-   (KL-6xxx version using 5 data bytes / 
-    non-alternative (standard) output ) 
-]]></Comment>
-			<BitSize>192</BitSize>
-			<SubItem>
-				<Name>Status</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000004}">WORD</Type>
-				<BitSize>16</BitSize>
-				<BitOffs>0</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>D</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000001}">BYTE</Type>
-				<ArrayInfo>
-					<LBound>0</LBound>
-					<Elements>22</Elements>
-				</ArrayInfo>
-				<BitSize>176</BitSize>
-				<BitOffs>16</BitOffs>
-			</SubItem>
-		</DataType>
-		<DataType>
-			<Name GUID="{F2D2AC72-ED5B-FB82-D333-AFF659CBA42A}" Namespace="Tc2_SerialCom" AutoDeleteType="true">EL6outData22B</Name>
-			<Comment><![CDATA[ This data type is corresponding to the
-   KL-6xxx data structure used in the
-   TwinCAT SystemManager
-   (KL-6xxx version using 5 data bytes / 
-    non-alternative (standard) output ) 
-]]></Comment>
-			<BitSize>192</BitSize>
-			<SubItem>
-				<Name>Ctrl</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000004}">WORD</Type>
-				<BitSize>16</BitSize>
-				<BitOffs>0</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>D</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000001}">BYTE</Type>
-				<ArrayInfo>
-					<LBound>0</LBound>
-					<Elements>22</Elements>
-				</ArrayInfo>
-				<BitSize>176</BitSize>
-				<BitOffs>16</BitOffs>
-			</SubItem>
-		</DataType>
-		<DataType>
 			<Name GUID="{6BDEED54-7268-405F-A18B-665A0AE0FEE9}" Namespace="MC" TcBaseType="true" HideType="true" IecDeclaration="DWORD;">NCTOPLC_AXIS_REF_OPMODE</Name>
 			<BitSize>32</BitSize>
 			<SubItem>
@@ -3823,22 +3771,6 @@ External Setpoint Generation:
 				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="Main_PLC_Project\Main_PLC_Project.tmc">
 					<Name>Main_PLC_Project Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
-					<Vars VarGrpType="1">
-						<Name>SerialComTask Inputs</Name>
-						<Var>
-							<Name>BackgroundCOM.stIn_EL6022</Name>
-							<Comment><![CDATA[ linked to the EL6022 in the TwinCAT System Manager ]]></Comment>
-							<Type GUID="{08AF3DC4-091E-9D2E-162D-D348FC75C632}" Namespace="Tc2_SerialCom">EL6inData22B</Type>
-						</Var>
-					</Vars>
-					<Vars VarGrpType="2" AreaNo="1">
-						<Name>SerialComTask Outputs</Name>
-						<Var>
-							<Name>BackgroundCOM.stOut_EL6022</Name>
-							<Comment><![CDATA[ linked to the EL6022 in the TwinCAT System Manager ]]></Comment>
-							<Type GUID="{F2D2AC72-ED5B-FB82-D333-AFF659CBA42A}" Namespace="Tc2_SerialCom">EL6outData22B</Type>
-						</Var>
-					</Vars>
 					<Vars VarGrpType="1" ContextId="1" AreaNo="16">
 						<Name>PlcTask Inputs</Name>
 						<Var>
@@ -6498,9 +6430,6 @@ External Setpoint Generation:
 				<Image Id="3" AddrType="9" ImageType="3">
 					<Name>Image</Name>
 				</Image>
-				<Image Id="6" AddrType="10" ImageType="3">
-					<Name>Image-2</Name>
-				</Image>
 				<Box Id="13" BoxType="9099">
 					<Name>Term 5 (EK1200)</Name>
 					<ImageId>1003</ImageId>
@@ -8029,16 +7958,15 @@ External Setpoint Generation:
 		</Io>
 	</Project>
 	<Mappings>
-		<MappingInfo Identifier="{00000000-2001-0850-0020-500830000403}" Id="#x02030020"/>
 		<MappingInfo Identifier="{00000000-2002-0850-0020-500820000101}" Id="#x02030060"/>
 		<MappingInfo Identifier="{00000000-2002-0850-0020-500830000101}" Id="#x02030050"/>
-		<MappingInfo Identifier="{00000000-2002-0850-0120-500861000403}" Id="#x020300a0"/>
+		<MappingInfo Identifier="{00000000-2002-0850-0120-500830000403}" Id="#x02030080"/>
 		<MappingInfo Identifier="{00000000-0020-0304-1000-040321000403}" Id="#x02030030"/>
 		<MappingInfo Identifier="{00000000-0030-0201-3000-010120000101}" Id="#x02030090"/>
 		<MappingInfo Identifier="{00000000-0050-0304-1000-040350000403}" Id="#x02030010"/>
 		<MappingInfo Identifier="{05000010-2002-0850-1000-040301205008}" Id="#x02030040" Watchdog="14000000040000000400000004000000"/>
-		<MappingInfo Identifier="{03040050-0060-0304-5000-040360000403}" Id="#x02030070" Watchdog="14000000040000000400000004000000"/>
-		<MappingInfo Identifier="{03040060-0060-0304-6000-040360000403}" Id="#x02030080" Watchdog="04000000040000000400000004000000"/>
+		<MappingInfo Identifier="{03040030-0030-0304-3000-040330000403}" Id="#x02030070" Watchdog="04000000040000000400000004000000"/>
+		<MappingInfo Identifier="{03040050-0030-0304-5000-040330000403}" Id="#x02030020" Watchdog="14000000040000000400000004000000"/>
 		<OwnerA Name="TIID^Device 1 (EtherCAT)">
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 5 (EK1200)^Term 14 (EL6900)">
 				<Link VarA="Term 5 (EK1200)^Term 15 (EL1904)^Module 1 (FSOES)^RxPDO^FSOE" VarB="ConnectionInputs^Message_9 TxPDO"/>
@@ -8112,54 +8040,6 @@ External Setpoint Generation:
 				<Link VarA="PlcTask Outputs^Safety.TS_Q_Safety_EStopRestart" VarB="StandardOutputs^Standard In Var 2"/>
 				<Link VarA="PlcTask Outputs^Safety.TS_Q_Safety_GroupPort_ErrAck" VarB="StandardOutputs^Standard In Var 1"/>
 				<Link VarA="PlcTask Outputs^Safety.TS_Q_Safety_GroupPort_RunStop" VarB="StandardOutputs^Standard In Var 3"/>
-			</OwnerB>
-			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 5 (EK1200)^Term 16 (EL6022)">
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 0" Size="8" OffsA="16"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 1" Size="8" OffsA="24"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 10" Size="8" OffsA="96"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 11" Size="8" OffsA="104"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 12" Size="8" OffsA="112"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 13" Size="8" OffsA="120"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 14" Size="8" OffsA="128"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 15" Size="8" OffsA="136"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 16" Size="8" OffsA="144"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 17" Size="8" OffsA="152"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 18" Size="8" OffsA="160"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 19" Size="8" OffsA="168"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 2" Size="8" OffsA="32"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 20" Size="8" OffsA="176"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 21" Size="8" OffsA="184"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 3" Size="8" OffsA="40"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 4" Size="8" OffsA="48"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 5" Size="8" OffsA="56"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 6" Size="8" OffsA="64"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 7" Size="8" OffsA="72"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 8" Size="8" OffsA="80"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Data In 9" Size="8" OffsA="88"/>
-				<Link VarA="SerialComTask Inputs^BackgroundCOM.stIn_EL6022" VarB="COM Inputs Channel 1^Status"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Ctrl"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 0" Size="8" OffsA="16"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 1" Size="8" OffsA="24"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 10" Size="8" OffsA="96"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 11" Size="8" OffsA="104"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 12" Size="8" OffsA="112"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 13" Size="8" OffsA="120"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 14" Size="8" OffsA="128"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 15" Size="8" OffsA="136"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 16" Size="8" OffsA="144"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 17" Size="8" OffsA="152"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 18" Size="8" OffsA="160"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 19" Size="8" OffsA="168"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 2" Size="8" OffsA="32"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 20" Size="8" OffsA="176"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 21" Size="8" OffsA="184"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 3" Size="8" OffsA="40"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 4" Size="8" OffsA="48"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 5" Size="8" OffsA="56"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 6" Size="8" OffsA="64"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 7" Size="8" OffsA="72"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 8" Size="8" OffsA="80"/>
-				<Link VarA="SerialComTask Outputs^BackgroundCOM.stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 9" Size="8" OffsA="88"/>
 			</OwnerB>
 			<OwnerB Name="TINC^Main_NC_Task SAF^Axes^Axis1_Drive1_Joint1">
 				<Link VarA="PlcTask Inputs^MAIN.robot.joints[0].axis.NcToPlc" VarB="Outputs^ToPlc"/>

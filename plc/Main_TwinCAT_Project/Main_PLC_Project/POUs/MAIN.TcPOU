@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <POU Name="MAIN" Id="{870836e7-c1db-4c5e-9373-286a0440b8b4}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
@@ -58,98 +58,11 @@ VAR
 	q_DEG : ARRAY [0..2] OF LREAL;
 	
 	
-	//serial communication with el6022
-	fbReadStim300 			: FB_ReadStim300;
-
-	x : ARRAY [0..30] OF LREAL;
-	raw_data : ARRAY [0..(SIZEOF(tDataFrame)-1)] OF SINT;
-	k : UDINT;
-
-	//// try with string
-//	OutputStr				: STRING(255);	//Be sure that this is long enough for a complete line of data (Timestamt,Data1,Data2,...)
-	
-//	//try with bytes data
-	OutputData : tDataFrame;
-
 	
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[// serial communication with el6022
-fbReadStim300();
-
-//// try with string----------------------------------------------------------
-//IF fbReadStim300.bStringCreated THEN
-//	OutputStr := fbReadStim300.OutputStr;
-//	FOR k:= 0 TO 64 DO
-//		 raw_data[k] := BYTE_TO_SINT((OutputStr[k]));
-//		 OutputData[k] := BYTE_TO_SINT((OutputStr[k]));		
-//	END_FOR
-////-----------------------------------------------------------------------
-	
-//// try with bytes data	---------------------------------------------------------------------------------------------
-IF fbReadStim300.bDataCreated  THEN
-	OutputData := fbReadStim300.OutputData;
-	FOR k:= 0 TO (SIZEOF(tDataFrame)-1) DO
-		 raw_data[k] := BYTE_TO_SINT(OutputData[k]);		
-	END_FOR
-////-----------------------------------------------------------------------	
-	// Rate (Gyro) X,Y,Z,Status 2^14
-	x[0] := (raw_data[1]*EXPT(2,16) + raw_data[2]*EXPT(2,8) + raw_data[3]*EXPT(2,0))/EXPT(2,14);
-	x[1] := (raw_data[4]*EXPT(2,16) + raw_data[5]*EXPT(2,8) + raw_data[6]*EXPT(2,0))/EXPT(2,14);
-	x[2] := (raw_data[7]*EXPT(2,16) + raw_data[8]*EXPT(2,8) + raw_data[9]*EXPT(2,0))/EXPT(2,14);
-	x[3] := OutputData[10]; //Status byte
-
-	// Acc X,Y,Z,Status Assumes range 10g --> 2^19
-	x[4] := (raw_data[11]*EXPT(2,16) + raw_data[12]*EXPT(2,8) + raw_data[13]*EXPT(2,0))/EXPT(2,19);
-	x[5] := (raw_data[14]*EXPT(2,16) + raw_data[15]*EXPT(2,8) + raw_data[16]*EXPT(2,0))/EXPT(2,19);
-	x[6] := (raw_data[17]*EXPT(2,16) + raw_data[18]*EXPT(2,8) + raw_data[19]*EXPT(2,0))/EXPT(2,19);
-	x[7] := OutputData[20]; //Status byte
-	
-	
-	// Incl X,Y,Z,Status. 2^22 
-	x[8] := (raw_data[21]*EXPT(2,16) + raw_data[22]*EXPT(2,8) + raw_data[23]*EXPT(2,0))/EXPT(2,22);
-	x[9] := (raw_data[24]*EXPT(2,16) + raw_data[25]*EXPT(2,8) + raw_data[26]*EXPT(2,0))/EXPT(2,22);
-	x[10] := (raw_data[27]*EXPT(2,16) + raw_data[28]*EXPT(2,8) + raw_data[29]*EXPT(2,0))/EXPT(2,22);
-	x[11] := OutputData[30]; //Status byte
-	
-	// Gyro Temp X,Y,Z,Status. 2^8 
-	x[12] := (raw_data[31]*EXPT(2,8) + raw_data[32]*EXPT(2,0))/EXPT(2,8);
-	x[13] := (raw_data[33]*EXPT(2,8) + raw_data[34]*EXPT(2,0))/EXPT(2,8);
-	x[14] := (raw_data[35]*EXPT(2,8) + raw_data[36]*EXPT(2,0))/EXPT(2,8);
-	x[15] := OutputData[37]; //Status byte
-	
-	
-	// Acc Temp X,Y,Z,Status. 2^8 
-	x[16] := (raw_data[38]*EXPT(2,8) + raw_data[39]*EXPT(2,0))/EXPT(2,8);
-	x[17] := (raw_data[40]*EXPT(2,8) + raw_data[41]*EXPT(2,0))/EXPT(2,8);
-	x[18] := (raw_data[42]*EXPT(2,8) + raw_data[43]*EXPT(2,0))/EXPT(2,8);
-	x[19] := OutputData[44]; //Status byte
-	
-	// Incl Temp X,Y,Z,Status. 2^8 
-	x[20] := (raw_data[45]*EXPT(2,8) + raw_data[46]*EXPT(2,0))/EXPT(2,8);
-	x[21] := (raw_data[47]*EXPT(2,8) + raw_data[48]*EXPT(2,0))/EXPT(2,8);
-	x[22] := (raw_data[49]*EXPT(2,8) + raw_data[50]*EXPT(2,0))/EXPT(2,8);
-	x[23] := OutputData[51]; //Status byte
-	
-
-	// AUX Output (External signal, IF ANY)
-    x[24] := OutputData[52]; // Aux BYTE 1
-    x[25] := OutputData[53]; // Aux BYTE 2
-    x[26] := OutputData[54]; // Aux BYTE 3
-    x[27] := OutputData[55]; // Status BYTE
-	
-    // Counter, Latency and CRC
-    x[28] := OutputData[56]; // Counter [0-255]
-    x[29] := (OutputData[57]*EXPT(2,8) + OutputData[58]*EXPT(2,0)); // Latency (microseconds)
-    x[30] := (OutputData[59]*EXPT(2,32) + OutputData[60]*EXPT(2,16) + OutputData[61]*EXPT(2,8) + OutputData[62]*EXPT(2,0)); // Checksum VERIFY???
-	
-	
-END_IF
-
-
-
-
+      <ST><![CDATA[
 stupidRoutine(bRunStupidRoutine:=bRunStupidRoutine);
 
 
@@ -287,52 +200,7 @@ END_IF
       </Implementation>
     </Method>
     <LineIds Name="MAIN">
-      <LineId Id="314" Count="0" />
-      <LineId Id="668" Count="0" />
-      <LineId Id="888" Count="0" />
-      <LineId Id="887" Count="0" />
-      <LineId Id="669" Count="0" />
-      <LineId Id="671" Count="0" />
-      <LineId Id="683" Count="0" />
-      <LineId Id="695" Count="0" />
-      <LineId Id="1040" Count="0" />
-      <LineId Id="681" Count="0" />
-      <LineId Id="967" Count="0" />
-      <LineId Id="885" Count="1" />
-      <LineId Id="890" Count="0" />
-      <LineId Id="892" Count="2" />
-      <LineId Id="889" Count="0" />
-      <LineId Id="701" Count="1" />
-      <LineId Id="700" Count="0" />
-      <LineId Id="703" Count="0" />
-      <LineId Id="705" Count="1" />
-      <LineId Id="704" Count="0" />
-      <LineId Id="708" Count="3" />
-      <LineId Id="707" Count="0" />
-      <LineId Id="712" Count="1" />
-      <LineId Id="715" Count="3" />
-      <LineId Id="714" Count="0" />
-      <LineId Id="719" Count="0" />
-      <LineId Id="721" Count="5" />
-      <LineId Id="728" Count="0" />
-      <LineId Id="732" Count="0" />
-      <LineId Id="729" Count="2" />
-      <LineId Id="727" Count="0" />
-      <LineId Id="720" Count="0" />
-      <LineId Id="734" Count="3" />
-      <LineId Id="733" Count="0" />
-      <LineId Id="740" Count="0" />
-      <LineId Id="749" Count="0" />
-      <LineId Id="748" Count="0" />
-      <LineId Id="741" Count="3" />
-      <LineId Id="750" Count="0" />
-      <LineId Id="745" Count="2" />
-      <LineId Id="738" Count="1" />
-      <LineId Id="699" Count="0" />
-      <LineId Id="662" Count="0" />
-      <LineId Id="661" Count="0" />
-      <LineId Id="660" Count="0" />
-      <LineId Id="658" Count="1" />
+      <LineId Id="659" Count="0" />
       <LineId Id="249" Count="0" />
       <LineId Id="317" Count="0" />
       <LineId Id="290" Count="0" />

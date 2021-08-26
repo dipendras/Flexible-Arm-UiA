@@ -24,10 +24,6 @@
       <SubType>Code</SubType>
       <LinkAlways>true</LinkAlways>
     </Compile>
-    <Compile Include="GVLs\IO.TcGVL">
-      <SubType>Code</SubType>
-      <LinkAlways>true</LinkAlways>
-    </Compile>
     <Compile Include="GVLs\Safety.TcGVL">
       <SubType>Code</SubType>
       <LinkAlways>true</LinkAlways>
@@ -35,16 +31,10 @@
     <Compile Include="PlcTask.TcTTO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\BackgroundCOM.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="POUs\E_RobotMode.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\FB_Joint.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="POUs\FB_ReadStim300.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\FB_Robot3R.TcPOU">
