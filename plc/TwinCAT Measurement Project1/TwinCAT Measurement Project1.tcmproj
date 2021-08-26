@@ -1,15 +1,13 @@
-﻿<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{2099fb1a-818b-4fad-b1fe-7dbe796b1458}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>MyApplication</RootNamespace>
-    <AssemblyName>MyApplication</AssemblyName>
+    <ProjectGuid>{288bef17-40c6-4782-8c15-e996d365150c}</ProjectGuid>
+    <AssemblyName>TwinCAT Measurement Project1</AssemblyName>
     <Name>TwinCAT Measurement Project1</Name>
+    <RootNamespace>TwinCAT Measurement Project1</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="ScopeWizard.tcscopex">
+    <Content Include="YT Scope Project.tcscopex">
       <SubType>Content</SubType>
     </Content>
   </ItemGroup>

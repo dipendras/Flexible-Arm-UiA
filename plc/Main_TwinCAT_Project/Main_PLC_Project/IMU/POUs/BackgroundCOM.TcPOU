@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="BackgroundCOM" Id="{b271819f-2bcd-49a4-b99d-11668f790144}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM BackgroundCOM
+VAR
+	i : DINT;	
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[FOR i := 0 TO 2 DO
+	IMU.fbStim300[i]();
+END_FOR
+
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="BackgroundCOM">
+      <LineId Id="147" Count="0" />
+      <LineId Id="151" Count="1" />
+      <LineId Id="148" Count="0" />
+      <LineId Id="145" Count="0" />
+      <LineId Id="81" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

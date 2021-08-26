@@ -4,6 +4,9 @@
     <!--CycleTime in micro seconds.-->
     <CycleTime>1000</CycleTime>
     <Priority>1</Priority>
+    <PouCall>
+      <Name>BackgroundCOM</Name>
+    </PouCall>
     <TaskFBGuid>{4883d004-444c-45de-b8bf-2e9822509996}</TaskFBGuid>
     <Fb_init>{a55d6c91-f22d-4645-9181-a1803da6ad83}</Fb_init>
     <Fb_exit>{dd938152-8bec-49c2-a709-8c4ce0c7153a}</Fb_exit>

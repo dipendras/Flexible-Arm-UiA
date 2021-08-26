@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <DUT Name="ST_Vector3" Id="{c0ba3d39-44d0-42c3-88e4-fbc7a8470ced}">
+    <Declaration><![CDATA[TYPE ST_Vector3 :
+STRUCT
+	x : LREAL;
+	y : LREAL;
+	z : LREAL;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

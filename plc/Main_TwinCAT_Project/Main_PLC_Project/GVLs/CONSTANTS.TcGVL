@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
-  <GVL Name="Control" Id="{3ea5403b-0fbe-4b19-8f13-45713f688109}">
+  <GVL Name="CONSTANTS" Id="{30160ff0-ea78-4fb0-89e7-23814721b7a0}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
-VAR_GLOBAL
-
-	
+VAR_GLOBAL CONSTANT
+	DEG_TO_RAD : LREAL := PI/180.0;
+	RAD_TO_DEG : LREAL := 180.0/PI;
 END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>

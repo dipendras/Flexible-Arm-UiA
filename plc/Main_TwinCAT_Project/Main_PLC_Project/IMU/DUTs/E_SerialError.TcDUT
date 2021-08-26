@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <DUT Name="E_SerialError" Id="{135869b0-a909-4423-8b39-3e668d4613a7}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+TYPE E_SerialError :
+(
+	eNoError := 0,
+	eComBufferError,
+	eOutputBufferTooSmall,
+	eChecksumFailed
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

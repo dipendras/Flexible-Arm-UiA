@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="F_Merge24BitSigned" Id="{d713e168-7b7c-4479-b686-3b5a4fddf01a}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_Merge24BitSigned : DINT
+VAR_INPUT
+	byte_0 : BYTE;
+	byte_1 : BYTE;
+	byte_2 : BYTE;
+END_VAR
+VAR
+	tmp : DWORD;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+tmp := F_Merge24BitUnsigned(byte_0, byte_1, byte_2);
+
+IF ((tmp AND 16#800000) <> 0) THEN // Check for sign bit
+	// If signed then pad to invert 32 bit
+	F_Merge24BitSigned := TO_DINT(tmp OR 16#FF000000);
+ELSE
+	// If unsigned then it's ok
+	F_Merge24BitSigned := TO_DINT(tmp);
+END_IF
+]]></ST>
+    </Implementation>
+    <LineIds Name="F_Merge24BitSigned">
+      <LineId Id="17" Count="1" />
+      <LineId Id="20" Count="1" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

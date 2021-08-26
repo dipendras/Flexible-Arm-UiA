@@ -123,7 +123,7 @@ END_IF
 
 // Execute joints
 FOR j:= 0 TO 2 DO
-	IF j = 2 THEN //Uncomment IF you want to use only joint 3
+	IF j = 0 THEN //Uncomment IF you want to use only joint 3
 		joints[j](
 			bReset:=bReset,
 			bEnable:=bEnable,

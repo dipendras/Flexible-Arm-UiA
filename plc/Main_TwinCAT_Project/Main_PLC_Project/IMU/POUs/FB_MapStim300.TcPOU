@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_MapStim300" Id="{5f7fd0be-53b8-4cf8-b0c9-21f376e0f253}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_MapStim300
+
+VAR_INPUT
+	
+END_VAR
+
+VAR_OUTPUT
+	ImuData : ST_IMUData;
+	
+END_VAR
+
+VAR
+	//serial communication with el6022
+	fbGetSerialData : FB_GetSerialData;	
+	ImuRawDataFrame : tDataFrame;
+	
+	fbEL6022Ctrl       : SerialLineControl;
+	bEL6022CtrlError   : BOOL;
+   	eEL6022CtrlErrorID : ComError_t;
+   
+	(* I/O variables for a EL6022 terminal*)
+	stIn_EL6022 AT %I*    : EL6inData22B; 		(* linked to the EL6022 in the TwinCAT System Manager *)
+	stOut_EL6022 AT %Q*    : EL6outData22B;		(* linked to the EL6022 in the TwinCAT System Manager *)
+	
+	RxBufferEL : ComBuffer; (* Receive data buffer; used with all receive function blocks *)
+	TxBufferEL : ComBuffer; (* Transmit data buffer; used with all receive function blocks *)
+
+	
+
+	fbTimer : TON := (PT := T#1S);
+	nCounter : DINT;
+	nSampleRate : LREAL;
+	
+	//COmplementary filter
+	fbAccelerometer : FB_AccelerometerAngle;
+	fbComplementaryFilterRoll : FB_ComplementaryFilter := (fFilterRatio:=0.98);
+	fbComplementaryFilterPitch : FB_ComplementaryFilter := (fFilterRatio:=0.98);
+	
+	fRollDeg : LREAL;
+	fPitchDeg : LREAL;
+	
+	// Task cycle time monitoring
+	bFirstRun : BOOL := TRUE;
+	Ts : LREAL := 0.01;
+	fbGetCurrentTaskIdx : GETCURTASKINDEX;
+	bCycleTimeExceeded : BOOL;
+	nCycleCount : UDINT;
+	
+END_VAR
+
+VAR CONSTANT
+	header : BYTE := 16#AF;
+	nDataSize : UDINT := SIZEOF(tDataFrame);
+	fRatioGyro : LREAL := 1.0/EXPT(2,14);
+	fRatioAcc : LREAL := 1.0/EXPT(2,19);
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF bFirstRun THEN
+	getSampleTIme();
+	bFirstRun:= FALSE;
+END_IF
+
+fbEL6022Ctrl(
+   Mode:= SERIALLINEMODE_EL6_22B, 
+   pComIn:= ADR(stIn_EL6022), 
+   pComOut:= ADR(stOut_EL6022), 
+   SizeComIn:= SIZEOF(stIn_EL6022), 
+   Error=> bEL6022CtrlError, 
+   ErrorID=> eEL6022CtrlErrorID, 
+   TxBuffer:= TxBufferEL, 
+   RxBuffer:= RxBufferEL
+);
+
+nCounter := nCounter + 1;
+fbTimer(IN := TRUE);
+IF fbTimer.Q THEN
+	fbTimer(IN := FALSE);
+	nSampleRate := 1.0/TO_LREAL(nCounter);
+	nCounter := 0;
+END_IF
+
+fbGetSerialData(
+	pHeader := ADR(header),
+	cbHeaderSize := 1,
+	cbPacketSize := nDataSize,
+	stRxBuffer := RxBufferEL,
+	pDataBuffer := ADR(ImuRawDataFrame),
+	cbDataBufferSize := nDataSize
+);
+
+IF fbGetSerialData.NewData THEN
+	mapStim300(
+		in := ADR(ImuRawDataFrame),
+		out := ImuData
+	);
+	
+	fbAccelerometer(fAx:=ImuData.stAcc.x,fAy:=ImuData.stAcc.y,fAz:=ImuData.stAcc.z);
+	
+	
+END_IF
+
+fbComplementaryFilterRoll(fAccAngle:=fbAccelerometer.fRoll,fGyroRate:=ImuData.stGyro.x*CONSTANTS.DEG_TO_RAD,fStepTime:=Ts,fAngle=>ImuData.fRoll);
+fbComplementaryFilterPitch(fAccAngle:=fbAccelerometer.fPitch,fGyroRate:=ImuData.stGyro.y*CONSTANTS.DEG_TO_RAD,fStepTime:=Ts,fAngle=>ImuData.fPitch);
+fRollDeg := ImuData.fRoll * CONSTANTS.RAD_TO_DEG;
+fPitchDeg := ImuData.fPitch * CONSTANTS.RAD_TO_DEG;
+]]></ST>
+    </Implementation>
+    <Action Name="getSampleTIme" Id="{cb4477fb-985f-4474-b442-53511ea0cc37}">
+      <Implementation>
+        <ST><![CDATA[// Get sample time of current task
+fbGetCurrentTaskIdx();
+bCycleTimeExceeded := _TaskInfo[fbGetCurrentTaskIdx.index].CycleTimeExceeded;
+nCycleCount := _TaskInfo[fbGetCurrentTaskIdx.index].CycleCount;
+Ts := UDINT_TO_LREAL(_TaskInfo[fbGetCurrentTaskIdx.index].CycleTime/10)/1E6;]]></ST>
+      </Implementation>
+    </Action>
+    <Method Name="mapStim300" Id="{cbc54e7b-fbd0-4f47-86b5-0d52db7252fa}">
+      <Declaration><![CDATA[METHOD PUBLIC mapStim300
+VAR_INPUT
+	in 	: POINTER TO BYTE;
+	out : REFERENCE TO ST_ImuData;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[	
+	out.stGyro.x := TO_LREAL(F_Merge24BitSigned(in[1], in[2], in[3]))*fRatioGyro;
+	out.stGyro.y := TO_LREAL(F_Merge24BitSigned(in[4], in[5], in[6]))*fRatioGyro;
+	out.stGyro.z := TO_LREAL(F_Merge24BitSigned(in[7], in[8], in[9]))*fRatioGyro;
+	
+	out.stAcc.x := TO_LREAL(F_Merge24BitSigned(in[11], in[12], in[13]))*fRatioAcc;
+	out.stAcc.y := TO_LREAL(F_Merge24BitSigned(in[14], in[15], in[16]))*fRatioAcc;
+	out.stAcc.z := TO_LREAL(F_Merge24BitSigned(in[17], in[18], in[19]))*fRatioAcc;
+	
+
+	
+	]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_MapStim300">
+      <LineId Id="140" Count="0" />
+      <LineId Id="143" Count="0" />
+      <LineId Id="141" Count="1" />
+      <LineId Id="139" Count="0" />
+      <LineId Id="55" Count="32" />
+      <LineId Id="145" Count="0" />
+      <LineId Id="148" Count="1" />
+      <LineId Id="146" Count="0" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="144" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="150" Count="0" />
+      <LineId Id="156" Count="1" />
+      <LineId Id="155" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_MapStim300.getSampleTIme">
+      <LineId Id="2" Count="3" />
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_MapStim300.mapStim300">
+      <LineId Id="96" Count="10" />
+      <LineId Id="89" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,350 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_GetSerialData" Id="{2e38885a-d06a-400a-8363-2ac0db4f0cd4}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_GetSerialData
+VAR_INPUT
+	bActive 			: BOOL := TRUE;
+	// [in] Pointer to header
+	pHeader 			: POINTER TO BYTE;
+	// Size of header in bytes
+	cbHeaderSize 		: UDINT;
+	// Size of data packet in bytes (including header and checksum)
+	cbPacketSize 		: UDINT;
+	// [in] Reference to RxBuffer
+	stRxBuffer 			: REFERENCE TO ComBuffer;
+	// [out] Pointer to output data buffer
+	pDataBuffer 		: POINTER TO BYTE;
+	// Size of data packet in bytes
+	cbDataBufferSize 	: UDINT;
+END_VAR
+VAR_OUTPUT
+	// Number of discarded bytes due to lack of synchronisation
+	nDiscardedBytes : UDINT := 0;
+	// True if an error occured on last receive
+	bError : BOOL;
+	// Last error code (keeps last error code even if ther is no error, to check for error use bError)
+	eLastError : E_SerialError;
+	// Number of errors since startup
+	nErrorCount : UDINT := 0;
+	// Number of received (verified) datagrams per second
+	nReceivedDatagrams : DINT := 0;
+	// Number of dropped datagrams per second
+	nDroppedDatagrams : DINT := 0;
+END_VAR
+VAR
+	// True if a new unread data packet has been received
+	bNewData : BOOL := FALSE;
+	// State
+	eSerialState : E_SerialState := E_SerialState.eStopped;
+	// Buffer com, single byte
+	fbReceiveByte : ReceiveByte;
+	// Clears com buffer
+	fbClearComBuffer : ClearComBuffer;
+	// Timer
+	fbTimer : TON := (PT := T#1S);
+	// Received datagrams counter
+	nReceivedCount : DINT := 0;
+	// Dropped datagrams counter
+	nDroppedCount : DINT := 0;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Keep the com buffer cleared to avoid overflows when we are not active
+IF NOT bActive THEN
+	IF (stRxBuffer.Count > 0) THEN
+		fbClearComBuffer(Buffer := stRxBuffer);
+	END_IF
+	
+	eSerialState := E_SerialState.eStopped;
+END_IF
+
+IF (cbPacketSize > cbDataBufferSize) THEN
+	bError := TRUE;
+	eLastError := E_SerialError.eOutputBufferTooSmall;
+ELSE
+	bError := FALSE;
+END_IF
+
+fbTimer(IN := TRUE);
+IF fbTimer.Q THEN
+	fbTimer(IN := FALSE);
+	nReceivedDatagrams := nReceivedCount;
+	nReceivedCount := 0;
+	nDroppedDatagrams := nDroppedCount;
+	nDroppedCount := 0;
+END_IF
+
+CASE eSerialState OF
+E_SerialState.eStopped:
+	IF bActive THEN
+		eSerialState := E_SerialState.eSearchForHeader;
+	END_IF
+
+E_SerialState.eSearchForHeader:
+	searchForHeader(nMaxBytes := 100);
+	
+E_SerialState.eReceive:
+	receive();
+
+END_CASE
+
+IF bError THEN
+	nErrorCount := nErrorCount + 1;
+END_IF
+]]></ST>
+    </Implementation>
+    <Method Name="checksum" Id="{7b5c0ec1-82a0-42d0-8bb4-225cc4d5c6f2}">
+      <Declaration><![CDATA[// Use this method to calculate checksum
+// Returns true if the checksum is correct, false if it is incorrect
+METHOD PRIVATE checksum : BOOL
+VAR_INPUT
+END_VAR
+VAR CONSTANT
+	ptSuffix : ARRAY [0..1] OF BYTE := [ 16#0D, 16#0A]; 
+	crc_polynomial : UDINT := 16#04C11DB7;//16#82608EDB;//16#DB710641; //16#EDB88320;//16#04C11DB7;//divisor is 32bit 
+	cbcrcSize : UDINT := 4;//Bytes
+	cbsuffixLength: UDINT := 2;//Bytes
+END_VAR
+VAR
+	calc_crc : UDINT := 0;//CRC value is 32bit
+	received_crc : UDINT;
+	i : UDINT ;
+	j : UDINT ;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+checksum := (pDataBuffer[63] = ptSuffix[0]) AND (pDataBuffer[64] = ptSuffix[1]);
+
+IF NOT checksum THEN
+	RETURN;
+	
+END_IF
+
+//http://www.sunshine2k.de/articles/coding/crc/understanding_crc.html
+calc_crc := 16#FFFFFFFF;
+FOR i := 0 TO cbPacketSize-cbcrcSize-cbsuffixLength-1 DO
+	calc_crc := calc_crc XOR SHL(TO_UDINT(pDataBuffer[i]),24); // move byte into MSB of 32bit CRC
+	FOR j := 0 TO 7 DO 
+		IF ((calc_crc AND 16#80000000) <> 0) THEN //test for MSB = bit 31
+			calc_crc := (SHL(calc_crc,1) XOR crc_polynomial);
+		ELSE 
+			calc_crc := SHL(calc_crc,1); 
+		END_IF		
+	END_FOR
+END_FOR
+
+//We add one more byte added for normal datagram mode
+calc_crc := calc_crc XOR 0; // move byte into MSB of 32bit CRC
+
+
+FOR j := 0 TO 7 DO 
+	IF ((calc_crc AND 16#80000000) <> 0) THEN //test for MSB = bit 31
+		calc_crc := (SHL(calc_crc,1) XOR crc_polynomial);
+	ELSE 
+		calc_crc := SHL(calc_crc,1); 
+	END_IF		
+END_FOR
+
+received_crc := SHL(TO_UDINT(pDataBuffer[59]), 24) OR SHL(TO_UDINT(pDataBuffer[60]), 16) OR SHL(TO_UDINT(pDataBuffer[61]), 8) OR TO_UDINT(pDataBuffer[62]);
+
+checksum := calc_crc = received_crc;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="NewData" Id="{f0b3d0e3-e608-4a60-8911-397a509b07e9}">
+      <Declaration><![CDATA[PROPERTY PUBLIC NewData : BOOL]]></Declaration>
+      <Get Name="Get" Id="{d777513f-21a4-4a02-b59c-07ea70863d26}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[NewData := bNewData;
+bNewData := FALSE;
+]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="receive" Id="{8e3ac4b6-e5bc-4c77-be9b-3f3a532ced93}">
+      <Declaration><![CDATA[METHOD PRIVATE receive
+VAR_INPUT
+END_VAR
+VAR
+	cbDataSize : UDINT;
+
+	i : UDINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[cbDataSize := (cbPacketSize - cbHeaderSize);
+
+IF (stRxBuffer.Count < cbDataSize) THEN
+	// Wait for more data
+	RETURN;
+END_IF
+
+FOR i := 0 TO (cbDataSize - 1) DO
+	fbReceiveByte(
+		ReceivedByte => pDataBuffer[cbHeaderSize + i],
+		RxBuffer := stRxBuffer
+	);
+
+	IF (fbReceiveByte.Error <> COMERROR_NOERROR) THEN
+		bError := TRUE;
+		eLastError := E_SerialError.eComBufferError;
+		eSerialState := E_SerialState.eSearchForHeader;
+		RETURN;
+	END_IF
+END_FOR
+
+eSerialState := E_SerialState.eSearchForHeader;
+
+IF NOT(checksum()) THEN
+	bError := TRUE;
+	eLastError := E_SerialError.eChecksumFailed;
+	nDroppedCount := nDroppedCount + 1;
+	RETURN;
+END_IF
+
+nDiscardedBytes := 0;
+nReceivedCount := nReceivedCount + 1;
+bNewData := TRUE;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="searchForHeader" Id="{ad34ed2d-772b-43aa-a032-8f6841abffd5}">
+      <Declaration><![CDATA[METHOD PRIVATE searchForHeader
+VAR_INPUT
+	// Set a maximum number of bytes to read each iteration in order to avoid getting stuck in an infinite loop
+	nMaxBytes : UDINT;
+END_VAR
+VAR
+	nBytesRead 	: UDINT;
+	nHeaderByte : UDINT := 0;
+	// nReceivedByte : BYTE;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+FOR nBytesRead := 0 TO (nMaxBytes - 1) DO
+	IF (stRxBuffer.Count < cbHeaderSize) THEN
+		// Buffer content is less than the size of the header. Wait for more data
+		RETURN;
+	END_IF
+
+	// Get a single byte from the buffer and compare to the header
+	fbReceiveByte(
+		ReceivedByte => pDataBuffer[nHeaderByte], // nReceivedByte,
+		RxBuffer := stRxBuffer
+	);
+	
+	IF (fbReceiveByte.Error <> COMERROR_NOERROR) THEN
+		bError := TRUE;
+		eLastError := E_SerialError.eComBufferError;
+		EXIT;
+	END_IF
+
+	IF (pHeader[nHeaderByte] = pDataBuffer[nHeaderByte]) THEN
+		// pDataBuffer[nHeaderByte] := nReceivedByte;
+		nHeaderByte := nHeaderByte + 1;
+	ELSE
+		nDiscardedBytes := nDiscardedBytes + 1;
+		nHeaderByte := 0;
+	END_IF
+	
+	IF (nHeaderByte = cbHeaderSize) THEN
+		// Header found :)
+		eSerialState := E_SerialState.eReceive;
+		// Run receive once in case we are already ready to read
+		receive();
+		EXIT;
+	END_IF
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_GetSerialData">
+      <LineId Id="67" Count="4" />
+      <LineId Id="144" Count="0" />
+      <LineId Id="143" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="145" Count="2" />
+      <LineId Id="149" Count="2" />
+      <LineId Id="148" Count="0" />
+      <LineId Id="210" Count="1" />
+      <LineId Id="214" Count="0" />
+      <LineId Id="261" Count="0" />
+      <LineId Id="263" Count="3" />
+      <LineId Id="262" Count="0" />
+      <LineId Id="76" Count="13" />
+      <LineId Id="154" Count="0" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="155" Count="2" />
+    </LineIds>
+    <LineIds Name="FB_GetSerialData.checksum">
+      <LineId Id="81" Count="31" />
+      <LineId Id="116" Count="0" />
+      <LineId Id="113" Count="0" />
+      <LineId Id="117" Count="0" />
+      <LineId Id="114" Count="0" />
+      <LineId Id="61" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_GetSerialData.NewData.Get">
+      <LineId Id="2" Count="0" />
+      <LineId Id="5" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_GetSerialData.receive">
+      <LineId Id="15" Count="1" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="31" Count="1" />
+      <LineId Id="34" Count="2" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="37" Count="2" />
+      <LineId Id="66" Count="0" />
+      <LineId Id="40" Count="1" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="44" Count="1" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="67" Count="1" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="22" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_GetSerialData.searchForHeader">
+      <LineId Id="14" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="31" Count="3" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="43" Count="1" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="50" Count="3" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="64" Count="0" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="11" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

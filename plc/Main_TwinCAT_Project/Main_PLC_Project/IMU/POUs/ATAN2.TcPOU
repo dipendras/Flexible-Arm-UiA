@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="ATAN2" Id="{f98b14fc-3cbb-4106-9d71-c37dc554b494}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION ATAN2 : LREAL
+VAR_INPUT
+	y : LREAL;
+	x : LREAL;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF (x > 0.0) THEN
+	// (x > 0)
+	ATAN2 := 2*ATAN(y/(SQRT(EXPT(x, 2.0) + EXPT(y, 2.0)) + x));
+ELSIF (y <> 0.0) THEN
+	// (x <= 0) & (y != 0)
+	ATAN2 := 2*ATAN((SQRT(EXPT(x, 2.0) + EXPT(y, 2.0)) - x)/y);
+ELSIF (x < 0.0) THEN
+	// (x < 0) & (y == 0)
+	ATAN2 := PI;
+ELSE
+	// (x == 0) & (y == 0) Technically undefined, but we set it to zero
+	ATAN2 := 0.0;
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="ATAN2">
+      <LineId Id="7" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="20" Count="1" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="11" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

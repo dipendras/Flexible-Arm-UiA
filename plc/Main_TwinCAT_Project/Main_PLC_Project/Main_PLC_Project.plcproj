@@ -20,6 +20,10 @@
     <Compile Include="DUTs\tDataFrame.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GVLs\CONSTANTS.TcGVL">
+      <SubType>Code</SubType>
+      <LinkAlways>true</LinkAlways>
+    </Compile>
     <Compile Include="GVLs\Control.TcGVL">
       <SubType>Code</SubType>
       <LinkAlways>true</LinkAlways>
@@ -27,6 +31,43 @@
     <Compile Include="GVLs\Safety.TcGVL">
       <SubType>Code</SubType>
       <LinkAlways>true</LinkAlways>
+    </Compile>
+    <Compile Include="IMU\DUTs\E_SerialError.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMU\DUTs\E_SerialState.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMU\DUTs\ST_ImuData.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMU\DUTs\ST_Vector3.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMU\DUTs\tDataFrame_1.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMU\GVLs\IMU.TcGVL">
+      <SubType>Code</SubType>
+      <LinkAlways>true</LinkAlways>
+    </Compile>
+    <Compile Include="IMU\POUs\ATAN2.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMU\POUs\BackgroundCOM.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMU\POUs\FB_AccelerometerAngle.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMU\POUs\FB_ComplementaryFilter.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMU\POUs\FB_GetSerialData.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMU\POUs\FB_MapStim300.TcPOU">
+      <SubType>Code</SubType>
     </Compile>
     <Compile Include="PlcTask.TcTTO">
       <SubType>Code</SubType>
@@ -40,6 +81,12 @@
     <Compile Include="POUs\FB_Robot3R.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\F_Merge24BitSigned.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\F_Merge24BitUnsigned.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\MAIN.TcPOU">
       <SubType>Code</SubType>
     </Compile>
@@ -50,6 +97,10 @@
   <ItemGroup>
     <Folder Include="DUTs" />
     <Folder Include="GVLs" />
+    <Folder Include="IMU" />
+    <Folder Include="IMU\GVLs" />
+    <Folder Include="IMU\DUTs" />
+    <Folder Include="IMU\POUs" />
     <Folder Include="VISUs" />
     <Folder Include="POUs" />
   </ItemGroup>

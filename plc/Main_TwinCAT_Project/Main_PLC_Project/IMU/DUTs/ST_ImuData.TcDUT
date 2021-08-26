@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <DUT Name="ST_ImuData" Id="{99b040bb-1e59-4cd4-bf02-ff165183db28}">
+    <Declaration><![CDATA[TYPE ST_ImuData :
+STRUCT
+	stGyro 	: ST_Vector3;
+	stAcc 	: ST_Vector3;
+	fRoll 	: LREAL;
+	fPitch	: LREAL;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_AccelerometerAngle" Id="{c699738f-17e1-40cf-9b0a-845ab33732d4}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_AccelerometerAngle
+VAR_INPUT
+	fAx : LREAL;
+	fAy : LREAL;
+	fAz : LREAL;
+END_VAR
+VAR_OUTPUT
+	fRoll 	: LREAL; // [rad]
+	fPitch 	: LREAL; // [rad]
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fRoll := ATAN2(fAy, fAz);
+
+fPitch := ATAN2(-fAx, SQRT(EXPT(fAy, 2.0) + EXPT(fAz, 2.0)));
+]]></ST>
+    </Implementation>
+    <LineIds Name="FB_AccelerometerAngle">
+      <LineId Id="9" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="24" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

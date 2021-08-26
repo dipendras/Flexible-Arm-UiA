@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_ComplementaryFilter" Id="{4c62a9fc-15bd-490c-ab27-22af31fc4756}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ComplementaryFilter
+VAR_INPUT
+	// Accelerometer angle [unit]
+	fAccAngle 		: LREAL;
+	// Gyro roll angle rate [unit/s]
+	fGyroRate		: LREAL;
+	// Filter ratio [0..1]
+	fFilterRatio 	: LREAL;
+	// Step time [s]
+	fStepTime 		: LREAL;
+END_VAR
+VAR_OUTPUT
+	// Filtered angle [unit]
+	fAngle 	: LREAL := 0.0;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+// θ(t) = (1 − α) · θ(t)a + α · (θt−1 + ω(t)g · dt)
+
+fAngle := (1.0 - fFilterRatio)*fAccAngle + fFilterRatio*(fAngle + fGyroRate*fStepTime);
+]]></ST>
+    </Implementation>
+    <LineIds Name="FB_ComplementaryFilter">
+      <LineId Id="29" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="34" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="F_Merge24BitUnsigned" Id="{834be859-21b6-4cc8-84c2-c5181836cf40}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_Merge24BitUnsigned : UDINT
+VAR_INPUT
+	byte_0 : BYTE;
+	byte_1 : BYTE;
+	byte_2 : BYTE;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[F_Merge24BitUnsigned := SHL(TO_DWORD(byte_0) AND 16#FF, 16) OR SHL(TO_DWORD(byte_1) AND 16#FF, 8) OR TO_DWORD(byte_2) AND 16#FF;]]></ST>
+    </Implementation>
+    <LineIds Name="F_Merge24BitUnsigned">
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
