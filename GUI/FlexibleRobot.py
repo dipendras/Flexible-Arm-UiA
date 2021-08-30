@@ -12,7 +12,7 @@ from RealTimePlot import RealTimePlot
 
 from Ui_MainWindow import Ui_MainWindow
 
-PLC_IP_ADDRESS = "169.254.234.23" #"127.0.0.1"
+PLC_IP_ADDRESS = "192.168.0.10" #"127.0.0.1"
 PLC_NETID = "5.72.215.242.1.1" #"127.0.0.1.1.1"
 
 class FlexibleRobot(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -64,9 +64,9 @@ class FlexibleRobot(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
     # Set the joint values to current joint values
-    self.gui.doubleSpinBox_SetJoint1Position.setValue(self.plc.read_by_name('MAIN.robot.joints[0].axis.NcToPlc.ActPos',pyads.PLCTYPE_LREAL))
-    self.gui.doubleSpinBox_SetJoint2Position.setValue(self.plc.read_by_name('MAIN.robot.joints[1].axis.NcToPlc.ActPos',pyads.PLCTYPE_LREAL))
-    self.gui.doubleSpinBox_SetJoint3Position.setValue(self.plc.read_by_name('MAIN.robot.joints[2].axis.NcToPlc.ActPos',pyads.PLCTYPE_LREAL))
+    self.gui.doubleSpinBox_SetJoint1Position.setValue(self.plc.read_by_name('Main.Robot.q[0]',pyads.PLCTYPE_LREAL))
+    self.gui.doubleSpinBox_SetJoint2Position.setValue(self.plc.read_by_name('Main.Robot.q[1]',pyads.PLCTYPE_LREAL))
+    self.gui.doubleSpinBox_SetJoint3Position.setValue(self.plc.read_by_name('Main.Robot.q[2]',pyads.PLCTYPE_LREAL))
 
 
     # Connect to slot
@@ -123,12 +123,12 @@ class FlexibleRobot(QtWidgets.QMainWindow, Ui_MainWindow):
     self.gui.pushButton_PositionModeExecute.released.connect(self.slot_released_bPositionModeExecute)
 
     # PLC -> SIGNAL
-    self.plcNotification('MAIN.Robot.bEnable', pyads.PLCTYPE_BOOL, self.signal_bRobotStatus)
+    self.plcNotification('MAIN.robot.bEnableAll', pyads.PLCTYPE_BOOL, self.signal_bRobotStatus)
     self.plcNotification('Safety.TS_I_Safety_EStopOK', pyads.PLCTYPE_BOOL, self.signal_bEStopOK)
     self.plcNotification('Safety.TS_I_Safety_EStopError', pyads.PLCTYPE_BOOL, self.signal_bEStopError)
-    self.plcNotification('MAIN.robot.joints[0].axis.NcToPlc.ActPos', pyads.PLCTYPE_LREAL, self.signal_fAxis_Joint1)
-    self.plcNotification('MAIN.robot.joints[1].axis.NcToPlc.ActPos', pyads.PLCTYPE_LREAL, self.signal_fAxis_Joint2)
-    self.plcNotification('MAIN.robot.joints[2].axis.NcToPlc.ActPos', pyads.PLCTYPE_LREAL, self.signal_fAxis_Joint3)
+    self.plcNotification('Main.Robot.q[0]', pyads.PLCTYPE_LREAL, self.signal_fAxis_Joint1)
+    self.plcNotification('Main.Robot.q[1]', pyads.PLCTYPE_LREAL, self.signal_fAxis_Joint2)
+    self.plcNotification('Main.Robot.q[2]', pyads.PLCTYPE_LREAL, self.signal_fAxis_Joint3)
 
     # SIGNAL -> SLOT
     self.signal_bRobotStatus.connect(self.slot_bRobotStatus)
@@ -149,7 +149,7 @@ class FlexibleRobot(QtWidgets.QMainWindow, Ui_MainWindow):
     
 
     #Check the status of Robot
-    status = (self.plc.read_by_name('MAIN.Robot.bEnable', pyads.PLCTYPE_BOOL))
+    status = (self.plc.read_by_name('MAIN.robot.bEnableAll', pyads.PLCTYPE_BOOL))
     if status:
         self.gui.label_RobotStatus.setPixmap(QtGui.QPixmap('led-images/led-green.png').scaled(50, 50, QtCore.Qt.KeepAspectRatio, QtCore.Qt.FastTransformation))
         self.gui.label_RobotStatus.adjustSize()
@@ -199,7 +199,7 @@ class FlexibleRobot(QtWidgets.QMainWindow, Ui_MainWindow):
 
   @QtCore.pyqtSlot()
   def slot_pressed_bPowerOnRobot(self):
-    self.plc.write_by_name('Main.Robot.bEnable', True, pyads.PLCTYPE_BOOL)
+    self.plc.write_by_name('Main.robot.bEnableAll', True, pyads.PLCTYPE_BOOL)
 
 
 

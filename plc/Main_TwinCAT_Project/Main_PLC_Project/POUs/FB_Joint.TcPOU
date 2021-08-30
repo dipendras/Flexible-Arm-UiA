@@ -17,7 +17,7 @@ VAR_INPUT
 	qRef_t : LREAL;
 	qRef_tt : LREAL;
 	
-	
+	fOffset : LREAL;
 END_VAR
 VAR_OUTPUT
 	bActive : BOOL;
@@ -169,11 +169,12 @@ END_IF
 
 //position control
 IF NOT bStop AND bActive AND NOT bVelocityMode AND  bPositionMode THEN
-	fbAxisMoveAbsolute(Axis:=axis,
-		Execute:=bPositionModeExecute,
-		Position:=qRef,
-		Velocity:=qRef_t
-		);
+	fbAxisMoveAbsolute(
+		Axis := axis,
+		Execute :=bPositionModeExecute,
+		Position := (fOffset - qRef), // (qRef - fOffset),
+		Velocity := qRef_t
+	);
 		
 END_IF
 
@@ -220,10 +221,10 @@ fActTorque := ((INT_TO_LREAL(nReadTorqueFeedback)/10)/100)*(UDINT_TO_LREAL(nRead
 
 //----------------------------------------------------------------------------------
 
-q := axis.NcToPlc.ActPos;
-q_t := axis.NcToPlc.ActVelo;
+q := -axis.NcToPlc.ActPos + fOffset;
+q_t := -axis.NcToPlc.ActVelo;
 //tau := axis.NcToPlc.ActTorque;
-tau := fActTorque;
+tau := -fActTorque;
 
 
 
@@ -300,7 +301,9 @@ END_IF]]></ST>
       <LineId Id="285" Count="0" />
       <LineId Id="266" Count="0" />
       <LineId Id="575" Count="3" />
-      <LineId Id="603" Count="3" />
+      <LineId Id="603" Count="0" />
+      <LineId Id="1044" Count="0" />
+      <LineId Id="604" Count="2" />
       <LineId Id="669" Count="1" />
       <LineId Id="572" Count="0" />
       <LineId Id="975" Count="0" />

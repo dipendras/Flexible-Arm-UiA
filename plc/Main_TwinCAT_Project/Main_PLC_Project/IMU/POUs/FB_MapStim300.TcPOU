@@ -1,18 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
   <POU Name="FB_MapStim300" Id="{5f7fd0be-53b8-4cf8-b0c9-21f376e0f253}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_MapStim300
-
 VAR_INPUT
+	stFilterParams : ST_FTR_IIRSpec := (
+		eFilterName   := E_FTR_Name.eButterworth,
+		eFilterType   := E_FTR_Type.eLowPass,
+		nFilterOrder  := 2,
+		fSamplingRate := 0.001,
+		fCutoff       := 4.0,
+		nOversamples  := 1,
+		nChannels     := 1,
+		pInitialValues := ADR(fRollDeg),
+		nInitialValuesSize := SIZEOF(fRollDeg)
+	);
 	
+	fbFilter : FB_FTR_IIRSpec := (stConfig := stFilterParams);
 END_VAR
-
 VAR_OUTPUT
 	ImuData : ST_IMUData;
 	
+	fRollDegFiltered : LREAL;
+	fRollDeg : LREAL;
+	fPitchDeg : LREAL;
 END_VAR
 
 VAR
+		
+
 	//serial communication with el6022
 	fbGetSerialData : FB_GetSerialData;	
 	ImuRawDataFrame : tDataFrame;
@@ -32,15 +47,12 @@ VAR
 
 	fbTimer : TON := (PT := T#1S);
 	nCounter : DINT;
-	nSampleRate : LREAL;
+	fSampleRate : LREAL;
 	
 	//COmplementary filter
 	fbAccelerometer : FB_AccelerometerAngle;
 	fbComplementaryFilterRoll : FB_ComplementaryFilter := (fFilterRatio:=0.98);
 	fbComplementaryFilterPitch : FB_ComplementaryFilter := (fFilterRatio:=0.98);
-	
-	fRollDeg : LREAL;
-	fPitchDeg : LREAL;
 	
 	// Task cycle time monitoring
 	bFirstRun : BOOL := TRUE;
@@ -79,7 +91,7 @@ nCounter := nCounter + 1;
 fbTimer(IN := TRUE);
 IF fbTimer.Q THEN
 	fbTimer(IN := FALSE);
-	nSampleRate := 1.0/TO_LREAL(nCounter);
+	fSampleRate := 1.0/TO_LREAL(nCounter);
 	nCounter := 0;
 END_IF
 
@@ -105,7 +117,15 @@ END_IF
 
 fbComplementaryFilterRoll(fAccAngle:=fbAccelerometer.fRoll,fGyroRate:=ImuData.stGyro.x*CONSTANTS.DEG_TO_RAD,fStepTime:=Ts,fAngle=>ImuData.fRoll);
 fbComplementaryFilterPitch(fAccAngle:=fbAccelerometer.fPitch,fGyroRate:=ImuData.stGyro.y*CONSTANTS.DEG_TO_RAD,fStepTime:=Ts,fAngle=>ImuData.fPitch);
+
 fRollDeg := ImuData.fRoll * CONSTANTS.RAD_TO_DEG;
+fbFilter.Call(
+	pIn := ADR(fRollDeg),
+	nSizeIn := SIZEOF(fRollDeg),
+	pOut := ADR(fRollDegFiltered),
+	nSizeOut := SIZEOF(fRollDegFiltered)
+);
+
 fPitchDeg := ImuData.fPitch * CONSTANTS.RAD_TO_DEG;
 ]]></ST>
     </Implementation>
@@ -115,7 +135,9 @@ fPitchDeg := ImuData.fPitch * CONSTANTS.RAD_TO_DEG;
 fbGetCurrentTaskIdx();
 bCycleTimeExceeded := _TaskInfo[fbGetCurrentTaskIdx.index].CycleTimeExceeded;
 nCycleCount := _TaskInfo[fbGetCurrentTaskIdx.index].CycleCount;
-Ts := UDINT_TO_LREAL(_TaskInfo[fbGetCurrentTaskIdx.index].CycleTime/10)/1E6;]]></ST>
+Ts := UDINT_TO_LREAL(_TaskInfo[fbGetCurrentTaskIdx.index].CycleTime/10)/1E6;
+//stFilterParams.fSamplingRate := Ts;
+]]></ST>
       </Implementation>
     </Action>
     <Method Name="mapStim300" Id="{cbc54e7b-fbd0-4f47-86b5-0d52db7252fa}">
@@ -141,24 +163,18 @@ END_VAR
       </Implementation>
     </Method>
     <LineIds Name="FB_MapStim300">
-      <LineId Id="140" Count="0" />
-      <LineId Id="143" Count="0" />
-      <LineId Id="141" Count="1" />
-      <LineId Id="139" Count="0" />
-      <LineId Id="55" Count="32" />
-      <LineId Id="145" Count="0" />
-      <LineId Id="148" Count="1" />
-      <LineId Id="146" Count="0" />
-      <LineId Id="88" Count="0" />
-      <LineId Id="144" Count="0" />
-      <LineId Id="9" Count="0" />
-      <LineId Id="150" Count="0" />
-      <LineId Id="156" Count="1" />
+      <LineId Id="280" Count="45" />
+      <LineId Id="343" Count="0" />
+      <LineId Id="326" Count="0" />
+      <LineId Id="333" Count="0" />
+      <LineId Id="337" Count="5" />
+      <LineId Id="327" Count="0" />
       <LineId Id="155" Count="0" />
     </LineIds>
     <LineIds Name="FB_MapStim300.getSampleTIme">
       <LineId Id="2" Count="3" />
       <LineId Id="1" Count="0" />
+      <LineId Id="6" Count="1" />
     </LineIds>
     <LineIds Name="FB_MapStim300.mapStim300">
       <LineId Id="96" Count="10" />

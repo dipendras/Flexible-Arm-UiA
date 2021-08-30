@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+  <GVL Name="Parameters" Id="{11109a4f-d22d-4ff0-beff-18bcb47d8d61}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL PERSISTENT
+	fJointPositionOffset 	: ARRAY [0..2] OF LREAL;	
+	fJointCalibrationOffset : ARRAY [0..2] OF LREAL;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

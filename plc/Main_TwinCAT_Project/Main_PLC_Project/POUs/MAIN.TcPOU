@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
   <POU Name="MAIN" Id="{870836e7-c1db-4c5e-9373-286a0440b8b4}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
@@ -57,7 +57,8 @@ VAR
 	q_t_DEG : ARRAY [0..2] OF LREAL;
 	q_DEG : ARRAY [0..2] OF LREAL;
 	
-	
+	deflection : ARRAY [0..2] OF LREAL;
+	cumulativeAngle : LREAL;
 	
 END_VAR
 ]]></Declaration>
@@ -78,7 +79,9 @@ IF NOT Safety.TS_I_Safety_EStopOK THEN
 		Ts:=Ts,
 		eRobotModeCmd := E_RobotMode.EStop,
 		fVelInput:=fVelInput,
-		fPosInput := fPosInput
+		fPosInput := fPosInput,
+		fJointPositionOffset := Parameters.fJointPositionOffset,
+		fJointCalibrationOffset := Parameters.fJointCalibrationOffset
 	);
 	
 ELSIF bVelocityMode AND NOT bPositionMode AND NOT bStop THEN
@@ -120,23 +123,35 @@ ELSIF bVelocityMode AND NOT bPositionMode AND NOT bStop THEN
 	robot(
 		Ts:=Ts,
 		eRobotModeCmd := E_RobotMode.VELOCITY,
-		fVelInput:=u
+		fVelInput:=u,
+		fJointPositionOffset := Parameters.fJointPositionOffset,
+		fJointCalibrationOffset := Parameters.fJointCalibrationOffset
 	);
 ELSIF NOT bVelocityMode AND bPositionMode AND NOT bStop THEN
 	robot(
-	Ts:=Ts,
-	eRobotModeCmd := E_RobotMode.POSITION,
-	fVelInput:=fVelInput,
-	fPosInput := fPosInput
+		Ts:=Ts,
+		eRobotModeCmd := E_RobotMode.POSITION,
+		fVelInput:=fVelInput,
+		fPosInput := fPosInput,
+		fJointPositionOffset := Parameters.fJointPositionOffset,
+		fJointCalibrationOffset := Parameters.fJointCalibrationOffset
 	);
 ELSE 
 	robot(
-	Ts:=Ts,
-	eRobotModeCmd := E_RobotMode.STOP,
-	fVelInput:=fVelInput,
-	fPosInput := fPosInput
+		Ts:=Ts,
+		eRobotModeCmd := E_RobotMode.STOP,
+		fVelInput:=fVelInput,
+		fPosInput := fPosInput,
+		fJointPositionOffset := Parameters.fJointPositionOffset,
+		fJointCalibrationOffset := Parameters.fJointCalibrationOffset
 	);
 END_IF
+
+cumulativeAngle := 0.0;
+FOR j := 0 TO 2 DO
+	cumulativeAngle := cumulativeAngle + robot.q[j];
+	deflection[j] := IMU.fbStim300[j].fRollDeg - cumulativeAngle;
+END_FOR
 ]]></ST>
     </Implementation>
     <Action Name="getSampleTime" Id="{503be4e8-d825-4f62-bfd8-9f7ff9c902be}">
@@ -213,6 +228,7 @@ END_IF
       <LineId Id="295" Count="2" />
       <LineId Id="320" Count="0" />
       <LineId Id="343" Count="0" />
+      <LineId Id="727" Count="1" />
       <LineId Id="292" Count="0" />
       <LineId Id="375" Count="0" />
       <LineId Id="293" Count="0" />
@@ -248,13 +264,21 @@ END_IF
       <LineId Id="288" Count="0" />
       <LineId Id="235" Count="0" />
       <LineId Id="321" Count="0" />
+      <LineId Id="724" Count="1" />
       <LineId Id="237" Count="0" />
       <LineId Id="352" Count="0" />
       <LineId Id="354" Count="4" />
+      <LineId Id="719" Count="1" />
       <LineId Id="353" Count="0" />
       <LineId Id="360" Count="5" />
+      <LineId Id="722" Count="1" />
       <LineId Id="359" Count="0" />
       <LineId Id="233" Count="0" />
+      <LineId Id="734" Count="0" />
+      <LineId Id="729" Count="0" />
+      <LineId Id="744" Count="0" />
+      <LineId Id="735" Count="0" />
+      <LineId Id="731" Count="1" />
       <LineId Id="222" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.getSampleTime">

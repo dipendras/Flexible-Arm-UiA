@@ -1,15 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
   <POU Name="FB_Robot3R" Id="{ac314762-16df-47a2-b7b8-44cc8c775bfa}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_Robot3R
 VAR_INPUT
 	Ts : LREAL := 0.01;
 	bReset : BOOL;
-	bEnable : BOOL;
+	bEnableAll : BOOL;
+	bEnableJoint : ARRAY [0..2] OF BOOL;
 	eRobotModeCmd : E_RobotMode;
 	fVelInput : ARRAY [0..2] OF LREAL;
 	fPosInput : ARRAY [0..2] OF LREAL;
-	
+	fJointPositionOffset 	: ARRAY [0..2] OF LREAL;	
+	fJointCalibrationOffset : ARRAY [0..2] OF LREAL;
 END_VAR
 VAR_OUTPUT
 	eRobotMode : E_RobotMode;
@@ -89,12 +91,12 @@ END_IF
 
 
 IF bReset THEN
-	bEnable := FALSE;
+	bEnableAll := FALSE;
 END_IF
 
 // E-stop mode
 IF(eRobotMode = E_RobotMode.ESTOP OR NOT Safety.TS_I_Safety_EStopOK) THEN
-	bEnable := FALSE;
+	bEnableAll := FALSE;
 	bReset := TRUE;	//to avoid error: the axis loss the enable signal while doing something
 END_IF
 
@@ -106,7 +108,7 @@ IF(eRobotMode = E_RobotMode.STOP OR bStop) THEN
 	END_FOR
 	
 	IF NOT bAnyJointActive AND bStop THEN
-		bEnable := FALSE;
+		bEnableAll := FALSE;
 	END_IF
 END_IF
 
@@ -123,20 +125,18 @@ END_IF
 
 // Execute joints
 FOR j:= 0 TO 2 DO
-	IF j = 0 THEN //Uncomment IF you want to use only joint 3
-		joints[j](
-			bReset:=bReset,
-			bEnable:=bEnable,
-			bStop:=bStop,
-			bVelocityMode:=bVelocityMode,
-			bPositionMode:=bPositionMode,
-			bPositionModeExecute := bPositionModeExecute,
-			qRef:=qRef[j],
-			qRef_t := qRef_t[j],
-			qRef_tt:=qRef_tt[j],	
-			);
-	END_IF; // Uncomment IF you want to use only joint 3
-	
+	joints[j](
+		bReset:=bReset,
+		bEnable:=bEnableAll AND bEnableJoint[j],
+		bStop:=bStop,
+		bVelocityMode:=bVelocityMode,
+		bPositionMode:=bPositionMode,
+		bPositionModeExecute := bPositionModeExecute,
+		qRef:=qRef[j],
+		qRef_t := qRef_t[j],
+		qRef_tt:=qRef_tt[j],
+		fOffset := fJointPositionOffset[j] + fJointCalibrationOffset[j]
+	);
 
 	// Assign feedback data from joints
 	q[j] := joints[j].q;
@@ -195,46 +195,11 @@ END_FOR]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="FB_Robot3R">
-      <LineId Id="299" Count="7" />
-      <LineId Id="543" Count="0" />
-      <LineId Id="539" Count="0" />
-      <LineId Id="541" Count="0" />
-      <LineId Id="307" Count="0" />
-      <LineId Id="542" Count="0" />
-      <LineId Id="309" Count="2" />
-      <LineId Id="548" Count="0" />
-      <LineId Id="545" Count="2" />
-      <LineId Id="312" Count="0" />
-      <LineId Id="544" Count="0" />
-      <LineId Id="313" Count="3" />
-      <LineId Id="551" Count="1" />
-      <LineId Id="317" Count="3" />
-      <LineId Id="553" Count="0" />
-      <LineId Id="556" Count="1" />
-      <LineId Id="554" Count="0" />
-      <LineId Id="321" Count="0" />
-      <LineId Id="323" Count="3" />
-      <LineId Id="496" Count="0" />
-      <LineId Id="328" Count="3" />
-      <LineId Id="527" Count="0" />
-      <LineId Id="501" Count="3" />
-      <LineId Id="500" Count="0" />
-      <LineId Id="528" Count="0" />
-      <LineId Id="517" Count="9" />
-      <LineId Id="332" Count="0" />
-      <LineId Id="532" Count="3" />
-      <LineId Id="333" Count="1" />
-      <LineId Id="600" Count="0" />
-      <LineId Id="456" Count="0" />
-      <LineId Id="505" Count="0" />
-      <LineId Id="515" Count="0" />
-      <LineId Id="335" Count="3" />
-      <LineId Id="652" Count="0" />
-      <LineId Id="663" Count="9" />
-      <LineId Id="651" Count="0" />
-      <LineId Id="369" Count="0" />
-      <LineId Id="352" Count="8" />
-      <LineId Id="368" Count="0" />
+      <LineId Id="759" Count="77" />
+      <LineId Id="838" Count="9" />
+      <LineId Id="862" Count="0" />
+      <LineId Id="848" Count="0" />
+      <LineId Id="851" Count="8" />
       <LineId Id="42" Count="0" />
     </LineIds>
     <LineIds Name="FB_Robot3R.positionMode">
