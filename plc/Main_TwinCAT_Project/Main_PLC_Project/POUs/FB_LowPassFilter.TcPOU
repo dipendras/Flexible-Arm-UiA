@@ -1,0 +1,194 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+  <POU Name="FB_LowPassFilter" Id="{29c6d520-6c1d-4664-9778-21df88e09e59}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_LowPassFilter
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+	bInitialized 	: BOOL := FALSE;
+	bInitError		: BOOL := FALSE;
+	fOut 			: LREAL := 0.0;
+END_VAR
+VAR
+	a : LREAL := 1.0;
+	b : LREAL := 0.0;
+	c : LREAL := 0.0;
+	
+	fOut_t2 : LREAL := 0.0;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="init" Id="{47d1c2bc-05e4-447c-a514-008e7d7311da}">
+      <Declaration><![CDATA[METHOD PUBLIC init : BOOL
+VAR_INPUT
+	stParams : REFERENCE TO ST_FilterParams;
+END_VAR
+VAR
+
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bInitError := FALSE;
+
+CASE stParams.eOrder OF
+E_FilterOrder.eFirst:
+	initFirstOrder(stParams);
+
+E_FilterOrder.eSecond:
+	initSecondOrder(stParams);
+	
+ELSE	
+	bInitError := TRUE;
+	init := bInitialized := FALSE;
+	a := 1.0;
+	b := 0.0;
+	c := 0.0;
+	RETURN;
+END_CASE
+
+
+IF bInitError OR (a <= 0.0) OR (a > 1.0) THEN
+	bInitError := TRUE;
+	init := bInitialized := FALSE;
+	a := 1.0;
+	b := 0.0;
+	c := 0.0;
+	RETURN;
+END_IF
+
+fOut := stParams.fInitialValue;
+init := bInitialized := TRUE;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="initFirstOrder" Id="{af0bfa00-7107-4dde-8848-ee6f06567aab}">
+      <Declaration><![CDATA[METHOD PRIVATE initFirstOrder
+VAR_INPUT
+	stParams : REFERENCE TO ST_FilterParams;
+END_VAR
+VAR
+	wc 		: LREAL;
+
+	tmp1 	: LREAL;
+	tmp2	: LREAL;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[wc := stParams.fCutoff*2.0*PI;
+
+tmp1 := wc*stParams.fDeltaTime;
+
+tmp2 := 1 + tmp1;
+
+IF (tmp2 <= 0.0) THEN
+	bInitError := TRUE;
+	bInitialized := FALSE;
+	a := 1.0;
+	b := 0.0;
+	c := 0.0;
+	RETURN;
+END_IF
+
+a := tmp1/tmp2;
+b := 1.0 - a;
+c := 0.0;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="initSecondOrder" Id="{be6515ca-36bb-4952-8b96-a35a9203972e}">
+      <Declaration><![CDATA[METHOD PRIVATE initSecondOrder
+VAR_INPUT
+	stParams : REFERENCE TO ST_FilterParams;
+END_VAR
+VAR
+	wc 		: LREAL;
+
+	tmp1 	: LREAL;
+	tmp2 	: LREAL;
+	tmp3	: LREAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[wc := stParams.fCutoff*2.0*PI;
+
+tmp1 := wc*stParams.fDeltaTime;
+tmp2 := EXPT(tmp1, 2.0);
+tmp3 := 1.0 + 2.0*wc*stParams.fDeltaTime*stParams.fDampingRatio + tmp2;
+
+IF (tmp3 <= 0.0) THEN
+	bInitError := TRUE;
+	bInitialized := FALSE;
+	a := 1.0;
+	b := 0.0;
+	c := 0.0;
+	RETURN;
+END_IF
+
+a := tmp2/tmp3;
+b := 2.0*(1.0 + tmp1)/tmp3;
+c := 1.0 - a - b;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="update" Id="{df624c17-52ff-47ff-909d-a5e875f7810b}">
+      <Declaration><![CDATA[METHOD PUBLIC update : LREAL
+VAR_INPUT
+	fIn : LREAL;
+END_VAR
+VAR
+	tmp : LREAL;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+tmp := fOut;
+
+update := fOut := a*fIn + b*fOut + c*fOut_t2;
+
+fOut_t2 := tmp;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_LowPassFilter">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_LowPassFilter.init">
+      <LineId Id="52" Count="0" />
+      <LineId Id="65" Count="2" />
+      <LineId Id="80" Count="1" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="78" Count="1" />
+      <LineId Id="71" Count="6" />
+      <LineId Id="68" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="36" Count="1" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="44" Count="2" />
+      <LineId Id="39" Count="1" />
+      <LineId Id="50" Count="1" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="34" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_LowPassFilter.initFirstOrder">
+      <LineId Id="14" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="18" Count="9" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="28" Count="2" />
+    </LineIds>
+    <LineIds Name="FB_LowPassFilter.initSecondOrder">
+      <LineId Id="30" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="6" Count="15" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_LowPassFilter.update">
+      <LineId Id="9" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="15" Count="1" />
+      <LineId Id="11" Count="1" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

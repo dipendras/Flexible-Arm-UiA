@@ -3,19 +3,9 @@
   <POU Name="FB_MapStim300" Id="{5f7fd0be-53b8-4cf8-b0c9-21f376e0f253}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_MapStim300
 VAR_INPUT
-	stFilterParams : ST_FTR_IIRSpec := (
-		eFilterName   := E_FTR_Name.eButterworth,
-		eFilterType   := E_FTR_Type.eLowPass,
-		nFilterOrder  := 2,
-		fSamplingRate := 0.001,
-		fCutoff       := 4.0,
-		nOversamples  := 1,
-		nChannels     := 1,
-		pInitialValues := ADR(fRollDeg),
-		nInitialValuesSize := SIZEOF(fRollDeg)
-	);
+	stFilterParams : ST_FilterParams;
 	
-	fbFilter : FB_FTR_IIRSpec := (stConfig := stFilterParams);
+	fbFilter : FB_LowPassFilter;
 END_VAR
 VAR_OUTPUT
 	ImuData : ST_IMUData;
@@ -55,7 +45,8 @@ VAR
 	fbComplementaryFilterPitch : FB_ComplementaryFilter := (fFilterRatio:=0.98);
 	
 	// Task cycle time monitoring
-	bFirstRun : BOOL := TRUE;
+	bFirstRun 		: BOOL := TRUE;
+	bFirstSample 	: BOOL := TRUE;
 	Ts : LREAL := 0.01;
 	fbGetCurrentTaskIdx : GETCURTASKINDEX;
 	bCycleTimeExceeded : BOOL;
@@ -112,19 +103,25 @@ IF fbGetSerialData.NewData THEN
 	
 	fbAccelerometer(fAx:=ImuData.stAcc.x,fAy:=ImuData.stAcc.y,fAz:=ImuData.stAcc.z);
 	
-	
+	IF bFirstSample THEN
+		bFirstSample := FALSE;
+		stFilterParams.fCutoff := 10;//Hz
+		stFilterParams.fDeltaTime := Ts;
+		stFilterParams.fInitialValue := fRollDeg;
+		fbFilter.init(stParams:=stFilterParams);
+	END_IF
 END_IF
 
 fbComplementaryFilterRoll(fAccAngle:=fbAccelerometer.fRoll,fGyroRate:=ImuData.stGyro.x*CONSTANTS.DEG_TO_RAD,fStepTime:=Ts,fAngle=>ImuData.fRoll);
 fbComplementaryFilterPitch(fAccAngle:=fbAccelerometer.fPitch,fGyroRate:=ImuData.stGyro.y*CONSTANTS.DEG_TO_RAD,fStepTime:=Ts,fAngle=>ImuData.fPitch);
 
 fRollDeg := ImuData.fRoll * CONSTANTS.RAD_TO_DEG;
-fbFilter.Call(
-	pIn := ADR(fRollDeg),
-	nSizeIn := SIZEOF(fRollDeg),
-	pOut := ADR(fRollDegFiltered),
-	nSizeOut := SIZEOF(fRollDegFiltered)
-);
+
+//Low pass filter
+fRollDegFiltered := fbFilter.update(fRollDeg);
+
+
+
 
 fPitchDeg := ImuData.fPitch * CONSTANTS.RAD_TO_DEG;
 ]]></ST>
@@ -163,11 +160,19 @@ END_VAR
       </Implementation>
     </Method>
     <LineIds Name="FB_MapStim300">
-      <LineId Id="280" Count="45" />
+      <LineId Id="280" Count="1" />
+      <LineId Id="364" Count="0" />
+      <LineId Id="283" Count="37" />
+      <LineId Id="367" Count="6" />
+      <LineId Id="322" Count="3" />
       <LineId Id="343" Count="0" />
       <LineId Id="326" Count="0" />
-      <LineId Id="333" Count="0" />
-      <LineId Id="337" Count="5" />
+      <LineId Id="348" Count="0" />
+      <LineId Id="347" Count="0" />
+      <LineId Id="340" Count="0" />
+      <LineId Id="351" Count="1" />
+      <LineId Id="350" Count="0" />
+      <LineId Id="342" Count="0" />
       <LineId Id="327" Count="0" />
       <LineId Id="155" Count="0" />
     </LineIds>

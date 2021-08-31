@@ -17,6 +17,9 @@
     <LibraryReferences>{3e5f0f04-1d4f-448b-abd9-b835cdbc09be}</LibraryReferences>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DUTs\ST_FilterParams.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\tDataFrame.TcDUT">
       <SubType>Code</SubType>
     </Compile>
@@ -35,6 +38,9 @@
     <Compile Include="GVLs\Safety.TcGVL">
       <SubType>Code</SubType>
       <LinkAlways>true</LinkAlways>
+    </Compile>
+    <Compile Include="IMU\DUTs\E_FilterOrder.TcDUT">
+      <SubType>Code</SubType>
     </Compile>
     <Compile Include="IMU\DUTs\E_SerialError.TcDUT">
       <SubType>Code</SubType>
@@ -83,6 +89,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\FB_Robot3R.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\FB_LowPassFilter.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\F_Merge24BitSigned.TcPOU">

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+  <DUT Name="ST_FilterParams" Id="{275728b0-3c8d-4818-9c95-32aac0e11fe9}">
+    <Declaration><![CDATA[TYPE ST_FilterParams :
+STRUCT
+	// Order
+	eOrder 			: E_FilterOrder := E_FilterOrder.eFirst;
+	// Cutoff frequency [Hz]
+	fCutoff 		: LREAL;
+	// Damping ratio [-] (default 0.7071) (Not used in first order)
+	fDampingRatio 	: LREAL := SQRT(0.5);
+	// Delta time [s]
+	fDeltaTime 		: LREAL;
+	// Initial value (default 0)
+	fInitialValue 	: LREAL := 0.0;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>
