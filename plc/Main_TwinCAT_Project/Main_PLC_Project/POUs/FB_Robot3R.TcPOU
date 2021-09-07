@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <POU Name="FB_Robot3R" Id="{ac314762-16df-47a2-b7b8-44cc8c775bfa}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_Robot3R
 VAR_INPUT
@@ -132,6 +132,7 @@ FOR j:= 0 TO 2 DO
 		bVelocityMode:=bVelocityMode,
 		bPositionMode:=bPositionMode,
 		bPositionModeExecute := bPositionModeExecute,
+		nGearRatio := CONSTANTS.GEAR_RATIO[j],
 		qRef:=qRef[j],
 		qRef_t := qRef_t[j],
 		qRef_tt:=qRef_tt[j],
@@ -196,7 +197,9 @@ END_FOR]]></ST>
     </Method>
     <LineIds Name="FB_Robot3R">
       <LineId Id="759" Count="77" />
-      <LineId Id="838" Count="9" />
+      <LineId Id="838" Count="6" />
+      <LineId Id="907" Count="0" />
+      <LineId Id="845" Count="2" />
       <LineId Id="862" Count="0" />
       <LineId Id="848" Count="0" />
       <LineId Id="851" Count="8" />

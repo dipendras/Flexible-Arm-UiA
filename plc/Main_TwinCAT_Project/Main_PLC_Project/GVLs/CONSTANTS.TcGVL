@@ -5,6 +5,7 @@
 VAR_GLOBAL CONSTANT
 	DEG_TO_RAD : LREAL := PI/180.0;
 	RAD_TO_DEG : LREAL := 180.0/PI;
+	GEAR_RATIO : ARRAY [0..2] OF UINT := [61, 50, 35];
 END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>

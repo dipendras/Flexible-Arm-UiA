@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.7">
+<TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.20">
 	<DataTypes>
 		<DataType>
 			<Name GUID="{18071995-0000-0000-0000-000000000035}" TcBaseType="true" HideType="true">UINTARR2</Name>
@@ -126,6 +126,8 @@
 			<SubItem>
 				<Name>nDataIn7</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000035}">UINTARR2</Type>
+				<Comment><![CDATA[Drive Velocity Actual Value
+]]></Comment>
 				<BitSize>32</BitSize>
 				<BitOffs>288</BitOffs>
 			</SubItem>
@@ -325,6 +327,8 @@ Drive Status 4 (manually linked):
 			<SubItem>
 				<Name>nState8</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000002}">USINT</Type>
+				<Comment><![CDATA[Digital Inputs 1..8
+]]></Comment>
 				<BitSize>8</BitSize>
 				<BitOffs>248</BitOffs>
 			</SubItem>
@@ -1021,7 +1025,7 @@ Drive Status 4 (manually linked):
 			</ArrayInfo>
 		</DataType>
 		<DataType>
-			<Name GUID="{72F5AAAA-16DF-4ED3-8367-F6C8C3ADAE99}" Namespace="MC" TcBaseType="true">NCTOPLC_AXIS_REF</Name>
+			<Name GUID="{72F5AAAA-16DF-4ED3-8367-F6C8C3ADAE99}" Namespace="MC" TcBaseType="true">NCTOPLC_AXIS_REF_OLD5</Name>
 			<BitSize>2048</BitSize>
 			<SubItem>
 				<Name>StateDWord</Name>
@@ -1398,6 +1402,493 @@ External Setpoint Generation:
 			</ArrayInfo>
 		</DataType>
 		<DataType>
+			<Name GUID="{6BDEED54-7268-405F-A18B-665A0AE0FEE9}" Namespace="MC" TcBaseType="true" HideType="true" IecDeclaration="DWORD;">NCTOPLC_AXIS_REF_OPMODE</Name>
+			<BitSize>32</BitSize>
+			<SubItem>
+				<Name>OpModePosAreaMonitoring</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>0</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>OpModeTargetPosMonitoring</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>1</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>OpModeLoop</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>2</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>OpModeMotionMonitoring</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>3</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>OpModePEHTimeMonitoring</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>4</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>OpModeBacklashCompensation</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>5</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>OpModeDelayedErrorReaction</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>6</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>OpModeModulo</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>7</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>OpModeSimulationAxis</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>8</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>OpModeStopMonitoring</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>12</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>OpModeOutputSmoothingFilter</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>13</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>OpModePosLagMonitoring</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>16</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>OpModeVeloLagMonitoring</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>17</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>OpModeSoftLimitMinMonitoring</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>18</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>OpModeSoftLimitMaxMonitoring</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>19</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>OpModePosCorrection</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>20</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>OpModeAllowSlaveCommands</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>21</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>OpModeAllowExtSetAxisCommands</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>22</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>ApplicationRequest</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>23</BitOffs>
+			</SubItem>
+		</DataType>
+		<DataType>
+			<Name GUID="{F7B9FC50-054E-4547-B468-83A9E72D8064}" Namespace="MC" TcBaseType="true" HideType="true">NCTOPLC_AXIS_REF_STATE3_FLAGS</Name>
+			<BitSize>32</BitSize>
+			<SubItem>
+				<Name>TouchProbe1InputState </Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>0</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>TouchProbe2InputState </Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000010}">BIT</Type>
+				<BitSize>1</BitSize>
+				<BitOffs>1</BitOffs>
+			</SubItem>
+			<Format Name="Short">
+				<Printf>%08x</Printf>
+			</Format>
+			<Format Name="Cpp">
+				<Printf>0x%08x</Printf>
+			</Format>
+			<Format Name="IEC">
+				<Printf>16#%08X</Printf>
+			</Format>
+		</DataType>
+		<DataType>
+			<Name GUID="{60E203BA-3CEE-4BB0-8728-643B1F529592}" Namespace="MC" TcBaseType="true" HideType="true">NCTOPLC_AXIS_REF_STATE3</Name>
+			<BitSize>32</BitSize>
+			<SubItem>
+				<Name>Value</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000007}">DWORD</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>0</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>Flags</Name>
+				<Type GUID="{F7B9FC50-054E-4547-B468-83A9E72D8064}" Namespace="MC">NCTOPLC_AXIS_REF_STATE3_FLAGS</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>0</BitOffs>
+			</SubItem>
+			<Format Name="Short">
+				<Printf>%08x</Printf>
+			</Format>
+			<Format Name="Cpp">
+				<Printf>0x%08x</Printf>
+			</Format>
+			<Format Name="IEC">
+				<Printf>16#%08X</Printf>
+			</Format>
+		</DataType>
+		<DataType>
+			<Name GUID="{10036166-C9D3-404B-BDD3-323034AAA7F4}" Namespace="MC" TcBaseType="true">NCTOPLC_AXIS_REF</Name>
+			<BitSize>2048</BitSize>
+			<SubItem>
+				<Name>StateDWord</Name>
+				<Type GUID="{CBC83B73-B816-4597-A9E5-2B03263CA131}" Namespace="MC">NCTOPLC_AXIS_REF_STATE</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>0</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>ErrorCode</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>32</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>AxisState</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<Comment><![CDATA[Present State Of The Axis Movement (continuous axis):
+0  = INACTIVE:		axis has no job
+1  = RUNNING:		axis is executing a motion job
+2  = OVERRIDE_ZERO:	axis is executing a job but override is zero
+3  = PHASE_VELOCONST:	axis is moving at constant velocity
+4  = PHASE_ACCPOS:	axis is accelerating
+5  = PHASE_ACCNEG:	axis is decelerating
+Slaves only:
+11 = PREPHASE:		slave axis is in a motion pre-phase
+12 = SYNCHRONIZING:	slave axis is synchronizing
+13 = SYNCHRONOUS:	slave axis is moving synchronously
+External Setpoint Generation:
+41 = EXTSETGEN_MODE1:	external setpoint generation active
+42 = EXTSETGEN_MODE2:	internal and external setpoint gen. active
+]]></Comment>
+				<BitSize>32</BitSize>
+				<BitOffs>64</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>AxisModeConfirmation</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>96</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>HomingState</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<Comment><![CDATA[Axis Homing Status:
+0: idle
+1: start homing
+2: searching home switch
+3: stopping on home switch
+4: moving off home switch
+5: searching sync pulse
+6: stopping after homing
+]]></Comment>
+				<BitSize>32</BitSize>
+				<BitOffs>128</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>CoupleState</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<Comment><![CDATA[Axis Coupling Status:
+0: axis is a single axis (not coupled)
+1: axis is a master axis
+2: axis is master and slave
+3: axis is a slave axis
+]]></Comment>
+				<BitSize>32</BitSize>
+				<BitOffs>160</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>SvbEntries</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>192</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>SafEntries</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>224</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>AxisId</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>256</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>OpModeDWord</Name>
+				<Type GUID="{6BDEED54-7268-405F-A18B-665A0AE0FEE9}" Namespace="MC">NCTOPLC_AXIS_REF_OPMODE</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>288</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>ActPos</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
+				<BitSize>64</BitSize>
+				<BitOffs>320</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>ModuloActPos</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
+				<BitSize>64</BitSize>
+				<BitOffs>384</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>ActiveControlLoopIndex</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>448</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>ControlLoopIndex</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>464</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>ModuloActTurns</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000009}">DINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>480</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>ActVelo</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
+				<BitSize>64</BitSize>
+				<BitOffs>512</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>PosDiff</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
+				<BitSize>64</BitSize>
+				<BitOffs>576</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>SetPos</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
+				<BitSize>64</BitSize>
+				<BitOffs>640</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>SetVelo</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
+				<BitSize>64</BitSize>
+				<BitOffs>704</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>SetAcc</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
+				<BitSize>64</BitSize>
+				<BitOffs>768</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>TargetPos</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
+				<BitSize>64</BitSize>
+				<BitOffs>832</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>ModuloSetPos</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
+				<BitSize>64</BitSize>
+				<BitOffs>896</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>ModuloSetTurns</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000009}">DINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>960</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>CmdNo</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>992</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>CmdState</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>1008</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>SetJerk</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
+				<BitSize>64</BitSize>
+				<BitOffs>1024</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>SetTorque</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
+				<BitSize>64</BitSize>
+				<BitOffs>1088</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>ActTorque</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
+				<BitSize>64</BitSize>
+				<BitOffs>1152</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>StateDWord2</Name>
+				<Type GUID="{669F3788-48FD-42CF-8A59-2DA946853FB6}" Namespace="MC">NCTOPLC_AXIS_REF_STATE2</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>1216</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>StateDWord3</Name>
+				<Type GUID="{60E203BA-3CEE-4BB0-8728-643B1F529592}" Namespace="MC">NCTOPLC_AXIS_REF_STATE3</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>1248</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>TouchProbeState</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000007}">DWORD</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>1280</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>TouchProbeCounter</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000007}">DWORD</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>1312</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>CamCouplingState</Name>
+				<Type GUID="{BA9D9D0F-1A4A-4A27-A19F-3032626A8491}" Namespace="MC">NCTOPLC_AXIS_REF_CAMCOUPLINGSTATE</Type>
+				<ArrayInfo>
+					<LBound>0</LBound>
+					<Elements>8</Elements>
+				</ArrayInfo>
+				<BitSize>64</BitSize>
+				<BitOffs>1344</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>CamCouplingTableID</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000039}">UINTARR8</Type>
+				<BitSize>128</BitSize>
+				<BitOffs>1408</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>ActTorqueDerivative</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
+				<BitSize>64</BitSize>
+				<BitOffs>1536</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>SetTorqueDerivative</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
+				<BitSize>64</BitSize>
+				<BitOffs>1600</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>AbsPhasingPos</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
+				<BitSize>64</BitSize>
+				<BitOffs>1664</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>TorqueOffset</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
+				<BitSize>64</BitSize>
+				<BitOffs>1728</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>ActPosWithoutPosCorrection</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
+				<BitSize>64</BitSize>
+				<BitOffs>1792</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>ActAcc</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
+				<BitSize>64</BitSize>
+				<BitOffs>1856</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>DcTimeStamp</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>1920</BitOffs>
+			</SubItem>
+			<Properties>
+				<Property>
+					<Name>NcStructType</Name>
+					<Value>2</Value>
+				</Property>
+			</Properties>
+			<Relations>
+				<Relation Priority="100">
+					<Type GUID="{429B767E-373B-40AE-BFA5-E1C08B444DF3}">NCAXLESTRUCT_TOPLC</Type>
+				</Relation>
+				<Relation Priority="100">
+					<Type GUID="{E8DA524A-605F-4879-82E6-B86EF6986572}">NCAXLESTRUCT_TOPLC2</Type>
+				</Relation>
+				<Relation Priority="100">
+					<Type GUID="{B507963E-69F3-4B64-BB8C-2BD7A560976D}">NCAXLESTRUCT_TOPLC3</Type>
+				</Relation>
+				<Relation Priority="100">
+					<Type GUID="{F794B740-82D7-4637-848E-4F74A711D038}">NCAXLESTRUCT_TOPLC4</Type>
+				</Relation>
+				<Relation Priority="100">
+					<Type GUID="{40BD39B0-C3EA-4F74-9F4F-5F1982786F7C}"></Type>
+				</Relation>
+				<Relation Priority="100">
+					<Type GUID="{40BD39B2-C3EA-4F74-9F4F-5F1982786F7C}"></Type>
+				</Relation>
+				<Relation Priority="100">
+					<Type GUID="{8CDE0C45-AB9D-42DB-BC94-1CF7521AB268}"></Type>
+				</Relation>
+				<Relation Priority="100">
+					<Type GUID="{6A65C767-34E5-42BF-AD87-E1A503EAC7BE}"></Type>
+				</Relation>
+				<Relation Priority="100">
+					<Type GUID="{72F5AAAA-16DF-4ED3-8367-F6C8C3ADAE99}"></Type>
+				</Relation>
+			</Relations>
+		</DataType>
+		<DataType>
 			<Name GUID="{11F20A4A-90D4-35C7-DB3B-0E8659E05E56}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..1] OF LREAL</Name>
 			<BitSize>128</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</BaseType>
@@ -1682,11 +2173,11 @@ External Setpoint Generation:
 						<Name>Outputs</Name>
 						<Var>
 							<Name>ToPlc</Name>
-							<Type GUID="{72F5AAAA-16DF-4ED3-8367-F6C8C3ADAE99}" Namespace="MC">NCTOPLC_AXIS_REF</Type>
+							<Type GUID="{72F5AAAA-16DF-4ED3-8367-F6C8C3ADAE99}" Namespace="MC">NCTOPLC_AXIS_REF_OLD5</Type>
 						</Var>
 					</Vars>
 				</Axis>
-				<Axis Id="3" CreateSymbols="true" AxisType="1">
+				<Axis Id="3" CreateSymbols="true" AxisType="1" GroupId="2">
 					<Name>Axis1_Drive2_Joint2</Name>
 					<AxisPara>
 						<General UnitName="°"/>
@@ -1832,12 +2323,12 @@ External Setpoint Generation:
 						<Name>Outputs</Name>
 						<Var>
 							<Name>ToPlc</Name>
-							<Type GUID="{72F5AAAA-16DF-4ED3-8367-F6C8C3ADAE99}" Namespace="MC">NCTOPLC_AXIS_REF</Type>
+							<Type GUID="{72F5AAAA-16DF-4ED3-8367-F6C8C3ADAE99}" Namespace="MC">NCTOPLC_AXIS_REF_OLD5</Type>
 							<BitOffs>2688</BitOffs>
 						</Var>
 					</Vars>
 				</Axis>
-				<Axis Id="5" CreateSymbols="true" AxisType="1">
+				<Axis Id="5" CreateSymbols="true" AxisType="1" GroupId="3">
 					<Name>Axis1_Drive3_Joint3</Name>
 					<AxisPara>
 						<General UnitName="Degree"/>
@@ -1983,7 +2474,7 @@ External Setpoint Generation:
 						<Name>Outputs</Name>
 						<Var>
 							<Name>ToPlc</Name>
-							<Type GUID="{72F5AAAA-16DF-4ED3-8367-F6C8C3ADAE99}" Namespace="MC">NCTOPLC_AXIS_REF</Type>
+							<Type GUID="{72F5AAAA-16DF-4ED3-8367-F6C8C3ADAE99}" Namespace="MC">NCTOPLC_AXIS_REF_OLD5</Type>
 							<BitOffs>5376</BitOffs>
 						</Var>
 					</Vars>
@@ -2013,7 +2504,7 @@ External Setpoint Generation:
 							<Type GUID="{08AF3DC4-091E-9D2E-162D-D348FC75C632}" Namespace="Tc2_SerialCom">EL6inData22B</Type>
 						</Var>
 					</Vars>
-					<Vars VarGrpType="2">
+					<Vars VarGrpType="2" AreaNo="1">
 						<Name>SerialComTask Outputs</Name>
 						<Var>
 							<Name>IMU.fbStim300[0].stOut_EL6022</Name>
@@ -2031,20 +2522,8 @@ External Setpoint Generation:
 							<Type GUID="{F2D2AC72-ED5B-FB82-D333-AFF659CBA42A}" Namespace="Tc2_SerialCom">EL6outData22B</Type>
 						</Var>
 					</Vars>
-					<Vars VarGrpType="1">
+					<Vars VarGrpType="1" ContextId="1" AreaNo="16">
 						<Name>PlcTask Inputs</Name>
-						<Var>
-							<Name>MAIN.robot.joints[0].axis.NcToPlc</Name>
-							<Type GUID="{72F5AAAA-16DF-4ED3-8367-F6C8C3ADAE99}" Namespace="MC">NCTOPLC_AXIS_REF</Type>
-						</Var>
-						<Var>
-							<Name>MAIN.robot.joints[1].axis.NcToPlc</Name>
-							<Type GUID="{72F5AAAA-16DF-4ED3-8367-F6C8C3ADAE99}" Namespace="MC">NCTOPLC_AXIS_REF</Type>
-						</Var>
-						<Var>
-							<Name>MAIN.robot.joints[2].axis.NcToPlc</Name>
-							<Type GUID="{72F5AAAA-16DF-4ED3-8367-F6C8C3ADAE99}" Namespace="MC">NCTOPLC_AXIS_REF</Type>
-						</Var>
 						<Var>
 							<Name>MAIN.q_t</Name>
 							<Type GUID="{7F3999D6-1785-057D-88BC-3449B9362C01}">ARRAY [0..2] OF LREAL</Type>
@@ -2061,24 +2540,102 @@ External Setpoint Generation:
 							<Name>Safety.TS_I_Safety_EStopError</Name>
 							<Type>BOOL</Type>
 						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[0].axis.NcToPlc</Name>
+							<Type GUID="{10036166-C9D3-404B-BDD3-323034AAA7F4}" Namespace="MC">NCTOPLC_AXIS_REF</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[0].fbTorqueControl.nMotorTempCelcius</Name>
+							<Type>UINT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[0].fbTorqueControl.fTorqueFbkPerc</Name>
+							<Comment><![CDATA[ Torque feedback]]></Comment>
+							<Type>INT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[0].fbTorqueControl.nFastStopState</Name>
+							<Comment><![CDATA[ Torque feedback]]></Comment>
+							<Type>UINT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[0].fbTorqueControl.nAccFbk</Name>
+							<Type>DINT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[0].fbTorqueControl.nVelFbk</Name>
+							<Type>DINT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[1].axis.NcToPlc</Name>
+							<Type GUID="{10036166-C9D3-404B-BDD3-323034AAA7F4}" Namespace="MC">NCTOPLC_AXIS_REF</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[1].fbTorqueControl.nMotorTempCelcius</Name>
+							<Type>UINT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[1].fbTorqueControl.fTorqueFbkPerc</Name>
+							<Comment><![CDATA[ Torque feedback]]></Comment>
+							<Type>INT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[1].fbTorqueControl.nFastStopState</Name>
+							<Comment><![CDATA[ Torque feedback]]></Comment>
+							<Type>UINT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[1].fbTorqueControl.nAccFbk</Name>
+							<Type>DINT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[1].fbTorqueControl.nVelFbk</Name>
+							<Type>DINT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[2].axis.NcToPlc</Name>
+							<Type GUID="{10036166-C9D3-404B-BDD3-323034AAA7F4}" Namespace="MC">NCTOPLC_AXIS_REF</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[2].fbTorqueControl.nMotorTempCelcius</Name>
+							<Type>UINT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[2].fbTorqueControl.fTorqueFbkPerc</Name>
+							<Comment><![CDATA[ Torque feedback]]></Comment>
+							<Type>INT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[2].fbTorqueControl.nFastStopState</Name>
+							<Comment><![CDATA[ Torque feedback]]></Comment>
+							<Type>UINT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[2].fbTorqueControl.nAccFbk</Name>
+							<Type>DINT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[2].fbTorqueControl.nVelFbk</Name>
+							<Type>DINT</Type>
+						</Var>
 					</Vars>
-					<Vars VarGrpType="2">
+					<Vars VarGrpType="2" ContextId="1" AreaNo="17">
 						<Name>PlcTask Outputs</Name>
-						<Var>
-							<Name>MAIN.robot.joints[0].axis.PlcToNc</Name>
-							<Type GUID="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" Namespace="MC">PLCTONC_AXIS_REF</Type>
-						</Var>
-						<Var>
-							<Name>MAIN.robot.joints[1].axis.PlcToNc</Name>
-							<Type GUID="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" Namespace="MC">PLCTONC_AXIS_REF</Type>
-						</Var>
-						<Var>
-							<Name>MAIN.robot.joints[2].axis.PlcToNc</Name>
-							<Type GUID="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" Namespace="MC">PLCTONC_AXIS_REF</Type>
-						</Var>
 						<Var>
 							<Name>MAIN.t</Name>
 							<Type>LREAL</Type>
+						</Var>
+						<Var>
+							<Name>Safety.TS_Q_Safety_GroupPort_ErrAck</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>Safety.TS_Q_Safety_EStopRestart</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>Safety.TS_Q_Safety_GroupPort_RunStop</Name>
+							<Type>BOOL</Type>
 						</Var>
 						<Var>
 							<Name>MAIN.Vt</Name>
@@ -2098,22 +2655,42 @@ External Setpoint Generation:
 							<Type GUID="{7F3999D6-1785-057D-88BC-3449B9362C01}">ARRAY [0..2] OF LREAL</Type>
 						</Var>
 						<Var>
-							<Name>Safety.TS_Q_Safety_GroupPort_ErrAck</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>Safety.TS_Q_Safety_EStopRestart</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>Safety.TS_Q_Safety_GroupPort_RunStop</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
 							<Name>Safety.TS_Q_Safety_Drive_Axis_ErrReset</Name>
 							<Type>BOOL</Type>
 						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[0].axis.PlcToNc</Name>
+							<Type GUID="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" Namespace="MC">PLCTONC_AXIS_REF</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[1].axis.PlcToNc</Name>
+							<Type GUID="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" Namespace="MC">PLCTONC_AXIS_REF</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[2].axis.PlcToNc</Name>
+							<Type GUID="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" Namespace="MC">PLCTONC_AXIS_REF</Type>
+						</Var>
 					</Vars>
+					<Contexts>
+						<Context>
+							<Id NeedCalleeCall="true">0</Id>
+							<Name>SerialComTask</Name>
+							<ManualConfig>
+								<OTCID>#x02010060</OTCID>
+							</ManualConfig>
+							<Priority>1</Priority>
+							<CycleTime>1000000</CycleTime>
+						</Context>
+						<Context>
+							<Id NeedCalleeCall="true">1</Id>
+							<Name>PlcTask</Name>
+							<ManualConfig>
+								<OTCID>#x02010030</OTCID>
+							</ManualConfig>
+							<Priority>20</Priority>
+							<CycleTime>10000000</CycleTime>
+						</Context>
+					</Contexts>
 					<TaskPouOids>
 						<TaskPouOid Prio="1" OTCID="#x08502001"/>
 						<TaskPouOid Prio="20" OTCID="#x08502002"/>
@@ -2139,7 +2716,7 @@ External Setpoint Generation:
 			</Project>
 		</Safety>
 		<Io>
-			<Device Id="5" DevType="111" DevFlags="#x0003" AmsPort="28677" AmsNetId="5.72.215.242.6.1" RemoteName="Device 5 (EtherCAT)">
+			<Device Id="5" DevType="111" DevFlags="#x0003" AmsPort="28677" AmsNetId="5.72.215.242.6.1" RemoteName="Device 5 (EtherCAT)" InfoImageId="2">
 				<Name>Device 5 (EtherCAT)</Name>
 				<AddressInfo>
 					<Pnp>
@@ -4316,8 +4893,8 @@ External Setpoint Generation:
 					<EtherCAT SlaveType="2" PdiType="#x0c08" MboxDataLinkLayer="true" StateMBoxPolling="true" CfgModeSafeOp="true" DownloadPdoCfg="true" CycleMBoxPollingTime="0" FoeType="1" SoeChannels="1" VendorId="#x00000002" ProductCode="#x13f26012" RevisionNo="#x00d20000" InfoDataAddr="true" InfoDataSoeDS401="true" InfoDataDcTimes="true" TimeoutStateChange3="10000" TimeoutStateChange4="500" AutoRestoreAfterWcOk="true" CheckRevisionNoType="4" PortPhys="12305" IdentificationAdo="308" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="AX5106-0000-0210 EtherCAT Drive (SoE, 1 Ch.)" Desc="AX5106-0000-0210" PortABoxInfo="#x01000003">
 						<SyncMan>001880002600010001000000800080008000001826010000</SyncMan>
 						<SyncMan>001a80002200010002000000800080008000001a22010000</SyncMan>
-						<SyncMan>001006002400010003000000000000000000001024010000</SyncMan>
-						<SyncMan>001106002200010004000000000000000000001122010000</SyncMan>
+						<SyncMan>001008002400010003000000000000000000001024010000</SyncMan>
+						<SyncMan>001108002200010004000000000000000000001122010000</SyncMan>
 						<SyncMan>002000002400010005000000000000000000002024010000</SyncMan>
 						<SyncMan>002400002000010006000000000000000000002420010000</SyncMan>
 						<Fmmu>0000000000000000001000020100000001000000000000000000000000000000</Fmmu>
@@ -4383,12 +4960,16 @@ External Setpoint Generation:
 						<MBoxUserCmdData>02000500ec0000000f00000000000000000000000000000000000000000000000340968000000000e000e00003000000454b4d33362d304b4630413053313600000000000000000000000000000000000000000000000000000000000e0000000000000005000e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000007000e000000000012000c000000000002000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000960096007d0000000000000000000000000000000000000000000000466565646261636b2031207479706500</MBoxUserCmdData>
 						<MBoxUserCmdData>020005001800000011000000000000000000000000000000000000000000000003400282000000000c000c0001000000f401e803bc02000056656c6f63697479206f6273657276657200</MBoxUserCmdData>
 						<MBoxUserCmdData>020005000a00000014000000000000000000000000000000000000000000000003402e81000000001000446973706c61792076616c7565206c696e65203100</MBoxUserCmdData>
+						<MBoxUserCmdData>020005000a0000001a0000000000000000000000000000000000000000000000034021000000000001005365636f6e64617279206f7065726174696f6e206d6f6465203100</MBoxUserCmdData>
 						<Pdo Name="AT" Index="#x0010" Flags="#x0001" SyncMan="3">
 							<Entry Name="Drive status word" BitLen="16" Index="#x0087" Flags="#x00000800">
 								<Type>UINT</Type>
 							</Entry>
 							<Entry Name="Position feedback 1 value (motor feedback)" BitLen="32" Index="#x0033">
 								<Type>DINT</Type>
+							</Entry>
+							<Entry Name="Torque/force feedback value" BitLen="16" Index="#x0054">
+								<Type>INT</Type>
 							</Entry>
 						</Pdo>
 						<Pdo Name="MDT" Index="#x0018" InOut="1" Flags="#x0001" SyncMan="2">
@@ -4397,6 +4978,9 @@ External Setpoint Generation:
 							</Entry>
 							<Entry Name="Velocity command value" BitLen="32" Index="#x0024">
 								<Type>DINT</Type>
+							</Entry>
+							<Entry Name="Torque/force command value" BitLen="16" Index="#x0050">
+								<Type>INT</Type>
 							</Entry>
 						</Pdo>
 					</EtherCAT>
@@ -4640,7 +5224,7 @@ External Setpoint Generation:
 				</Box>
 				<EtherCAT DcSyncMode="3"/>
 			</Device>
-			<Device Id="1" DevType="111" DevFlags="#x0003" AmsPort="28673" AmsNetId="5.72.215.242.2.1" RemoteName="Device 1 (EtherCAT)">
+			<Device Id="1" DevType="111" DevFlags="#x0003" AmsPort="28673" AmsNetId="5.72.215.242.2.1" RemoteName="Device 1 (EtherCAT)" InfoImageId="4">
 				<Name>Device 1 (EtherCAT)</Name>
 				<AddressInfo>
 					<Ccat>
@@ -5514,8 +6098,6 @@ External Setpoint Generation:
 							</Pdo>
 							<CoeProfile ProfileNo="39326601"/>
 							<CoeProfile ProfileNo="39326601"/>
-							<EL60xxComPort BaudRate="9600" ByteSize="8" EnableRtsCts="true" LocalComPort="true" RxFifoFullThreshold="864"/>
-							<EL60xxComPort BaudRate="9600" ByteSize="8" EnableRtsCts="true" LocalComPort="true" RxFifoFullThreshold="864"/>
 						</EtherCAT>
 					</Box>
 					<Box Id="19" BoxType="9103" BoxFlags="#x00000020">
@@ -6186,8 +6768,6 @@ External Setpoint Generation:
 							</Pdo>
 							<CoeProfile ProfileNo="39326601"/>
 							<CoeProfile ProfileNo="39326601"/>
-							<EL60xxComPort BaudRate="9600" ByteSize="8" EnableRtsCts="true" LocalComPort="true" RxFifoFullThreshold="864"/>
-							<EL60xxComPort BaudRate="9600" ByteSize="8" EnableRtsCts="true" LocalComPort="true" RxFifoFullThreshold="864"/>
 						</EtherCAT>
 					</Box>
 					<Box Id="18" BoxType="9099">
@@ -6205,27 +6785,30 @@ External Setpoint Generation:
 		<MappingInfo Identifier="{00000000-2002-0850-0120-500861000403}" Id="#x02030070"/>
 		<MappingInfo Identifier="{00000000-0020-0304-1000-040321000403}" Id="#x02030030"/>
 		<MappingInfo Identifier="{00000000-0050-0304-1000-040350000403}" Id="#x02030020"/>
+		<MappingInfo Identifier="{08502002-0050-0304-0020-500850000403}" Id="#x02030050" Watchdog="00000000000000000000000000000000"/>
 		<MappingInfo Identifier="{05000010-2002-0850-1000-040301205008}" Id="#x02030080" Watchdog="14000000040000000400000004000000"/>
 		<MappingInfo Identifier="{03040050-0060-0304-5000-040360000403}" Id="#x02030010" Watchdog="14000000040000000400000004000000"/>
 		<MappingInfo Identifier="{03040060-0060-0304-6000-040360000403}" Id="#x02030060" Watchdog="04000000040000000400000004000000"/>
 		<OwnerA Name="TIID^Device 1 (EtherCAT)">
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 5 (EK1200)^Term 14 (EL6900)">
 				<Link VarA="Term 5 (EK1200)^Term 15 (EL1904)^Module 1 (FSOES)^RxPDO^FSOE" VarB="ConnectionInputs^Message_9 TxPDO"/>
-				<Link VarA="Term 5 (EK1200)^Term 15 (EL1904)^Module 1 (FSOES)^TxPDO^FSOE" VarB="ConnectionOutputs^Message_9 RxPDO"/>
 			</OwnerB>
-			<OwnerB Name="TIID^Device 5 (EtherCAT)^Drive1_Joint1 (AX5106-0000-0210)^Term 10 (AX5805)">
-				<Link VarA="Term 5 (EK1200)^Term 14 (EL6900)^ConnectionOutputs^Message_6 RxPDO" VarB="Module 1 (Safety Process Data, 1 axis)^Inputs (Statusword)^FSOE"/>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 5 (EK1200)^Term 15 (EL1904)">
+				<Link VarA="Term 5 (EK1200)^Term 14 (EL6900)^ConnectionOutputs^Message_9 RxPDO" VarB="Module 1 (FSOES)^TxPDO^FSOE"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 5 (EtherCAT)^Drive2_Joint2(AX5106-0000-0210)^Term 11 (AX5805)">
 				<Link VarA="Term 5 (EK1200)^Term 14 (EL6900)^ConnectionInputs^Message_7 TxPDO" VarB="Module 1 (Safety Process Data, 1 axis)^Outputs (Controlword)^FSOE"/>
 				<Link VarA="Term 5 (EK1200)^Term 14 (EL6900)^ConnectionOutputs^Message_7 RxPDO" VarB="Module 1 (Safety Process Data, 1 axis)^Inputs (Statusword)^FSOE"/>
 			</OwnerB>
+			<OwnerB Name="TIID^Device 5 (EtherCAT)^Drive3_Joint3(AX5106-0000-0210)^Term 12 (AX5805)">
+				<Link VarA="Term 5 (EK1200)^Term 14 (EL6900)^ConnectionInputs^Message_8 TxPDO" VarB="Module 1 (Safety Process Data, 1 axis)^Outputs (Controlword)^FSOE"/>
+				<Link VarA="Term 5 (EK1200)^Term 14 (EL6900)^ConnectionOutputs^Message_8 RxPDO" VarB="Module 1 (Safety Process Data, 1 axis)^Inputs (Statusword)^FSOE"/>
+			</OwnerB>
 		</OwnerA>
 		<OwnerA Name="TIID^Device 5 (EtherCAT)">
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 5 (EK1200)^Term 14 (EL6900)">
+				<Link VarA="Drive1_Joint1 (AX5106-0000-0210)^Term 10 (AX5805)^Module 1 (Safety Process Data, 1 axis)^Inputs (Statusword)^FSOE" VarB="ConnectionOutputs^Message_6 RxPDO"/>
 				<Link VarA="Drive1_Joint1 (AX5106-0000-0210)^Term 10 (AX5805)^Module 1 (Safety Process Data, 1 axis)^Outputs (Controlword)^FSOE" VarB="ConnectionInputs^Message_6 TxPDO"/>
-				<Link VarA="Drive3_Joint3(AX5106-0000-0210)^Term 12 (AX5805)^Module 1 (Safety Process Data, 1 axis)^Inputs (Statusword)^FSOE" VarB="ConnectionOutputs^Message_8 RxPDO"/>
-				<Link VarA="Drive3_Joint3(AX5106-0000-0210)^Term 12 (AX5805)^Module 1 (Safety Process Data, 1 axis)^Outputs (Controlword)^FSOE" VarB="ConnectionInputs^Message_8 TxPDO"/>
 			</OwnerB>
 		</OwnerA>
 		<OwnerA Name="TINC^Main_NC_Task SAF^Axes^Axis1_Drive1_Joint1">
@@ -6267,6 +6850,7 @@ External Setpoint Generation:
 				<Link VarA="Drive^Inputs^In^nState4" VarB="WcState^WcState"/>
 				<Link VarA="Drive^Outputs^Out^nCtrl1" VarB="MDT^Master control word" Size="8" OffsB="8"/>
 				<Link VarA="Drive^Outputs^Out^nDataOut2" VarB="MDT^Velocity command value"/>
+				<Link VarA="Drive^Outputs^Out^nDataOut4[0]" VarB="MDT^Torque/force command value"/>
 				<Link VarA="Enc^Inputs^In^nDataIn1" VarB="AT^Position feedback 1 value (motor feedback)"/>
 				<Link VarA="Enc^Inputs^In^nDcInputTime" VarB="InfoData^DcInputShift"/>
 				<Link VarA="Enc^Inputs^In^nState4" VarB="WcState^InputToggle" Size="1" OffsA="1"/>
@@ -6423,6 +7007,9 @@ External Setpoint Generation:
 				<Link VarA="SerialComTask Outputs^IMU.fbStim300[2].stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 7" Size="8" OffsA="72"/>
 				<Link VarA="SerialComTask Outputs^IMU.fbStim300[2].stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 8" Size="8" OffsA="80"/>
 				<Link VarA="SerialComTask Outputs^IMU.fbStim300[2].stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 9" Size="8" OffsA="88"/>
+			</OwnerB>
+			<OwnerB Name="TIID^Device 5 (EtherCAT)^Drive3_Joint3(AX5106-0000-0210)">
+				<Link VarA="PlcTask Inputs^MAIN.robot.joints[2].fbTorqueControl.fTorqueFbkPerc" VarB="AT^Torque/force feedback value"/>
 			</OwnerB>
 			<OwnerB Name="TINC^Main_NC_Task SAF^Axes^Axis1_Drive1_Joint1">
 				<Link VarA="PlcTask Inputs^MAIN.robot.joints[0].axis.NcToPlc" VarB="Outputs^ToPlc"/>

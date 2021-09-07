@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_TorqueController" Id="{4419c06c-aafb-436e-b726-b61650f1597d}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_TorqueController
+VAR_INPUT
+	bEnable: BOOL;
+	fShaftTorqueCmdNm: LREAL; // Torque input in NM in the shaft after gearbox
+	fTorqueScaling: LREAL:= 2.98;
+	fVelocityLimitHigh: LREAL:= 100; // [mm/s]
+	fVelocityLimitLow: LREAL:= 0; // [mm/s]
+	fTorqueRamp: LREAL:= 10.0; // // [%/s] 
+	nGearRatio: UINT := 1;
+	bStop: BOOL;
+	bRelative: BOOL:= FALSE;
+END_VAR
+VAR_IN_OUT
+	Axis: AXIS_REF;
+END_VAR
+VAR_OUTPUT
+	fShaftSetTorqueNm: LREAL;
+	fShaftTorqueFbkNm : LREAL;
+	// Torque output
+	bInTorque: BOOL;
+	bBusy: BOOL;
+	bActive: BOOL;
+	bCommandAborted: BOOL;
+	bError: BOOL;
+	nErrId: UDINT;
+	nMotorTempCelcius AT %I*: UINT;
+END_VAR
+VAR
+	// Torque controller
+	fbTorque: MC_TorqueControl;
+	// Controller options
+	stTorqueOptions: ST_TorqueControlOptions := (ManualTorqueStartValue:= 0, EnableManualTorqueStartValue:= FALSE); 	
+	// Trigger on change in setpoint
+	rTrigTorqueChange: R_Trig;
+	
+
+
+	fTorqueCmdNm: LREAL; // Torque input in NM
+	fTorqueFbkNm: LREAL; // Torque output
+	
+	// Setpoint
+	fSetTorquePerc : LREAL;
+	fSetTorqueNm: LREAL;
+	
+	fTorqueCmdPercent: LREAL; // [%] Torque
+	fTorqueCmdPercentOld: LREAL; // [%] Torque
+	
+	// Torque feedback
+	fTorqueFbkPerc AT %I*: INT;	
+	// Torque feedback
+	nFastStopState AT %I*: UINT;
+	nAccFbk AT %I*: DINT;	
+	nVelFbk AT %I*: DINT;
+	
+
+	fTorqueFbkNmFiltered : LREAL;
+	
+	// Stop handling
+	mcStop : MC_Stop;
+	bStopDone           : BOOL;
+	bStopBusy           : BOOL;
+	bStopActive         : BOOL;
+	bStopCommandAborted : BOOL;
+	bStopError          : BOOL;
+	nStopErrorID        : UDINT;
+	rTrigStop: R_TRIG;
+	fbMcPower : MC_POWER;
+	
+	eState: UDINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Read torque feedback
+ReadFeedback();
+
+fTorqueCmdNm := fShaftTorqueCmdNm/nGearRatio;
+
+// Scale torque command in NM to percentage
+fTorqueCmdPercent:= RescaleRange(fTorqueCmdNm, -fTorqueScaling, fTorqueScaling, -100, 100);
+// Set falling edge before new setpoint
+IF(fTorqueCmdPercent <> fTorqueCmdPercentOld) AND bEnable THEN
+	fbTorque(Axis:= Axis, Execute:= FALSE);
+END_IF
+// Store current torque as old torque
+fTorqueCmdPercentOld:= fTorqueCmdPercent;	
+
+
+// Torque testing
+fbTorque(
+	Axis:= Axis,
+	Execute:= bEnable,
+	Relative:= bRelative, // Torque setpoint relative to current torque load???
+	Torque:= fTorqueCmdPercent,
+	TorqueRamp:= fTorqueRamp,
+	VelocityLimitHigh:= fVelocityLimitHigh,
+	VelocityLimitLow:= fVelocityLimitLow,
+	BufferMode:= MC_BufferMode.MC_Aborting, // Abort current if new cmd
+	Options:= stTorqueOptions,
+	InTorque => bInTorque,
+	Busy => bBusy,
+	Active => bActive,
+	CommandAborted => bCommandAborted,
+	Error => bError,
+	ErrorId => nErrId
+);
+
+
+// Torque setpoints (% and NM)
+fSetTorquePerc:= Axis.NcToPlc.SetTorque;
+fSetTorqueNm:= RescaleRange(fSetTorquePerc, -100, 100, -fTorqueScaling, fTorqueScaling);
+fShaftSetTorqueNm := fSetTorqueNm*nGearRatio;
+
+]]></ST>
+    </Implementation>
+    <Method Name="ReadFeedback" Id="{3d3db19b-15f7-430b-8473-dd60671defc5}">
+      <Declaration><![CDATA[METHOD ReadFeedback : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// S-0-0084 Torque feedback value
+// The parameter contains the current in one-tenth of a percent relative to P-0-0094 (Configured channel peak torque)
+// (Hence signal range [-1000, 1000])
+fTorqueFbkNm := RescaleRange(INT_TO_LREAL(fTorqueFbkPerc), -1000, 1000, -fTorqueScaling, fTorqueScaling);
+
+
+
+// Calculate shaft torque after gearbox
+fTorqueFbkNmFiltered := fTorqueFbkNm;
+fShaftTorqueFbkNm:= fTorqueFbkNmFiltered * nGearRatio;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_TorqueController">
+      <LineId Id="3" Count="1" />
+      <LineId Id="111" Count="0" />
+      <LineId Id="110" Count="0" />
+      <LineId Id="5" Count="35" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TorqueController.ReadFeedback">
+      <LineId Id="3" Count="4" />
+      <LineId Id="11" Count="2" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

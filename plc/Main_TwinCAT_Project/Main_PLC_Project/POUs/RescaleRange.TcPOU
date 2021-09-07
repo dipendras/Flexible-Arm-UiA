@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+  <POU Name="RescaleRange" Id="{01836272-1a98-4336-98f7-9ee27f8d7a56}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION RescaleRange : LREAL
+VAR_INPUT
+	x: LREAL;
+	x_min: LREAL;
+	x_max: LREAL;
+	a: LREAL;
+	b: LREAL;
+END_VAR
+
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[x := LIMIT(x_min, x, x_max);
+RescaleRange:= LIMIT(a, (a + (x - x_min)*(b-a)/(x_max-x_min)), b);]]></ST>
+    </Implementation>
+    <LineIds Name="RescaleRange">
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
