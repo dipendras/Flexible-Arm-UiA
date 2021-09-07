@@ -8,6 +8,7 @@ VAR
 	robot : FB_Robot3R;
 	
 	Kp : LREAL := 0.1;
+	Kd : LREAL := 0.1;
 	
 	
 	t AT %Q* : LREAL;
@@ -114,16 +115,16 @@ ELSIF bVelocityMode AND NOT bPositionMode AND NOT bStop THEN
 	
 	FOR j:= 0 TO 2 DO
 
-		w[j] := 2.0*PI/TT[j];
-		y[j] := A[j]*SIN(w[j]*t + phi_Offset[j]*PI/180) + q_Offset[j];//start at the angle of 45 degree
-		y_t[j] := A[j]*w[j]*COS(w[j]*t + phi_Offset[j]*PI/180);
-		u[j] := Kp*(y[j] - robot.q[j]) + y_t[j];	
+//		w[j] := 2.0*PI/TT[j];
+//		y[j] := A[j]*SIN(w[j]*t + phi_Offset[j]*PI/180) + q_Offset[j];//start at the angle of 45 degree
+//		y_t[j] := A[j]*w[j]*COS(w[j]*t + phi_Offset[j]*PI/180);
+//		u[j] := Kp*(y[j] - robot.q[j]) + y_t[j];	
 		
-		q_t_DEG[j] := q_t[j]*180/PI;
-		q_DEG[j] := q[j]*180/PI;
+//		q_t_DEG[j] := q_t[j]*180/PI;
+//		q_DEG[j] := q[j]*180/PI;
 		
 		
-		u[j] := Kp*(q_DEG[j] - robot.q[j]) + q_t_DEG[j];
+		u[j] := Kp*(fPosInput[j] - robot.q[j]) + q_t_DEG[j];
 		 
 		
 	END_FOR
