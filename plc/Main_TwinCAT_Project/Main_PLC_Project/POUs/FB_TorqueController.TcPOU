@@ -5,11 +5,11 @@
 VAR_INPUT
 	bEnable: BOOL;
 	fShaftTorqueCmdNm: LREAL; // Torque input in NM in the shaft after gearbox
-	fTorqueScaling: LREAL:= 2.98;
+	fTorqueScaling: LREAL:= 2.99;
 	fVelocityLimitHigh: LREAL:= 100; // [mm/s]
 	fVelocityLimitLow: LREAL:= 0; // [mm/s]
 	fTorqueRamp: LREAL:= 10.0; // // [%/s] 
-	nGearRatio: UINT := 1;
+	fGearRatio: LREAL := 1.0;
 	bStop: BOOL;
 	bRelative: BOOL:= FALSE;
 END_VAR
@@ -76,7 +76,7 @@ END_VAR
       <ST><![CDATA[// Read torque feedback
 ReadFeedback();
 
-fTorqueCmdNm := fShaftTorqueCmdNm/nGearRatio;
+fTorqueCmdNm := fShaftTorqueCmdNm/fGearRatio;
 
 // Scale torque command in NM to percentage
 fTorqueCmdPercent:= RescaleRange(fTorqueCmdNm, -fTorqueScaling, fTorqueScaling, -100, 100);
@@ -111,7 +111,7 @@ fbTorque(
 // Torque setpoints (% and NM)
 fSetTorquePerc:= Axis.NcToPlc.SetTorque;
 fSetTorqueNm:= RescaleRange(fSetTorquePerc, -100, 100, -fTorqueScaling, fTorqueScaling);
-fShaftSetTorqueNm := fSetTorqueNm*nGearRatio;
+fShaftSetTorqueNm := fSetTorqueNm*fGearRatio;
 
 ]]></ST>
     </Implementation>
@@ -130,7 +130,7 @@ fTorqueFbkNm := RescaleRange(INT_TO_LREAL(fTorqueFbkPerc), -1000, 1000, -fTorque
 
 // Calculate shaft torque after gearbox
 fTorqueFbkNmFiltered := fTorqueFbkNm;
-fShaftTorqueFbkNm:= fTorqueFbkNmFiltered * nGearRatio;]]></ST>
+fShaftTorqueFbkNm:= fTorqueFbkNmFiltered * fGearRatio;]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="FB_TorqueController">

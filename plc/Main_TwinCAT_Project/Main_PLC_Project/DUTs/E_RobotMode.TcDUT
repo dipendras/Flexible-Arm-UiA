@@ -5,8 +5,8 @@
 {attribute 'strict'}
 TYPE E_RobotMode :
 (
-	STOP := 0,
-	ESTOP,
+	ESTOP := 0,
+	STOP,
 	POSITION,
 	VELOCITY,
 	TORQUE
