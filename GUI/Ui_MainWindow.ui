@@ -142,8 +142,8 @@
    <widget class="QLabel" name="label_CurrentJointAngles">
     <property name="geometry">
      <rect>
-      <x>420</x>
-      <y>500</y>
+      <x>530</x>
+      <y>510</y>
       <width>121</width>
       <height>16</height>
      </rect>
@@ -206,8 +206,8 @@
    <widget class="QLCDNumber" name="lcdNumber_CurrentJoint1">
     <property name="geometry">
      <rect>
-      <x>430</x>
-      <y>550</y>
+      <x>540</x>
+      <y>560</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -219,8 +219,8 @@
    <widget class="QLCDNumber" name="lcdNumber_CurrentJoint2">
     <property name="geometry">
      <rect>
-      <x>430</x>
-      <y>590</y>
+      <x>540</x>
+      <y>600</y>
       <width>100</width>
       <height>31</height>
      </rect>
@@ -229,8 +229,8 @@
    <widget class="QLCDNumber" name="lcdNumber_CurrentJoint3">
     <property name="geometry">
      <rect>
-      <x>430</x>
-      <y>630</y>
+      <x>540</x>
+      <y>640</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -295,6 +295,9 @@
     </property>
     <property name="text">
      <string>Enable Manual Control</string>
+    </property>
+    <property name="tristate">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_ResetRobot">
@@ -361,7 +364,7 @@
    <widget class="QLabel" name="label_SetJointVelocity">
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>280</x>
       <y>580</y>
       <width>161</width>
       <height>16</height>
@@ -388,29 +391,47 @@
     </property>
    </widget>
    <widget class="QCheckBox" name="checkBox_PositionMode">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
-      <x>110</x>
+      <x>20</x>
       <y>510</y>
       <width>221</width>
       <height>41</height>
      </rect>
     </property>
     <property name="text">
-     <string>Position  Mode</string>
+     <string/>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+    <property name="tristate">
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QCheckBox" name="checkBox_VelocityMode">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
-      <x>260</x>
+      <x>170</x>
       <y>510</y>
-      <width>221</width>
+      <width>201</width>
       <height>41</height>
      </rect>
     </property>
     <property name="text">
-     <string>Velocity Mode</string>
+     <string/>
+    </property>
+    <property name="tristate">
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QLabel" name="label_RobotStatus">
@@ -455,6 +476,64 @@
      <string>Robot Power Status</string>
     </property>
    </widget>
+   <widget class="QCheckBox" name="checkBox_TorqueMode">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>510</y>
+      <width>31</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="tristate">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_PositionMode">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>520</y>
+      <width>81</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Position Mode</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_VelocityMode">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>520</y>
+      <width>81</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Velocity Mode</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_TorqueMode">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>520</y>
+      <width>81</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Torque Mode</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -462,7 +541,7 @@
      <x>0</x>
      <y>0</y>
      <width>1226</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

@@ -3,113 +3,90 @@
   <POU Name="FB_Robot3R" Id="{ac314762-16df-47a2-b7b8-44cc8c775bfa}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_Robot3R
 VAR_INPUT
+	bEmStop : BOOL;
 	Ts : LREAL := 0.01;
 	bReset : BOOL;
-	bEnableAll : BOOL;
+	bEnable : BOOL;
 	bEnableJoint : ARRAY [0..2] OF BOOL;
 	eRobotModeCmd : E_RobotMode;
 	fVelInput : ARRAY [0..2] OF LREAL;
-	fPosInput : ARRAY [0..2] OF LREAL;
+	fPosInput : ARRAY [0..2] OF LREAL;	
+	bPositionModeExecute 	: BOOL;
 	fJointPositionOffset 	: ARRAY [0..2] OF LREAL;	
 	fJointCalibrationOffset : ARRAY [0..2] OF LREAL;
 END_VAR
 VAR_OUTPUT
-	eRobotMode : E_RobotMode;
+	eRobotMode : E_RobotMode := E_RobotMode.STOP;
 	
 	// Robot feedback
 	q : ARRAY [0..2] OF LREAL;
 	q_t : ARRAY [0..2] OF LREAL;
 	tau : ARRAY [0..2] OF LREAL;
 	
+	bAnyJointActive : BOOL;
 END_VAR
 VAR
-	bStop: BOOL;//Soft stop -> Ramp down first and then disables power
-	bVelocityMode : BOOL;
-	bPositionMode : BOOL;
-	bPositionModeExecute : BOOL;
-
 	// Setpoints
 	qRef : ARRAY [0..2] OF LREAL;
 	qRef_t : ARRAY [0..2] OF LREAL;
-	qRef_tt : ARRAY [0..2] OF LREAL;	
+	qRef_tt : ARRAY [0..2] OF LREAL;
 	
 
 	i : USINT;
 	j : USINT;
 	k : USINT;
 	joints : ARRAY [0..2] OF FB_Joint;
-	
-	bAnyJointActive : BOOL;
-	
+		
 	//Velcity of last timestamp
 	fVelInputOld : ARRAY [0..2] OF LREAL;
 
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[
+      <ST><![CDATA[IF bEmStop AND (eRobotMode <> E_RobotMode.ESTOP) THEN
+	eRobotModeCmd := E_RobotMode.ESTOP;
+END_IF
 
-
-
-
-IF eRobotModeCmd <> eRobotMode THEN
+IF eRobotModeCmd <> E_RobotMode.NONE THEN
 	CASE eRobotModeCmd OF
 		 E_RobotMode.STOP:
-		 
-		 	bVelocityMode := FALSE;
-			bPositionMode := FALSE;
-			bPositionModeExecute := FALSE;
-			
 		 	eRobotMode := E_RobotMode.STOP;
 			
 		 E_RobotMode.ESTOP:
-		 	
-
-			bVelocityMode := FALSE;
-			bPositionMode := FALSE;
-			bPositionModeExecute := FALSE;
-		 
 		 	eRobotMode := E_RobotMode.ESTOP;
 		 
-		 E_RobotMode.POSITION:
-		 	
-			bVelocityMode := FALSE;
-			bPositionMode := TRUE;
-		 
+		 E_RobotMode.POSITION:	
 		 	eRobotMode := E_RobotMode.POSITION;
 		 
 		 E_RobotMode.VELOCITY:
-		 
-			bVelocityMode := TRUE;
-			bPositionMode := FALSE;
-			bPositionModeExecute := FALSE;
-		 	
 		 	eRobotMode := E_RobotMode.VELOCITY;
-	
+			
+		E_RobotMode.TORQUE:
+			eRobotMode := E_RobotMode.TORQUE;
+			
 	END_CASE	
 END_IF
+eRobotModeCmd := E_RobotMode.NONE;
 
-
-IF bReset THEN
-	bEnableAll := FALSE;
+IF bReset AND NOT(bEmStop)  THEN
+//	bEnableAll := FALSE;
+	eRobotMode := E_RobotMode.STOP;
 END_IF
 
 // E-stop mode
-IF(eRobotMode = E_RobotMode.ESTOP OR NOT Safety.TS_I_Safety_EStopOK) THEN
-	bEnableAll := FALSE;
+IF(eRobotMode = E_RobotMode.ESTOP) THEN
+	bEnable := FALSE;
 	bReset := TRUE;	//to avoid error: the axis loss the enable signal while doing something
 END_IF
 
-// soft stop mode
-IF(eRobotMode = E_RobotMode.STOP OR bStop) THEN
-	bAnyJointActive := joints[0].bActive;
-	FOR k:= 1 TO 2 DO
-		bAnyJointActive := bAnyJointActive OR joints[k].bActive;	
-	END_FOR
-	
-	IF NOT bAnyJointActive AND bStop THEN
-		bEnableAll := FALSE;
-	END_IF
+
+bAnyJointActive := joints[0].bActive;
+FOR k:= 1 TO 2 DO
+	bAnyJointActive := bAnyJointActive OR joints[k].bActive;	
+END_FOR
+
+IF(eRobotMode = E_RobotMode.STOP) AND  NOT bAnyJointActive THEN
+	bEnable := FALSE;
 END_IF
 
 // position mode
@@ -127,10 +104,8 @@ END_IF
 FOR j:= 0 TO 2 DO
 	joints[j](
 		bReset:=bReset,
-		bEnable:=bEnableAll AND bEnableJoint[j],
-		bStop:=bStop,
-		bVelocityMode:=bVelocityMode,
-		bPositionMode:=bPositionMode,
+		bEnable:=bEnable AND bEnableJoint[j],
+		eRobotMode := eRobotMode,
 		bPositionModeExecute := bPositionModeExecute,
 		fGearRatio := CONSTANTS.GEAR_RATIO[j],
 		qRef:=qRef[j],
@@ -196,13 +171,20 @@ END_FOR]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="FB_Robot3R">
-      <LineId Id="759" Count="77" />
-      <LineId Id="838" Count="6" />
-      <LineId Id="907" Count="0" />
-      <LineId Id="845" Count="2" />
-      <LineId Id="862" Count="0" />
-      <LineId Id="848" Count="0" />
-      <LineId Id="851" Count="8" />
+      <LineId Id="983" Count="6" />
+      <LineId Id="993" Count="2" />
+      <LineId Id="999" Count="2" />
+      <LineId Id="1004" Count="2" />
+      <LineId Id="1010" Count="2" />
+      <LineId Id="1015" Count="1" />
+      <LineId Id="1018" Count="14" />
+      <LineId Id="1034" Count="4" />
+      <LineId Id="1077" Count="0" />
+      <LineId Id="1039" Count="0" />
+      <LineId Id="1041" Count="0" />
+      <LineId Id="1043" Count="17" />
+      <LineId Id="1080" Count="0" />
+      <LineId Id="1061" Count="15" />
       <LineId Id="42" Count="0" />
     </LineIds>
     <LineIds Name="FB_Robot3R.positionMode">

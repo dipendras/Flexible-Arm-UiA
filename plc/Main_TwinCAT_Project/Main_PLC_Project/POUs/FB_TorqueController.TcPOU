@@ -73,8 +73,8 @@ VAR
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[// Read torque feedback
-ReadFeedback();
+      <ST><![CDATA[// Don't Read torque feedback
+// readFeedback();
 
 fTorqueCmdNm := fShaftTorqueCmdNm/fGearRatio;
 
@@ -115,9 +115,26 @@ fShaftSetTorqueNm := fSetTorqueNm*fGearRatio;
 
 ]]></ST>
     </Implementation>
-    <Method Name="ReadFeedback" Id="{3d3db19b-15f7-430b-8473-dd60671defc5}">
-      <Declaration><![CDATA[METHOD ReadFeedback : BOOL
+    <Method Name="FB_init" Id="{91044a41-766b-4c9c-b1e8-484f09ed5961}">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
 VAR_INPUT
+	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+	
+	fTorqueScaling : LREAL;
+ 	fGearRatio : LREAL;
+	
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[fTorqueScaling := fTorqueScaling; 
+fGearRatio := fGearRatio;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="readFeedback" Id="{3d3db19b-15f7-430b-8473-dd60671defc5}">
+      <Declaration><![CDATA[METHOD readFeedback : BOOL
+VAR_INPUT
+
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -140,7 +157,10 @@ fShaftTorqueFbkNm:= fTorqueFbkNmFiltered * fGearRatio;]]></ST>
       <LineId Id="5" Count="35" />
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="FB_TorqueController.ReadFeedback">
+    <LineIds Name="FB_TorqueController.FB_init">
+      <LineId Id="7" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_TorqueController.readFeedback">
       <LineId Id="3" Count="4" />
       <LineId Id="11" Count="2" />
       <LineId Id="17" Count="0" />

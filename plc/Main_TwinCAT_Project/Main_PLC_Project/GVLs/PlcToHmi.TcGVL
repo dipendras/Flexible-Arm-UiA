@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <GVL Name="PlcToHmi" Id="{b17d7ed7-002b-478f-86a5-b167a0c0c26e}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	
+	fPosFb  : ARRAY [0..2] OF LREAL;
+	fVelFb  : ARRAY [0..2] OF LREAL;
+	fTauFb 	: ARRAY [0..2] OF LREAL;
+	
+	bPositionMode 	: BOOL;
+	bVelocityMode 	: BOOL;
+	bTorqueMode 	: BOOL;
+	
+	bSafety_EStopOK  : BOOL;
+	bSafety_EStopError : BOOL;
+	
+	bAnyJointActive : BOOL;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

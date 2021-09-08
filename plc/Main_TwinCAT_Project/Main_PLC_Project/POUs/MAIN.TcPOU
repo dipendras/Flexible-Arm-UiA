@@ -1,11 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <POU Name="MAIN" Id="{870836e7-c1db-4c5e-9373-286a0440b8b4}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
+VAR_INPUT
+	robot : FB_Robot3R;
+	fPosInput : ARRAY [0..2] OF LREAL;
+	fVelInput : ARRAY [0..2] OF LREAL;
+END_VAR
 VAR
 	bDelayStart : BOOL := TRUE;
 	fbDelayStart : TON := (PT := T#2S);
-	robot : FB_Robot3R;
 	
 	Kp : LREAL := 0.1;
 	Kd : LREAL := 0.1;
@@ -36,10 +40,6 @@ VAR
 	bEStop : BOOL;
 	
 	bRunStupidRoutine: BOOL;
-	
-	
-	fPosInput : ARRAY [0..2] OF LREAL;
-	fVelInput : ARRAY [0..2] OF LREAL;
 	
 	bVelocityMode : BOOL;
 	bPositionMode : BOOL;
@@ -74,6 +74,7 @@ END_VAR
 	RETURN;
 END_IF
 
+P_HMI();
 
 stupidRoutine(bRunStupidRoutine:=bRunStupidRoutine);
 
@@ -84,79 +85,95 @@ getSampleTime();
 
 	 
 
+robot(
+	bEmStop := NOT Safety.TS_I_Safety_EStopOK,
+	Ts:=Ts,
+	fVelInput:=fVelInput,//u
+	fPosInput := fPosInput,
+	fJointPositionOffset := Parameters.fJointPositionOffset,
+	fJointCalibrationOffset := Parameters.fJointCalibrationOffset
+);
+//IF NOT Safety.TS_I_Safety_EStopOK THEN
+//	robot(
+//		Ts:=Ts,
+//		eRobotModeCmd := E_RobotMode.EStop,
+//		fJointPositionOffset := Parameters.fJointPositionOffset,
+//		fJointCalibrationOffset := Parameters.fJointCalibrationOffset
+//	);
+//ELSE
+//	robot(
+//		Ts:=Ts,
+//		fVelInput:=fVelInput,//u
+//		fPosInput := fPosInput,
+//		fJointPositionOffset := Parameters.fJointPositionOffset,
+//		fJointCalibrationOffset := Parameters.fJointCalibrationOffset
+//	);
+//END_IF	
 
-IF NOT Safety.TS_I_Safety_EStopOK THEN
-	robot(
-		Ts:=Ts,
-		eRobotModeCmd := E_RobotMode.EStop,
-		fVelInput:=fVelInput,
-		fPosInput := fPosInput,
-		fJointPositionOffset := Parameters.fJointPositionOffset,
-		fJointCalibrationOffset := Parameters.fJointCalibrationOffset
-	);
+//ELSIF bVelocityMode AND NOT bPositionMode AND NOT bStop THEN
+//	// Debug
+//	t := t + Ts;
 	
-ELSIF bVelocityMode AND NOT bPositionMode AND NOT bStop THEN
-	// Debug
-	t := t + Ts;
+//	A[0] := 5.0;
+//	TT[0]:= 2;
+//	q_Offset[0] := 0;
 	
-	A[0] := 5.0;
-	TT[0]:= 2;
-	q_Offset[0] := 0;
-	
-	A[1] := 5.0;
-	TT[1]:= 2;
-	q_Offset[1] := 60;
+//	A[1] := 5.0;
+//	TT[1]:= 2;
+//	q_Offset[1] := 60;
 	
 
-	A[2] := 10.0;
-	TT[2]:= 2;
-	q_Offset[2] := 45;
-	phi_Offset[2] := 90;
+//	A[2] := 10.0;
+//	TT[2]:= 2;
+//	q_Offset[2] := 45;
+//	phi_Offset[2] := 90;
 	
-	FOR j:= 0 TO 2 DO
+//	FOR j:= 0 TO 2 DO
 
-//		w[j] := 2.0*PI/TT[j];
-//		y[j] := A[j]*SIN(w[j]*t + phi_Offset[j]*PI/180) + q_Offset[j];//start at the angle of 45 degree
-//		y_t[j] := A[j]*w[j]*COS(w[j]*t + phi_Offset[j]*PI/180);
-//		u[j] := Kp*(y[j] - robot.q[j]) + y_t[j];	
+////		w[j] := 2.0*PI/TT[j];
+////		y[j] := A[j]*SIN(w[j]*t + phi_Offset[j]*PI/180) + q_Offset[j];//start at the angle of 45 degree
+////		y_t[j] := A[j]*w[j]*COS(w[j]*t + phi_Offset[j]*PI/180);
+////		u[j] := Kp*(y[j] - robot.q[j]) + y_t[j];	
 		
-//		q_t_DEG[j] := q_t[j]*180/PI;
-//		q_DEG[j] := q[j]*180/PI;
+////		q_t_DEG[j] := q_t[j]*180/PI;
+////		q_DEG[j] := q[j]*180/PI;
 		
 		
-		u[j] := Kp*(fPosInput[j] - robot.q[j]) + q_t_DEG[j];
+//		u[j] := Kp*(fPosInput[j] - robot.q[j]) + q_t_DEG[j];
 		 
 		
-	END_FOR
+//	END_FOR
 	
 	
-	// velocity control
-	robot(
-		Ts:=Ts,
-		eRobotModeCmd := E_RobotMode.VELOCITY,
-		fVelInput:=fVelInput,//u
-		fJointPositionOffset := Parameters.fJointPositionOffset,
-		fJointCalibrationOffset := Parameters.fJointCalibrationOffset
-	);
-ELSIF NOT bVelocityMode AND bPositionMode AND NOT bStop THEN
-	robot(
-		Ts:=Ts,
-		eRobotModeCmd := E_RobotMode.POSITION,
-		fVelInput:=fVelInput,
-		fPosInput := fPosInput,
-		fJointPositionOffset := Parameters.fJointPositionOffset,
-		fJointCalibrationOffset := Parameters.fJointCalibrationOffset
-	);
-ELSE 
-	robot(
-		Ts:=Ts,
-		eRobotModeCmd := E_RobotMode.STOP,
-		fVelInput:=fVelInput,
-		fPosInput := fPosInput,
-		fJointPositionOffset := Parameters.fJointPositionOffset,
-		fJointCalibrationOffset := Parameters.fJointCalibrationOffset
-	);
-END_IF
+//	// velocity control
+//	robot(
+//		Ts:=Ts,
+//		eRobotModeCmd := E_RobotMode.VELOCITY,
+//		fVelInput:=fVelInput,//u
+//		fJointPositionOffset := Parameters.fJointPositionOffset,
+//		fJointCalibrationOffset := Parameters.fJointCalibrationOffset
+//	);
+//ELSIF NOT bVelocityMode AND bPositionMode AND NOT bStop THEN
+//	robot(
+//		Ts:=Ts,
+//		eRobotModeCmd := E_RobotMode.POSITION,
+//		fVelInput:=fVelInput,
+//		fPosInput := fPosInput,
+//		fJointPositionOffset := Parameters.fJointPositionOffset,
+//		fJointCalibrationOffset := Parameters.fJointCalibrationOffset
+//	);
+//ELSE 
+//	robot(
+//		Ts:=Ts,
+//		eRobotModeCmd := E_RobotMode.STOP,
+//		fVelInput:=fVelInput,
+//		fPosInput := fPosInput,
+//		fJointPositionOffset := Parameters.fJointPositionOffset,
+//		fJointCalibrationOffset := Parameters.fJointCalibrationOffset
+//	);
+//END_IF
+
+
 
 cumulativeAngle := 0.0;
 FOR j := 0 TO 2 DO
@@ -234,6 +251,7 @@ END_IF
       <LineId Id="811" Count="0" />
       <LineId Id="810" Count="0" />
       <LineId Id="807" Count="0" />
+      <LineId Id="892" Count="0" />
       <LineId Id="659" Count="0" />
       <LineId Id="249" Count="0" />
       <LineId Id="317" Count="0" />
@@ -242,57 +260,20 @@ END_IF
       <LineId Id="280" Count="0" />
       <LineId Id="576" Count="1" />
       <LineId Id="587" Count="1" />
+      <LineId Id="1056" Count="0" />
+      <LineId Id="1068" Count="0" />
+      <LineId Id="1057" Count="4" />
       <LineId Id="229" Count="0" />
       <LineId Id="232" Count="0" />
       <LineId Id="295" Count="2" />
-      <LineId Id="320" Count="0" />
-      <LineId Id="343" Count="0" />
       <LineId Id="727" Count="1" />
       <LineId Id="292" Count="0" />
       <LineId Id="375" Count="0" />
-      <LineId Id="293" Count="0" />
-      <LineId Id="409" Count="0" />
-      <LineId Id="412" Count="0" />
-      <LineId Id="418" Count="0" />
-      <LineId Id="504" Count="1" />
-      <LineId Id="502" Count="1" />
-      <LineId Id="500" Count="1" />
-      <LineId Id="499" Count="0" />
-      <LineId Id="506" Count="0" />
-      <LineId Id="423" Count="0" />
-      <LineId Id="410" Count="0" />
-      <LineId Id="497" Count="0" />
-      <LineId Id="466" Count="0" />
-      <LineId Id="498" Count="0" />
-      <LineId Id="508" Count="0" />
-      <LineId Id="470" Count="0" />
-      <LineId Id="494" Count="2" />
-      <LineId Id="491" Count="0" />
-      <LineId Id="484" Count="0" />
-      <LineId Id="489" Count="1" />
-      <LineId Id="591" Count="0" />
-      <LineId Id="596" Count="0" />
-      <LineId Id="599" Count="0" />
-      <LineId Id="573" Count="0" />
-      <LineId Id="595" Count="0" />
-      <LineId Id="572" Count="0" />
-      <LineId Id="469" Count="0" />
-      <LineId Id="467" Count="1" />
-      <LineId Id="231" Count="0" />
-      <LineId Id="234" Count="0" />
-      <LineId Id="288" Count="0" />
-      <LineId Id="235" Count="0" />
-      <LineId Id="321" Count="0" />
-      <LineId Id="724" Count="1" />
-      <LineId Id="237" Count="0" />
-      <LineId Id="352" Count="0" />
-      <LineId Id="354" Count="4" />
-      <LineId Id="719" Count="1" />
-      <LineId Id="353" Count="0" />
-      <LineId Id="360" Count="5" />
-      <LineId Id="722" Count="1" />
-      <LineId Id="359" Count="0" />
-      <LineId Id="233" Count="0" />
+      <LineId Id="1062" Count="5" />
+      <LineId Id="990" Count="0" />
+      <LineId Id="912" Count="0" />
+      <LineId Id="905" Count="0" />
+      <LineId Id="991" Count="63" />
       <LineId Id="734" Count="0" />
       <LineId Id="729" Count="0" />
       <LineId Id="744" Count="0" />

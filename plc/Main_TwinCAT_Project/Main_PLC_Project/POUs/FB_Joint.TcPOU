@@ -5,22 +5,26 @@
 VAR_INPUT
 	bReset : BOOL;
 	bEnable : BOOL;//e-stop can use this
-	bStop : BOOL;//soft stop
-	
-	//type of control
-	bVelocityMode : BOOL;
-	bPositionMode : BOOL;
+	eRobotMode : E_RobotMode;
+
+
 	bPositionModeExecute : BOOL;
 
+	
 	fGearRatio : LREAL := 1.0;
+	fTorqueScaling : LREAL := 1.0;
 	
 	qRef : LREAL;
 	qRef_t : LREAL;
 	qRef_tt : LREAL;
 	
+	fShaftTorqueRef : LREAL; //initialize with holding torque??
+	
 	fOffset : LREAL;
 END_VAR
 VAR_OUTPUT
+	// eRobotMode : E_RobotMode;
+
 	bActive : BOOL;
 	bAxisStopped :BOOL;
 	
@@ -55,21 +59,21 @@ VAR
 	
 
 	
-	//read actual torque feedback
-	fbSoEReadTorqueFeedback : FB_SoERead;
-	fbSoEReadChannelPeakTorque : FB_SoERead;
-	bReadTorqueFeedback    : BOOL := TRUE;
-	bReadChannelPeakTorque : BOOL := TRUE;
-	nIdnTorqueFeedback     : WORD := S_0_IDNs + 84;
-	nIdnChannelPeakTorque  : WORD := P_0_IDNs + 94;
-	nReadTorqueFeedback : INT; //Torque/force feedback value S-0-0084  per thousand; one-tenth of a per cent (‰)   //16bit and 1 decimal point
-	nReadChannelPeakTorque : UDINT; //IDN P-0-0094 (Configured channel peak torque) in Nm           //32bit and 2 decimal points
+//	//read actual torque feedback
+//	fbSoEReadTorqueFeedback : FB_SoERead;
+//	fbSoEReadChannelPeakTorque : FB_SoERead;
+//	bReadTorqueFeedback    : BOOL := TRUE;
+//	bReadChannelPeakTorque : BOOL := TRUE;
+//	nIdnTorqueFeedback     : WORD := S_0_IDNs + 84;
+//	nIdnChannelPeakTorque  : WORD := P_0_IDNs + 94;
+//	nReadTorqueFeedback : INT; //Torque/force feedback value S-0-0084  per thousand; one-tenth of a per cent (‰)   //16bit and 1 decimal point
+//	nReadChannelPeakTorque : UDINT; //IDN P-0-0094 (Configured channel peak torque) in Nm           //32bit and 2 decimal points
 	
-	fActTorque : LREAL := 0.0;
+//	fActTorque : LREAL := 0.0;
 	
 	
 
-	fbTorqueControl : FB_TorqueController;
+	fbTorqueControl : FB_TorqueController(fTorqueScaling := fTorqueScaling, fGearRatio := fGearRatio);
 	
 	
 		
@@ -85,89 +89,47 @@ IF NOT(fbReadParameterSet.Busy OR fbReadParameterSet.Error) THEN
 	bReadParameterSet := FALSE;
 END_IF
 
-//IF bReadParameterSet AND NOT fbReadParameterSet.Busy THEN
-//	fbReadParameterSet(
-//		Axis := axis,
-//		Parameter := stAxisParameterSet,
-//		Execute := TRUE
-//	);
-//	bReadParameterSet := FALSE;
-//ELSE
-//	fbReadParameterSet(
-//		Axis := axis,
-//		Parameter := stAxisParameterSet,
-//		Execute := FALSE
-//	);
-	
-//END_IF
-
-
+bAxisStopped := (
+	axis.Status.NotMoving 
+	AND ((eRobotMode = E_RobotMode.STOP) OR (eRobotMode = E_RobotMode.ESTOP))
+	AND NOT(fbExtSetPointGenEnable.Enabled)
+);
 
 // Power and reset logic
 fbPower(
 	Axis := axis,
-	Enable := (bEnable AND NOT bReset AND NOT bAxisStopped),
-	Enable_Positive := (bEnable AND NOT bReset AND NOT bAxisStopped),
-	Enable_Negative := (bEnable AND NOT bReset AND NOT bAxisStopped)
+	Enable := (bEnable AND NOT bAxisStopped),
+	Enable_Positive := (bEnable AND NOT bAxisStopped),
+	Enable_Negative := (bEnable AND NOT bAxisStopped)
 );
 
-IF bReset THEN
-	fbReset(
-		Execute:=TRUE,
-		Axis:=axis
-	);
-	bEnable := FALSE;
-ELSE
-	fbReset(
-		Execute:=FALSE,
-		Axis:=axis
-	);
-END_IF
+fbReset(
+	Execute := (bReset AND bAxisStopped),
+	Axis := axis
+);
 
-//soft stop
-IF NOT fbExtSetPointGenEnable.Enabled THEN //motion comands are not allowed for external setpoint generated axis
-	fbStop(Axis := axis,
-			Execute:= bStop,
-			Deceleration := fDeceleration,
-			Jerk := fJerk
-			);
-END_IF
-
-IF bStop AND axis.Status.NotMoving AND NOT fbExtSetPointGenEnable.Enabled THEN
-	bAxisStopped := TRUE;	
-ELSE
-	bAxisStopped := FALSE;		
-END_IF
-
-
-
+//you can't execute fbstop when fbExtSetPointGenEnable.Enabled ----> motion comands are not allowed for external setpoint generated axis
+fbStop(
+	Axis := axis,
+	Execute := NOT(fbExtSetPointGenEnable.Enabled) AND (eRobotMode = E_RobotMode.STOP),
+	Deceleration := fDeceleration,
+	Jerk := fJerk
+);
 
 // Read power status
 bActive := fbPower.Status;
 
 //velocity control
-IF NOT bStop AND bActive AND bVelocityMode AND NOT bPositionMode THEN
-	// Enable external setpoint when on
-	fbExtSetPointGenDisable(
-		Axis := axis,
-		Execute := FALSE);
-	
-	fbExtSetPointGenEnable(
-		Axis := axis,
-		Execute := TRUE);
-			
-ELSE
-	
-	fbExtSetPointGenDisable(
-		Axis := axis,
-		Execute := TRUE);
-	
-	fbExtSetPointGenEnable(
-		Axis := axis,
-		Execute := FALSE);		
-	
-END_IF
+// Enable external setpoint when on
+fbExtSetPointGenDisable(
+	Axis := axis,
+	Execute := (eRobotMode <> E_RobotMode.VELOCITY) OR NOT(bActive)
+);
 
+fbExtSetPointGenEnable(
+	Axis := axis,
+	Execute := (eRobotMode = E_RobotMode.VELOCITY) AND bActive
+);
 
 IF bActive AND fbExtSetPointGenEnable.Enabled THEN		
 	//Feed extrernal setpoints to axis interface
@@ -182,72 +144,27 @@ END_IF
 
 
 //position control
-IF NOT bStop AND bActive AND NOT bVelocityMode AND  bPositionMode THEN
-	fbAxisMoveAbsolute(
-		Axis := axis,
-		Execute :=bPositionModeExecute,
-		Position := (fOffset - qRef), // (qRef - fOffset),
-		Velocity := qRef_t,
-		BufferMode := MC_BufferMode.MC_Aborting
-		
-	);
-	
-		
-END_IF
+fbAxisMoveAbsolute(
+	Axis := axis,
+	Execute := bPositionModeExecute AND (eRobotMode = E_RobotMode.POSITION) AND bActive,
+	Position := (fOffset - qRef), // (qRef - fOffset),
+	Velocity := qRef_t,
+	BufferMode := MC_BufferMode.MC_Aborting
+);
+
 
 
 // Update axis data
 axis();
+fbTorqueControl.readFeedback(); 
 
-
-// read actual torque feedback----------------------------------------------
-
-IF bReadTorqueFeedback THEN
-    fbSoEReadTorqueFeedback(
-        Axis    := Axis,
-        Idn     := nIdnTorqueFeedback,
-        Element := 16#40,
-        pDstBuf := ADR(nReadTorqueFeedback),
-        BufLen  := SIZEOF(nReadTorqueFeedback),
-        Execute := TRUE,
-        Timeout := DEFAULT_ADS_TIMEOUT,
-    );
-    IF NOT fbSoEReadTorqueFeedback.Busy THEN
-        fbSoEReadTorqueFeedback(Axis := axis, Execute := FALSE);
-//        bReadTorqueFeedback := FALSE;
-    END_IF
-END_IF
-
-IF bReadChannelPeakTorque THEN
-    fbSoEReadChannelPeakTorque(
-        Axis    := Axis,
-        Idn     := nIdnChannelPeakTorque,
-        Element := 16#40,
-        pDstBuf := ADR(nReadChannelPeakTorque),
-        BufLen  := SIZEOF(nReadChannelPeakTorque),
-        Execute := TRUE,
-        Timeout := DEFAULT_ADS_TIMEOUT,
-    );
-    IF NOT fbSoEReadChannelPeakTorque.Busy THEN
-        fbSoEReadChannelPeakTorque(Axis := axis, Execute := FALSE);
-        bReadChannelPeakTorque := FALSE;
-    END_IF
-END_IF
-
-fActTorque := ((INT_TO_LREAL(nReadTorqueFeedback)/10)/100)*(UDINT_TO_LREAL(nReadChannelPeakTorque)/100)*fGearRatio;
-
-//////----------------------------------------------------------------------------------
 
 
 //-----------------torque control
-fbTorqueControl(Axis:=axis,fGearRatio := fGearRatio);
-
-//-----------------
-
-
-
-
-
+fbTorqueControl(Axis := axis,
+				bEnable := bActive AND (eRobotMode = E_RobotMode.TORQUE),
+				fShaftTorqueCmdNm := fShaftTorqueRef
+			);
 
 
 
@@ -255,8 +172,8 @@ fbTorqueControl(Axis:=axis,fGearRatio := fGearRatio);
 
 q := -axis.NcToPlc.ActPos + fOffset;
 q_t := -axis.NcToPlc.ActVelo;
-//tau := axis.NcToPlc.ActTorque;
-tau := -fActTorque;
+tau := - fbTorqueControl.fShaftTorqueFbkNm;
+
 
 
 
@@ -287,7 +204,7 @@ END_IF]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="FB_Joint">
-      <LineId Id="1472" Count="184" />
+      <LineId Id="1854" Count="97" />
       <LineId Id="76" Count="0" />
     </LineIds>
     <LineIds Name="FB_Joint.getDirection">

@@ -2,15 +2,16 @@
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <DUT Name="E_RobotMode" Id="{db494ded-5119-4829-9668-a22c486cb433}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
-{attribute 'strict'}
-TYPE E_RobotMode :
+//{attribute 'strict'}
+TYPE E_RobotMode : 
 (
-	ESTOP := 0,
+	NONE := 0,
+	ESTOP,
 	STOP,
 	POSITION,
 	VELOCITY,
 	TORQUE
-);
+)INT;
 END_TYPE
 ]]></Declaration>
   </DUT>

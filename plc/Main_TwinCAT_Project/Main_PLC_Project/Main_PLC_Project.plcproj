@@ -18,6 +18,9 @@
     <LibraryReferences>{3e5f0f04-1d4f-448b-abd9-b835cdbc09be}</LibraryReferences>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DUTs\E_RobotMode.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\ST_FilterParams.TcDUT">
       <SubType>Code</SubType>
     </Compile>
@@ -32,7 +35,15 @@
       <SubType>Code</SubType>
       <LinkAlways>true</LinkAlways>
     </Compile>
+    <Compile Include="GVLs\HmiToPlc.TcGVL">
+      <SubType>Code</SubType>
+      <LinkAlways>true</LinkAlways>
+    </Compile>
     <Compile Include="GVLs\Parameters.TcGVL">
+      <SubType>Code</SubType>
+      <LinkAlways>true</LinkAlways>
+    </Compile>
+    <Compile Include="GVLs\PlcToHmi.TcGVL">
       <SubType>Code</SubType>
       <LinkAlways>true</LinkAlways>
     </Compile>
@@ -83,9 +94,6 @@
     <Compile Include="PlcTask.TcTTO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\E_RobotMode.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="POUs\FB_Joint.TcPOU">
       <SubType>Code</SubType>
     </Compile>
@@ -105,6 +113,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\MAIN.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\P_HMI.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\RescaleRange.TcPOU">
@@ -160,7 +171,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <SubObject Include="FB_TorqueController.ReadFeedback" />
+    <SubObject Include="FB_TorqueController.readFeedback" />
   </ItemGroup>
   <ItemGroup>
     <PlaceholderResolution Include="Tc2_MC2">

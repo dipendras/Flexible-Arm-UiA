@@ -16,4 +16,4 @@ def main():
 # Application startup
 if __name__ == '__main__':
   
-    main()
+    main(),
