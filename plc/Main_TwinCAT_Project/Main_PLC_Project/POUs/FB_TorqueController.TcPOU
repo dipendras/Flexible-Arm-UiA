@@ -9,9 +9,9 @@ VAR_INPUT
 	fVelocityLimitHigh: LREAL:= 100; // [mm/s]
 	fVelocityLimitLow: LREAL:= 0; // [mm/s]
 	fTorqueRamp: LREAL:= 10.0; // // [%/s] 
-	fGearRatio: LREAL := 1.0;
+	fGearRatio: LREAL := 1000;
 	bStop: BOOL;
-	bRelative: BOOL:= FALSE;
+	bRelative: BOOL:= TRUE;
 END_VAR
 VAR_IN_OUT
 	Axis: AXIS_REF;
@@ -70,11 +70,22 @@ VAR
 	fbMcPower : MC_POWER;
 	
 	eState: UDINT;
+	
+	
+	//read  and write drive operation mode
+	fbMC_ReadDriveOperationMode : MC_ReadDriveOperationMode;
+	fbMC_WriteDriveOperationMode : MC_WriteDriveOperationMode;
+	bReadDriveOperationMode : BOOL := FALSE;
+	bWriteDriveOperationMode : BOOL := TRUE;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[// Don't Read torque feedback
 // readFeedback();
+
+
+
+
 
 fTorqueCmdNm := fShaftTorqueCmdNm/fGearRatio;
 
@@ -108,29 +119,46 @@ fbTorque(
 );
 
 
+
 // Torque setpoints (% and NM)
 fSetTorquePerc:= Axis.NcToPlc.SetTorque;
 fSetTorqueNm:= RescaleRange(fSetTorquePerc, -100, 100, -fTorqueScaling, fTorqueScaling);
 fShaftSetTorqueNm := fSetTorqueNm*fGearRatio;
 
-]]></ST>
+
+
+IF bEnable THEN
+	bReadDriveOperationMode := TRUE;
+	bWriteDriveOperationMode := FALSE;
+ELSE
+	bReadDriveOperationMode := FALSE;
+	bWriteDriveOperationMode := TRUE;	
+END_IF
+
+
+
+fbMC_ReadDriveOperationMode(
+		Axis := axis,
+		Execute := bReadDriveOperationMode AND NOT bEnable
+);
+
+
+IF NOT(fbMC_ReadDriveOperationMode.Busy OR fbMC_ReadDriveOperationMode.Error) THEN
+	bReadDriveOperationMode := FALSE;
+END_IF
+
+IF fbMC_ReadDriveOperationMode.DriveOperationMode <> E_DriveOperationMode.DriveOperationMode_Velo1 THEN
+	fbMC_WriteDriveOperationMode(
+		Axis := axis,
+		Execute := bWriteDriveOperationMode AND NOT bEnable,
+		DriveOperationMode := E_DriveOperationMode.DriveOperationMode_Velo1
+);
+END_IF
+
+IF NOT(fbMC_WriteDriveOperationMode.Busy OR fbMC_WriteDriveOperationMode.Error) THEN
+	bWriteDriveOperationMode := FALSE;
+END_IF]]></ST>
     </Implementation>
-    <Method Name="FB_init" Id="{91044a41-766b-4c9c-b1e8-484f09ed5961}">
-      <Declaration><![CDATA[METHOD FB_init : BOOL
-VAR_INPUT
-	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
-	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
-	
-	fTorqueScaling : LREAL;
- 	fGearRatio : LREAL;
-	
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[fTorqueScaling := fTorqueScaling; 
-fGearRatio := fGearRatio;]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="readFeedback" Id="{3d3db19b-15f7-430b-8473-dd60671defc5}">
       <Declaration><![CDATA[METHOD readFeedback : BOOL
 VAR_INPUT
@@ -152,13 +180,38 @@ fShaftTorqueFbkNm:= fTorqueFbkNmFiltered * fGearRatio;]]></ST>
     </Method>
     <LineIds Name="FB_TorqueController">
       <LineId Id="3" Count="1" />
+      <LineId Id="200" Count="0" />
+      <LineId Id="197" Count="2" />
       <LineId Id="111" Count="0" />
       <LineId Id="110" Count="0" />
-      <LineId Id="5" Count="35" />
+      <LineId Id="5" Count="28" />
+      <LineId Id="201" Count="0" />
+      <LineId Id="208" Count="0" />
+      <LineId Id="196" Count="0" />
+      <LineId Id="36" Count="3" />
+      <LineId Id="209" Count="0" />
+      <LineId Id="225" Count="0" />
+      <LineId Id="224" Count="0" />
+      <LineId Id="249" Count="0" />
+      <LineId Id="257" Count="0" />
+      <LineId Id="272" Count="0" />
+      <LineId Id="274" Count="1" />
+      <LineId Id="277" Count="0" />
+      <LineId Id="258" Count="0" />
+      <LineId Id="245" Count="1" />
+      <LineId Id="253" Count="2" />
+      <LineId Id="237" Count="0" />
+      <LineId Id="256" Count="0" />
+      <LineId Id="262" Count="0" />
+      <LineId Id="259" Count="2" />
+      <LineId Id="240" Count="0" />
+      <LineId Id="236" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="266" Count="3" />
+      <LineId Id="264" Count="1" />
+      <LineId Id="243" Count="0" />
+      <LineId Id="270" Count="1" />
       <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TorqueController.FB_init">
-      <LineId Id="7" Count="1" />
     </LineIds>
     <LineIds Name="FB_TorqueController.readFeedback">
       <LineId Id="3" Count="4" />

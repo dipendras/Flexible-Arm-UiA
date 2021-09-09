@@ -31,6 +31,7 @@ VAR
 	qRef_t : ARRAY [0..2] OF LREAL;
 	qRef_tt : ARRAY [0..2] OF LREAL;
 	
+	fShaftTorqueRef : ARRAY [0..2] OF LREAL;
 
 	i : USINT;
 	j : USINT;
@@ -39,6 +40,15 @@ VAR
 		
 	//Velcity of last timestamp
 	fVelInputOld : ARRAY [0..2] OF LREAL;
+	
+	
+	//Torque oontrol
+	Kp : LREAL := 0.1;
+	Kd : LREAL := 0.1;
+	fGravityTorque : ARRAY [0..2] OF LREAL := [0, 0, 0];
+	
+	
+
 
 END_VAR
 ]]></Declaration>
@@ -50,15 +60,19 @@ END_IF
 IF eRobotModeCmd <> E_RobotMode.NONE THEN
 	CASE eRobotModeCmd OF
 		 E_RobotMode.STOP:
+		 	
+			
 		 	eRobotMode := E_RobotMode.STOP;
 			
 		 E_RobotMode.ESTOP:
 		 	eRobotMode := E_RobotMode.ESTOP;
 		 
-		 E_RobotMode.POSITION:	
+		 E_RobotMode.POSITION:
+				
 		 	eRobotMode := E_RobotMode.POSITION;
 		 
 		 E_RobotMode.VELOCITY:
+		 	
 		 	eRobotMode := E_RobotMode.VELOCITY;
 			
 		E_RobotMode.TORQUE:
@@ -69,7 +83,6 @@ END_IF
 eRobotModeCmd := E_RobotMode.NONE;
 
 IF bReset AND NOT(bEmStop)  THEN
-//	bEnableAll := FALSE;
 	eRobotMode := E_RobotMode.STOP;
 END_IF
 
@@ -95,6 +108,8 @@ IF(eRobotMode = E_RobotMode.POSITION) THEN
 // velocity mode
 ELSIF(eRobotMode = E_RobotMode.VELOCITY) THEN
 	velocityMode();
+ELSIF(eRobotMode = E_RobotMode.TORQUE) THEN
+	torqueMode();
 END_IF
 
 
@@ -108,9 +123,11 @@ FOR j:= 0 TO 2 DO
 		eRobotMode := eRobotMode,
 		bPositionModeExecute := bPositionModeExecute,
 		fGearRatio := CONSTANTS.GEAR_RATIO[j],
+		fTorqueScaling := CONSTANTS.TORQUE_SCALING[J],
 		qRef:=qRef[j],
 		qRef_t := qRef_t[j],
 		qRef_tt:=qRef_tt[j],
+		fShaftTorqueRef  := fShaftTorqueRef[j],
 		fOffset := fJointPositionOffset[j] + fJointCalibrationOffset[j]
 	);
 
@@ -143,6 +160,25 @@ FOR i:= 0 TO 2 DO
 END_FOR]]></ST>
       </Implementation>
     </Method>
+    <Method Name="torqueMode" Id="{917d5002-9927-47e3-af29-77ce3af9dfae}">
+      <Declaration><![CDATA[METHOD torqueMode : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[ 
+
+
+FOR i:= 0 TO 2 DO
+	IF joints[i].bActive THEN		
+		// get input position from HMI
+		qRef[i] := fPosInput[i];		
+		fShaftTorqueRef[i] := Kp*(qRef[i] - joints[i].q)* CONSTANTS.DEG_TO_RAD + Kd*(0.0 - joints[i].q_t)*CONSTANTS.DEG_TO_RAD + fGravityTorque[i]; //add gravity torque here 
+		
+	END_IF	
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="velocityMode" Id="{125ad195-c68c-497a-bc79-95830c09961a}">
       <Declaration><![CDATA[METHOD PRIVATE velocityMode : BOOL
 VAR_INPUT
@@ -172,19 +208,30 @@ END_FOR]]></ST>
     </Method>
     <LineIds Name="FB_Robot3R">
       <LineId Id="983" Count="6" />
+      <LineId Id="1137" Count="0" />
+      <LineId Id="1139" Count="0" />
       <LineId Id="993" Count="2" />
       <LineId Id="999" Count="2" />
+      <LineId Id="1131" Count="0" />
       <LineId Id="1004" Count="2" />
+      <LineId Id="1132" Count="0" />
       <LineId Id="1010" Count="2" />
       <LineId Id="1015" Count="1" />
-      <LineId Id="1018" Count="14" />
+      <LineId Id="1018" Count="4" />
+      <LineId Id="1024" Count="8" />
       <LineId Id="1034" Count="4" />
       <LineId Id="1077" Count="0" />
       <LineId Id="1039" Count="0" />
       <LineId Id="1041" Count="0" />
-      <LineId Id="1043" Count="17" />
+      <LineId Id="1043" Count="7" />
+      <LineId Id="1123" Count="1" />
+      <LineId Id="1051" Count="9" />
       <LineId Id="1080" Count="0" />
-      <LineId Id="1061" Count="15" />
+      <LineId Id="1061" Count="1" />
+      <LineId Id="1140" Count="0" />
+      <LineId Id="1063" Count="2" />
+      <LineId Id="1121" Count="0" />
+      <LineId Id="1066" Count="10" />
       <LineId Id="42" Count="0" />
     </LineIds>
     <LineIds Name="FB_Robot3R.positionMode">
@@ -192,6 +239,13 @@ END_FOR]]></ST>
       <LineId Id="10" Count="3" />
       <LineId Id="23" Count="0" />
       <LineId Id="21" Count="1" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Robot3R.torqueMode">
+      <LineId Id="15" Count="2" />
+      <LineId Id="6" Count="3" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="11" Count="1" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_Robot3R.velocityMode">

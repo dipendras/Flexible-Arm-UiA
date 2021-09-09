@@ -11,14 +11,14 @@ VAR_INPUT
 	bPositionModeExecute : BOOL;
 
 	
-	fGearRatio : LREAL := 1.0;
+	fGearRatio : LREAL := 1000.0;
 	fTorqueScaling : LREAL := 1.0;
 	
 	qRef : LREAL;
 	qRef_t : LREAL;
 	qRef_tt : LREAL;
 	
-	fShaftTorqueRef : LREAL; //initialize with holding torque??
+	fShaftTorqueRef : LREAL; //Nm initialize with holding torque??
 	
 	fOffset : LREAL;
 END_VAR
@@ -57,24 +57,11 @@ VAR
 	//move to position
 	fbAxisMoveAbsolute : MC_MoveAbsolute;
 	
-
-	
-//	//read actual torque feedback
-//	fbSoEReadTorqueFeedback : FB_SoERead;
-//	fbSoEReadChannelPeakTorque : FB_SoERead;
-//	bReadTorqueFeedback    : BOOL := TRUE;
-//	bReadChannelPeakTorque : BOOL := TRUE;
-//	nIdnTorqueFeedback     : WORD := S_0_IDNs + 84;
-//	nIdnChannelPeakTorque  : WORD := P_0_IDNs + 94;
-//	nReadTorqueFeedback : INT; //Torque/force feedback value S-0-0084  per thousand; one-tenth of a per cent (‰)   //16bit and 1 decimal point
-//	nReadChannelPeakTorque : UDINT; //IDN P-0-0094 (Configured channel peak torque) in Nm           //32bit and 2 decimal points
-	
-//	fActTorque : LREAL := 0.0;
-	
 	
 
-	fbTorqueControl : FB_TorqueController(fTorqueScaling := fTorqueScaling, fGearRatio := fGearRatio);
+	fbTorqueControl : FB_TorqueController;
 	
+
 	
 		
 END_VAR
@@ -90,7 +77,8 @@ IF NOT(fbReadParameterSet.Busy OR fbReadParameterSet.Error) THEN
 END_IF
 
 bAxisStopped := (
-	axis.Status.NotMoving 
+	axis.Status.NotMoving  
+	AND NOT axis.Status.HasJob //this is necessary to avoid error while stopping when torque control mode is on
 	AND ((eRobotMode = E_RobotMode.STOP) OR (eRobotMode = E_RobotMode.ESTOP))
 	AND NOT(fbExtSetPointGenEnable.Enabled)
 );
@@ -104,7 +92,7 @@ fbPower(
 );
 
 fbReset(
-	Execute := (bReset AND bAxisStopped),
+	Execute := bReset AND (bAxisStopped OR (eRobotMode = E_RobotMode.ESTOP)), //brest must also be set from fbrobot 
 	Axis := axis
 );
 
@@ -163,7 +151,9 @@ fbTorqueControl.readFeedback();
 //-----------------torque control
 fbTorqueControl(Axis := axis,
 				bEnable := bActive AND (eRobotMode = E_RobotMode.TORQUE),
-				fShaftTorqueCmdNm := fShaftTorqueRef
+				fShaftTorqueCmdNm := -fShaftTorqueRef, //negative sign is to change the direction
+				fTorqueScaling := fTorqueScaling,
+				fGearRatio := fGearRatio
 			);
 
 
@@ -204,7 +194,14 @@ END_IF]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="FB_Joint">
-      <LineId Id="1854" Count="97" />
+      <LineId Id="1854" Count="10" />
+      <LineId Id="2033" Count="0" />
+      <LineId Id="2032" Count="0" />
+      <LineId Id="1866" Count="71" />
+      <LineId Id="2029" Count="1" />
+      <LineId Id="1938" Count="0" />
+      <LineId Id="2037" Count="1" />
+      <LineId Id="1941" Count="10" />
       <LineId Id="76" Count="0" />
     </LineIds>
     <LineIds Name="FB_Joint.getDirection">

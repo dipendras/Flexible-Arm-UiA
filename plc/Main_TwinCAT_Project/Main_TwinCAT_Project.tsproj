@@ -2626,18 +2626,6 @@ External Setpoint Generation:
 							<Type>LREAL</Type>
 						</Var>
 						<Var>
-							<Name>Safety.TS_Q_Safety_GroupPort_ErrAck</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>Safety.TS_Q_Safety_EStopRestart</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>Safety.TS_Q_Safety_GroupPort_RunStop</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
 							<Name>MAIN.Vt</Name>
 							<Comment><![CDATA[ IK Data]]></Comment>
 							<Type>LREAL</Type>
@@ -2653,6 +2641,18 @@ External Setpoint Generation:
 						<Var>
 							<Name>MAIN.L</Name>
 							<Type GUID="{7F3999D6-1785-057D-88BC-3449B9362C01}">ARRAY [0..2] OF LREAL</Type>
+						</Var>
+						<Var>
+							<Name>Safety.TS_Q_Safety_GroupPort_ErrAck</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>Safety.TS_Q_Safety_EStopRestart</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>Safety.TS_Q_Safety_GroupPort_RunStop</Name>
+							<Type>BOOL</Type>
 						</Var>
 						<Var>
 							<Name>Safety.TS_Q_Safety_Drive_Axis_ErrReset</Name>
@@ -4763,6 +4763,9 @@ External Setpoint Generation:
 								<InitCmd DriveNo="0" IDN="32860" MotorDataLevel="1" DisableMode="0"/>
 								<InitCmd DriveNo="0" IDN="32861" MotorDataLevel="1" DisableMode="0"/>
 								<InitCmd DriveNo="0" IDN="32918" MotorDataLevel="1" DisableMode="0"/>
+								<InitCmd DriveNo="0" IDN="33088" MotorDataLevel="0" DisableMode="0">
+									<RetainData>24002400d2001500ca0002002b9d5b002b9d5b000000000000000000000000002260000000000000</RetainData>
+								</InitCmd>
 								<InitCmd DriveNo="0" IDN="33093" MotorDataLevel="0" DisableMode="0">
 									<RetainData>16001a004665622032362032303139202c2031313a30353a3236</RetainData>
 								</InitCmd>
@@ -4800,6 +4803,7 @@ External Setpoint Generation:
 								<Element option="0" SortOder="0" SubIdx="0">
 									<Index>135</Index>
 									<SubItem>ActualOperationMode</SubItem>
+									<Width>144</Width>
 								</Element>
 								<Element option="1" SortOder="0" SubIdx="0">
 									<Index>33080</Index>
