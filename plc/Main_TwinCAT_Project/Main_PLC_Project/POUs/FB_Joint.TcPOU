@@ -144,7 +144,7 @@ fbAxisMoveAbsolute(
 
 // Update axis data
 axis();
-fbTorqueControl.readFeedback(); 
+
 
 
 
@@ -156,7 +156,7 @@ fbTorqueControl(Axis := axis,
 				fGearRatio := fGearRatio
 			);
 
-
+ fbTorqueControl.readFeedback();
 
 
 

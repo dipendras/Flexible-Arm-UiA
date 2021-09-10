@@ -11,7 +11,7 @@ VAR_INPUT
 	fTorqueRamp: LREAL:= 10.0; // // [%/s] 
 	fGearRatio: LREAL := 1000;
 	bStop: BOOL;
-	bRelative: BOOL:= TRUE;
+	bRelative: BOOL:= FALSE; //it should be false, but DS doesn't know why it was true by default
 END_VAR
 VAR_IN_OUT
 	Axis: AXIS_REF;
@@ -76,12 +76,12 @@ VAR
 	fbMC_ReadDriveOperationMode : MC_ReadDriveOperationMode;
 	fbMC_WriteDriveOperationMode : MC_WriteDriveOperationMode;
 	bReadDriveOperationMode : BOOL := FALSE;
-	bWriteDriveOperationMode : BOOL := TRUE;
+	bWriteDriveOperationMode : BOOL := FALSE;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[// Don't Read torque feedback
-// readFeedback();
+      <ST><![CDATA[// Read torque feedback
+ readFeedback();
 
 
 
@@ -93,7 +93,9 @@ fTorqueCmdNm := fShaftTorqueCmdNm/fGearRatio;
 fTorqueCmdPercent:= RescaleRange(fTorqueCmdNm, -fTorqueScaling, fTorqueScaling, -100, 100);
 // Set falling edge before new setpoint
 IF(fTorqueCmdPercent <> fTorqueCmdPercentOld) AND bEnable THEN
+	
 	fbTorque(Axis:= Axis, Execute:= FALSE);
+	
 END_IF
 // Store current torque as old torque
 fTorqueCmdPercentOld:= fTorqueCmdPercent;	
@@ -128,35 +130,35 @@ fShaftSetTorqueNm := fSetTorqueNm*fGearRatio;
 
 
 IF bEnable THEN
-	bReadDriveOperationMode := TRUE;
+	bReadDriveOperationMode := FALSE;
 	bWriteDriveOperationMode := FALSE;
 ELSE
-	bReadDriveOperationMode := FALSE;
-	bWriteDriveOperationMode := TRUE;	
+	bReadDriveOperationMode := TRUE;//to see if the drive operation mode is in velocity control mode
+	bWriteDriveOperationMode := TRUE;	//to bring it to velocity control if the drive operation mode is not in velocity control mode
 END_IF
 
 
 
 fbMC_ReadDriveOperationMode(
 		Axis := axis,
-		Execute := bReadDriveOperationMode AND NOT bEnable
+		Execute := bReadDriveOperationMode
 );
 
 
-IF NOT(fbMC_ReadDriveOperationMode.Busy OR fbMC_ReadDriveOperationMode.Error) THEN
-	bReadDriveOperationMode := FALSE;
+IF (fbMC_ReadDriveOperationMode.Busy OR fbMC_ReadDriveOperationMode.Error) THEN 
+	bReadDriveOperationMode := FALSE;//attempt once again
 END_IF
 
 IF fbMC_ReadDriveOperationMode.DriveOperationMode <> E_DriveOperationMode.DriveOperationMode_Velo1 THEN
 	fbMC_WriteDriveOperationMode(
 		Axis := axis,
-		Execute := bWriteDriveOperationMode AND NOT bEnable,
+		Execute := bWriteDriveOperationMode,
 		DriveOperationMode := E_DriveOperationMode.DriveOperationMode_Velo1
 );
 END_IF
 
-IF NOT(fbMC_WriteDriveOperationMode.Busy OR fbMC_WriteDriveOperationMode.Error) THEN
-	bWriteDriveOperationMode := FALSE;
+IF (fbMC_WriteDriveOperationMode.Busy OR fbMC_WriteDriveOperationMode.Error) THEN
+	bWriteDriveOperationMode := FALSE;//attempt once again
 END_IF]]></ST>
     </Implementation>
     <Method Name="readFeedback" Id="{3d3db19b-15f7-430b-8473-dd60671defc5}">
@@ -184,7 +186,11 @@ fShaftTorqueFbkNm:= fTorqueFbkNmFiltered * fGearRatio;]]></ST>
       <LineId Id="197" Count="2" />
       <LineId Id="111" Count="0" />
       <LineId Id="110" Count="0" />
-      <LineId Id="5" Count="28" />
+      <LineId Id="5" Count="4" />
+      <LineId Id="357" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="356" Count="0" />
+      <LineId Id="11" Count="22" />
       <LineId Id="201" Count="0" />
       <LineId Id="208" Count="0" />
       <LineId Id="196" Count="0" />

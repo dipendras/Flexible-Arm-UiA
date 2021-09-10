@@ -123,11 +123,11 @@ FOR j:= 0 TO 2 DO
 		eRobotMode := eRobotMode,
 		bPositionModeExecute := bPositionModeExecute,
 		fGearRatio := CONSTANTS.GEAR_RATIO[j],
-		fTorqueScaling := CONSTANTS.TORQUE_SCALING[J],
+		fTorqueScaling := CONSTANTS.TORQUE_SCALING[j],
 		qRef:=qRef[j],
 		qRef_t := qRef_t[j],
 		qRef_tt:=qRef_tt[j],
-		fShaftTorqueRef  := fShaftTorqueRef[j],
+		fShaftTorqueRef  :=  fShaftTorqueRef[j],
 		fOffset := fJointPositionOffset[j] + fJointCalibrationOffset[j]
 	);
 
@@ -161,7 +161,7 @@ END_FOR]]></ST>
       </Implementation>
     </Method>
     <Method Name="torqueMode" Id="{917d5002-9927-47e3-af29-77ce3af9dfae}">
-      <Declaration><![CDATA[METHOD torqueMode : BOOL
+      <Declaration><![CDATA[METHOD PRIVATE torqueMode : BOOL
 VAR_INPUT
 END_VAR
 ]]></Declaration>
