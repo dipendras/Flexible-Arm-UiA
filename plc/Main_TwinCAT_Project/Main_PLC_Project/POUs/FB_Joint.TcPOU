@@ -156,7 +156,7 @@ fbTorqueControl(Axis := axis,
 				fGearRatio := fGearRatio
 			);
 
- fbTorqueControl.readFeedback();
+// fbTorqueControl.readFeedback();
 
 
 

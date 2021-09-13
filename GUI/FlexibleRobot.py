@@ -26,6 +26,7 @@ class E_RobotMode(Enum):
 
 class FlexibleRobot(QtWidgets.QMainWindow, Ui_MainWindow):
   
+  enableModeChangeFromHmi = False;
 
   signal_bEStopOK = QtCore.pyqtSignal(bool)
   signal_bEStopError = QtCore.pyqtSignal(bool)
@@ -184,9 +185,11 @@ class FlexibleRobot(QtWidgets.QMainWindow, Ui_MainWindow):
     if status:
         self.gui.label_RobotStatus.setPixmap(QtGui.QPixmap('led-images/led-green.png').scaled(50, 50, QtCore.Qt.KeepAspectRatio, QtCore.Qt.FastTransformation))
         self.gui.label_RobotStatus.adjustSize()
+        self.enableModeChangeFromHmi = False;
     else: 
         self.gui.label_RobotStatus.setPixmap(QtGui.QPixmap('led-images/led-red.png').scaled(50, 50, QtCore.Qt.KeepAspectRatio, QtCore.Qt.FastTransformation))
-        self.gui.label_RobotStatus.adjustSize() 
+        self.gui.label_RobotStatus.adjustSize()
+        self.enableModeChangeFromHmi = True; 
     
 
 
@@ -195,9 +198,11 @@ class FlexibleRobot(QtWidgets.QMainWindow, Ui_MainWindow):
     if value:
         self.gui.label_RobotStatus.setPixmap(QtGui.QPixmap('led-images/led-green.png').scaled(50, 50, QtCore.Qt.KeepAspectRatio, QtCore.Qt.FastTransformation))
         self.gui.label_RobotStatus.adjustSize()
+        self.enableModeChangeFromHmi = False
     else: 
         self.gui.label_RobotStatus.setPixmap(QtGui.QPixmap('led-images/led-red.png').scaled(50, 50, QtCore.Qt.KeepAspectRatio, QtCore.Qt.FastTransformation))
         self.gui.label_RobotStatus.adjustSize() 
+        self.enableModeChangeFromHmi = True
 
 
 
@@ -307,14 +312,17 @@ class FlexibleRobot(QtWidgets.QMainWindow, Ui_MainWindow):
 
   @QtCore.pyqtSlot()
   def slot_bPositionModeCmd(self):
-    self.plc.write_by_name('HmiToPlc.bPositionMode', True, pyads.PLCTYPE_BOOL)
+    if self.enableModeChangeFromHmi:
+      self.plc.write_by_name('HmiToPlc.bPositionMode', True, pyads.PLCTYPE_BOOL)
 
   @QtCore.pyqtSlot()
   def slot_bVelocityModeCmd(self):
-    self.plc.write_by_name('HmiToPlc.bVelocityMode', True, pyads.PLCTYPE_BOOL)
+    if self.enableModeChangeFromHmi:
+      self.plc.write_by_name('HmiToPlc.bVelocityMode', True, pyads.PLCTYPE_BOOL)
 
   @QtCore.pyqtSlot()
   def slot_bTorqueModeCmd(self):
+    if self.enableModeChangeFromHmi:
       self.plc.write_by_name('HmiToPlc.bTorqueMode', True, pyads.PLCTYPE_BOOL)
 
 
