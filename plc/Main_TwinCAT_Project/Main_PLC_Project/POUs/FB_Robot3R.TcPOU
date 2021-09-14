@@ -30,6 +30,7 @@ VAR
 	qRef : ARRAY [0..2] OF LREAL;
 	qRef_t : ARRAY [0..2] OF LREAL;
 	qRef_tt : ARRAY [0..2] OF LREAL;
+	fShaftAdditiveTorque : ARRAY [0..2] OF LREAL := [0.0, 0.0, 0.0]; // [Nm]
 	
 	fShaftTorqueRef : ARRAY [0..2] OF LREAL;
 
@@ -127,6 +128,7 @@ FOR j:= 0 TO 2 DO
 		qRef:=qRef[j],
 		qRef_t := qRef_t[j],
 		qRef_tt:=qRef_tt[j],
+		fShaftAdditiveTorque := fShaftAdditiveTorque[j],
 		fShaftTorqueRef  :=  fShaftTorqueRef[j],
 		fOffset := fJointPositionOffset[j] + fJointCalibrationOffset[j]
 	);
@@ -172,7 +174,7 @@ END_VAR
 FOR i:= 0 TO 2 DO
 //	IF joints[i].bActive THEN		
 		// get input position from HMI
-		qRef[i] := fPosInput[i];		
+		qRef[i] := fPosInput[i];	
 		fShaftTorqueRef[i] := Kp[i]*(qRef[i] - joints[i].q)* CONSTANTS.DEG_TO_RAD + Kd[i]*(0.0 - joints[i].q_t)*CONSTANTS.DEG_TO_RAD + fGravityTorque[i]; //add gravity torque here 
 		
 //	END_IF	
@@ -196,6 +198,7 @@ FOR i:= 0 TO 2 DO
 		qRef_tt[i] := (fVelInput[i]-fVelInputOld[i])/(Ts);
 		// Update old variable
 		fVelInputOld[i] := fVelInput[i];
+		
 		
 //	ELSE
 //		qRef[i] := joints[i].q;
@@ -230,6 +233,7 @@ END_FOR]]></ST>
       <LineId Id="1061" Count="1" />
       <LineId Id="1140" Count="0" />
       <LineId Id="1063" Count="2" />
+      <LineId Id="1192" Count="0" />
       <LineId Id="1121" Count="0" />
       <LineId Id="1066" Count="10" />
       <LineId Id="42" Count="0" />
@@ -252,6 +256,7 @@ END_FOR]]></ST>
       <LineId Id="9" Count="9" />
       <LineId Id="25" Count="0" />
       <LineId Id="34" Count="0" />
+      <LineId Id="38" Count="0" />
       <LineId Id="26" Count="4" />
       <LineId Id="19" Count="0" />
       <LineId Id="21" Count="0" />

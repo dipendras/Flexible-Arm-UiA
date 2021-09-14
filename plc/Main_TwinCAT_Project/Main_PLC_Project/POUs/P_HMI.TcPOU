@@ -4,6 +4,9 @@
     <Declaration><![CDATA[PROGRAM P_HMI
 VAR
 	i : UINT;
+	fbSafety_GroupPort_ErrAck 		: TOF := (PT := T#0.5S);
+	fbSafety_EStopRestart 			: TOF := (PT := T#0.5S);
+	fbSafety_Drive_Axis_ErrReset 	: TOF := (PT := T#0.5S);
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -46,13 +49,16 @@ HmiToPlc.bEnable := FALSE;
 MAIN.robot.bPositionModeExecute := HmiToPlc.bPositionModeExecute;
 HmiToPlc.bPositionModeExecute := FALSE;
 
-Safety.TS_Q_Safety_GroupPort_ErrAck := HmiToPlc.bSafety_GroupPort_ErrAck;
+fbSafety_GroupPort_ErrAck(IN := HmiToPlc.bSafety_GroupPort_ErrAck);
+Safety.TS_Q_Safety_GroupPort_ErrAck := fbSafety_GroupPort_ErrAck.Q;
 HmiToPlc.bSafety_GroupPort_ErrAck := FALSE;
 
-Safety.TS_Q_Safety_EStopRestart := HmiToPlc.bSafety_EStopRestart;
+fbSafety_EStopRestart(IN := HmiToPlc.bSafety_EStopRestart);
+Safety.TS_Q_Safety_EStopRestart := fbSafety_EStopRestart.Q;
 HmiToPlc.bSafety_EStopRestart := FALSE;
 
-Safety.TS_Q_Safety_Drive_Axis_ErrReset := HmiToPlc.bSafety_Drive_Axis_ErrReset;
+fbSafety_Drive_Axis_ErrReset(IN := HmiToPlc.bSafety_Drive_Axis_ErrReset);
+Safety.TS_Q_Safety_Drive_Axis_ErrReset := fbSafety_Drive_Axis_ErrReset.Q;
 HmiToPlc.bSafety_Drive_Axis_ErrReset := FALSE;
 
 FOR i := 0 TO 2 DO
@@ -81,61 +87,7 @@ PlcToHmi.bSafety_EStopOK := Safety.TS_I_Safety_EStopOK;
 ]]></ST>
     </Implementation>
     <LineIds Name="P_HMI">
-      <LineId Id="65" Count="1" />
-      <LineId Id="64" Count="0" />
-      <LineId Id="10" Count="0" />
-      <LineId Id="12" Count="0" />
-      <LineId Id="14" Count="0" />
-      <LineId Id="13" Count="0" />
-      <LineId Id="15" Count="0" />
-      <LineId Id="17" Count="2" />
-      <LineId Id="33" Count="0" />
-      <LineId Id="21" Count="1" />
-      <LineId Id="28" Count="0" />
-      <LineId Id="23" Count="1" />
-      <LineId Id="34" Count="0" />
-      <LineId Id="26" Count="1" />
-      <LineId Id="36" Count="0" />
-      <LineId Id="38" Count="0" />
-      <LineId Id="48" Count="0" />
-      <LineId Id="40" Count="1" />
-      <LineId Id="37" Count="0" />
-      <LineId Id="42" Count="0" />
-      <LineId Id="47" Count="0" />
-      <LineId Id="35" Count="0" />
-      <LineId Id="49" Count="0" />
-      <LineId Id="57" Count="3" />
-      <LineId Id="55" Count="0" />
-      <LineId Id="100" Count="0" />
-      <LineId Id="106" Count="0" />
-      <LineId Id="105" Count="0" />
-      <LineId Id="81" Count="0" />
-      <LineId Id="97" Count="0" />
-      <LineId Id="50" Count="0" />
-      <LineId Id="94" Count="0" />
-      <LineId Id="98" Count="0" />
-      <LineId Id="89" Count="0" />
-      <LineId Id="95" Count="0" />
-      <LineId Id="99" Count="0" />
-      <LineId Id="93" Count="0" />
-      <LineId Id="107" Count="0" />
-      <LineId Id="109" Count="2" />
-      <LineId Id="108" Count="0" />
-      <LineId Id="85" Count="0" />
-      <LineId Id="62" Count="0" />
-      <LineId Id="30" Count="0" />
-      <LineId Id="63" Count="0" />
-      <LineId Id="29" Count="0" />
-      <LineId Id="31" Count="1" />
-      <LineId Id="72" Count="0" />
-      <LineId Id="68" Count="0" />
-      <LineId Id="75" Count="1" />
-      <LineId Id="73" Count="1" />
-      <LineId Id="71" Count="0" />
-      <LineId Id="67" Count="0" />
-      <LineId Id="78" Count="1" />
-      <LineId Id="77" Count="0" />
-      <LineId Id="80" Count="0" />
+      <LineId Id="376" Count="73" />
       <LineId Id="16" Count="0" />
     </LineIds>
   </POU>

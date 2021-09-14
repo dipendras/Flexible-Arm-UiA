@@ -17,6 +17,7 @@ VAR_INPUT
 	qRef : LREAL;
 	qRef_t : LREAL;
 	qRef_tt : LREAL;
+	fShaftAdditiveTorque : LREAL; // [Nm] on shaft
 	
 	fShaftTorqueRef : LREAL; //Nm initialize with holding torque??
 	
@@ -32,9 +33,14 @@ VAR_OUTPUT
 	q : LREAL;
 	q_t : LREAL;
 	tau : LREAL;
-	
+	fVelocityControllerShaftOutputTorque: LREAL; // [Nm] on shaft
 END_VAR
 VAR
+	fAdditiveTorque : LREAL; // [Nm] on motor
+	nAdditiveTorquePerc AT %Q* : INT;	
+	nVelocityControllerOutputTorque AT %I*: INT;
+ 	fVelocityControllerOutputTorque: LREAL; // [Nm] on motor
+
 	// Drive axis stuff
 	axis : AXIS_REF;
 	fbPower : MC_Power;
@@ -128,6 +134,29 @@ IF bActive AND fbExtSetPointGenEnable.Enabled THEN
 		Acceleration := -qRef_tt,
 		Direction := getDirection(-qRef_t, -qRef_tt)
 	);
+	
+	fAdditiveTorque := fShaftAdditiveTorque / fGearRatio;
+	
+	nAdditiveTorquePerc := TO_INT(
+		RescaleRange(
+			in := -fAdditiveTorque, //flip the direction
+			in_min := -fTorqueScaling, 
+			in_max := fTorqueScaling,
+			out_min := -1000, 
+			out_max := 1000 
+		)
+	);
+	
+	fVelocityControllerOutputTorque := 	RescaleRange(
+		in := -TO_LREAL(nVelocityControllerOutputTorque), //flip the direction
+		in_min := -1000, 
+		in_max := 1000,
+		out_min := -fTorqueScaling, 
+		out_max := fTorqueScaling 
+	);
+	fVelocityControllerShaftOutputTorque :=fVelocityControllerOutputTorque*fGearRatio; 
+ELSE
+	nAdditiveTorquePerc := 0;
 END_IF
 
 
@@ -149,12 +178,13 @@ axis();
 
 
 //-----------------torque control
-fbTorqueControl(Axis := axis,
-				bEnable := bActive AND (eRobotMode = E_RobotMode.TORQUE),
-				fShaftTorqueCmdNm := -fShaftTorqueRef, //negative sign is to change the direction
-				fTorqueScaling := fTorqueScaling,
-				fGearRatio := fGearRatio
-			);
+fbTorqueControl(
+	Axis := axis,
+	bEnable := bActive AND (eRobotMode = E_RobotMode.TORQUE),
+	fShaftTorqueCmdNm := -fShaftTorqueRef, //negative sign is to change the direction
+	fTorqueScaling := fTorqueScaling,
+	fGearRatio := fGearRatio
+);
 
 // fbTorqueControl.readFeedback();
 
@@ -194,14 +224,14 @@ END_IF]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="FB_Joint">
-      <LineId Id="1854" Count="10" />
-      <LineId Id="2033" Count="0" />
-      <LineId Id="2032" Count="0" />
-      <LineId Id="1866" Count="71" />
-      <LineId Id="2029" Count="1" />
-      <LineId Id="1938" Count="0" />
-      <LineId Id="2037" Count="1" />
-      <LineId Id="1941" Count="10" />
+      <LineId Id="2579" Count="61" />
+      <LineId Id="2694" Count="1" />
+      <LineId Id="2641" Count="8" />
+      <LineId Id="2698" Count="0" />
+      <LineId Id="2700" Count="0" />
+      <LineId Id="2702" Count="5" />
+      <LineId Id="2710" Count="0" />
+      <LineId Id="2650" Count="42" />
       <LineId Id="76" Count="0" />
     </LineIds>
     <LineIds Name="FB_Joint.getDirection">

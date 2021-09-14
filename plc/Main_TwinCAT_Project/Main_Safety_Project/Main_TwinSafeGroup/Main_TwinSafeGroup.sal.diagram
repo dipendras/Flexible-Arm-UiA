@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<safetyApplicationLanguageDiagram Crc="1692175138" dslVersion="1.2.0.0" Id="3ad81f57-4eb4-4ec1-bacf-66cd8a1d3436" absoluteBounds="0, 0, 19.25, 8.5" name="TwinSAFE">
+<safetyApplicationLanguageDiagram Crc="1597094923" dslVersion="1.4.0.0" Id="3ad81f57-4eb4-4ec1-bacf-66cd8a1d3436" absoluteBounds="0, 0, 20.375, 8.5" name="TwinSAFE">
   <safetyApplicationMoniker name="/" />
   <nestedChildShapes>
-    <networkSwimLane Id="f1fd5e14-5ab5-42f4-b2cb-5a0af4e7409a" absoluteBounds="0, 0, 19.299999999999997, 6.5">
+    <networkSwimLane Id="f1fd5e14-5ab5-42f4-b2cb-5a0af4e7409a" absoluteBounds="0, 0, 20.375, 6.5">
       <networkMoniker name="//Network1" />
       <nestedChildShapes>
         <fBEstopShape Id="3c750e0e-7154-4678-b6cd-d4b7a53a1d22" absoluteBounds="5.75, 0.625, 3.35, 4.45">

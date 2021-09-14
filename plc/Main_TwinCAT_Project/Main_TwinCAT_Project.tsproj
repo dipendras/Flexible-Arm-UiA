@@ -1880,24 +1880,6 @@ External Setpoint Generation:
 			</Relations>
 		</DataType>
 		<DataType>
-			<Name GUID="{7F3999D6-1785-057D-88BC-3449B9362C01}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..2] OF LREAL</Name>
-			<BitSize>192</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</BaseType>
-			<ArrayInfo>
-				<LBound>0</LBound>
-				<Elements>3</Elements>
-			</ArrayInfo>
-		</DataType>
-		<DataType>
-			<Name GUID="{11F20A4A-90D4-35C7-DB3B-0E8659E05E56}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..1] OF LREAL</Name>
-			<BitSize>128</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</BaseType>
-			<ArrayInfo>
-				<LBound>0</LBound>
-				<Elements>2</Elements>
-			</ArrayInfo>
-		</DataType>
-		<DataType>
 			<Name GUID="{18071995-0000-0000-0000-002000000001}" IecBaseType="true" BitType="true" AutoDeleteType="true" HideSubItems="true">ARRAY [0..0] OF BIT</Name>
 			<BitSize>1</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000010}">BIT</BaseType>
@@ -2525,6 +2507,18 @@ External Setpoint Generation:
 					<Vars VarGrpType="1" ContextId="1" AreaNo="16">
 						<Name>PlcTask Inputs</Name>
 						<Var>
+							<Name>Safety.TS_I_Safety_EStopOK</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>Safety.TS_I_Safety_EStopError</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[0].nVelocityControllerOutputTorque</Name>
+							<Type>INT</Type>
+						</Var>
+						<Var>
 							<Name>MAIN.robot.joints[0].axis.NcToPlc</Name>
 							<Type GUID="{10036166-C9D3-404B-BDD3-323034AAA7F4}" Namespace="MC">NCTOPLC_AXIS_REF</Type>
 						</Var>
@@ -2549,6 +2543,10 @@ External Setpoint Generation:
 						<Var>
 							<Name>MAIN.robot.joints[0].fbTorqueControl.nVelFbk</Name>
 							<Type>DINT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[1].nVelocityControllerOutputTorque</Name>
+							<Type>INT</Type>
 						</Var>
 						<Var>
 							<Name>MAIN.robot.joints[1].axis.NcToPlc</Name>
@@ -2577,6 +2575,10 @@ External Setpoint Generation:
 							<Type>DINT</Type>
 						</Var>
 						<Var>
+							<Name>MAIN.robot.joints[2].nVelocityControllerOutputTorque</Name>
+							<Type>INT</Type>
+						</Var>
+						<Var>
 							<Name>MAIN.robot.joints[2].axis.NcToPlc</Name>
 							<Type GUID="{10036166-C9D3-404B-BDD3-323034AAA7F4}" Namespace="MC">NCTOPLC_AXIS_REF</Type>
 						</Var>
@@ -2602,57 +2604,12 @@ External Setpoint Generation:
 							<Name>MAIN.robot.joints[2].fbTorqueControl.nVelFbk</Name>
 							<Type>DINT</Type>
 						</Var>
-						<Var>
-							<Name>MAIN.q_t</Name>
-							<Type GUID="{7F3999D6-1785-057D-88BC-3449B9362C01}">ARRAY [0..2] OF LREAL</Type>
-						</Var>
-						<Var>
-							<Name>MAIN.q</Name>
-							<Type GUID="{7F3999D6-1785-057D-88BC-3449B9362C01}">ARRAY [0..2] OF LREAL</Type>
-						</Var>
-						<Var>
-							<Name>Safety.TS_I_Safety_EStopOK</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>Safety.TS_I_Safety_EStopError</Name>
-							<Type>BOOL</Type>
-						</Var>
 					</Vars>
 					<Vars VarGrpType="2" ContextId="1" AreaNo="17">
 						<Name>PlcTask Outputs</Name>
 						<Var>
-							<Name>MAIN.robot.joints[0].axis.PlcToNc</Name>
-							<Type GUID="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" Namespace="MC">PLCTONC_AXIS_REF</Type>
-						</Var>
-						<Var>
-							<Name>MAIN.robot.joints[1].axis.PlcToNc</Name>
-							<Type GUID="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" Namespace="MC">PLCTONC_AXIS_REF</Type>
-						</Var>
-						<Var>
-							<Name>MAIN.robot.joints[2].axis.PlcToNc</Name>
-							<Type GUID="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" Namespace="MC">PLCTONC_AXIS_REF</Type>
-						</Var>
-						<Var>
 							<Name>MAIN.t</Name>
 							<Type>LREAL</Type>
-						</Var>
-						<Var>
-							<Name>MAIN.Vt</Name>
-							<Comment><![CDATA[ IK Data]]></Comment>
-							<Type>LREAL</Type>
-						</Var>
-						<Var>
-							<Name>MAIN.radius</Name>
-							<Type>LREAL</Type>
-						</Var>
-						<Var>
-							<Name>MAIN.p0</Name>
-							<Type GUID="{11F20A4A-90D4-35C7-DB3B-0E8659E05E56}">ARRAY [0..1] OF LREAL</Type>
-						</Var>
-						<Var>
-							<Name>MAIN.L</Name>
-							<Type GUID="{7F3999D6-1785-057D-88BC-3449B9362C01}">ARRAY [0..2] OF LREAL</Type>
 						</Var>
 						<Var>
 							<Name>Safety.TS_Q_Safety_GroupPort_ErrAck</Name>
@@ -2669,6 +2626,30 @@ External Setpoint Generation:
 						<Var>
 							<Name>Safety.TS_Q_Safety_Drive_Axis_ErrReset</Name>
 							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[0].nAdditiveTorquePerc</Name>
+							<Type>INT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[0].axis.PlcToNc</Name>
+							<Type GUID="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" Namespace="MC">PLCTONC_AXIS_REF</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[1].nAdditiveTorquePerc</Name>
+							<Type>INT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[1].axis.PlcToNc</Name>
+							<Type GUID="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" Namespace="MC">PLCTONC_AXIS_REF</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[2].nAdditiveTorquePerc</Name>
+							<Type>INT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[2].axis.PlcToNc</Name>
+							<Type GUID="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" Namespace="MC">PLCTONC_AXIS_REF</Type>
 						</Var>
 					</Vars>
 					<Contexts>
@@ -4891,8 +4872,8 @@ External Setpoint Generation:
 					<EtherCAT SlaveType="2" PdiType="#x0c08" MboxDataLinkLayer="true" StateMBoxPolling="true" CfgModeSafeOp="true" DownloadPdoCfg="true" CycleMBoxPollingTime="0" FoeType="1" SoeChannels="1" VendorId="#x00000002" ProductCode="#x13f26012" RevisionNo="#x00d20000" InfoDataAddr="true" InfoDataSoeDS401="true" InfoDataDcTimes="true" TimeoutStateChange3="10000" TimeoutStateChange4="500" AutoRestoreAfterWcOk="true" CheckRevisionNoType="4" PortPhys="12305" IdentificationAdo="308" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="AX5106-0000-0210 EtherCAT Drive (SoE, 1 Ch.)" Desc="AX5106-0000-0210" PortABoxInfo="#x01000003">
 						<SyncMan>001880002600010001000000800080008000001826010000</SyncMan>
 						<SyncMan>001a80002200010002000000800080008000001a22010000</SyncMan>
-						<SyncMan>001008002400010003000000000000000000001024010000</SyncMan>
-						<SyncMan>001108002200010004000000000000000000001122010000</SyncMan>
+						<SyncMan>00100a002400010003000000000000000000001024010000</SyncMan>
+						<SyncMan>00110a002200010004000000000000000000001122010000</SyncMan>
 						<SyncMan>002000002400010005000000000000000000002024010000</SyncMan>
 						<SyncMan>002400002000010006000000000000000000002420010000</SyncMan>
 						<Fmmu>0000000000000000001000020100000001000000000000000000000000000000</Fmmu>
@@ -4969,6 +4950,9 @@ External Setpoint Generation:
 							<Entry Name="Torque/force feedback value" BitLen="16" Index="#x0054">
 								<Type>INT</Type>
 							</Entry>
+							<Entry Name="Velocity controller output" BitLen="16" Index="#x81f9">
+								<Type>INT</Type>
+							</Entry>
 						</Pdo>
 						<Pdo Name="MDT" Index="#x0018" InOut="1" Flags="#x0001" SyncMan="2">
 							<Entry Name="Master control word" BitLen="16" Index="#x0086" Flags="#x00000800">
@@ -4978,6 +4962,9 @@ External Setpoint Generation:
 								<Type>DINT</Type>
 							</Entry>
 							<Entry Name="Torque/force command value" BitLen="16" Index="#x0050">
+								<Type>INT</Type>
+							</Entry>
+							<Entry Name="Additive torque/force command value" BitLen="16" Index="#x0051">
 								<Type>INT</Type>
 							</Entry>
 						</Pdo>
@@ -5077,7 +5064,7 @@ External Setpoint Generation:
 								<Entry Name="FSOE__Axis 1 SDI_n" BitLen="1" Index="#x66d1">
 									<Type>BIT</Type>
 								</Entry>
-								<Entry Name="FSOE__Axis 1 Error" BitLen="1" Index="#x6632">
+								<Entry Name="FSOE__Axis 1 Error" BitLen="1" Index="#x6632" Flags="#x00008020">
 									<Type>BIT</Type>
 								</Entry>
 								<Entry BitLen="1">
@@ -6783,6 +6770,7 @@ External Setpoint Generation:
 		<MappingInfo Identifier="{00000000-2002-0850-0120-500861000403}" Id="#x02030070"/>
 		<MappingInfo Identifier="{00000000-0020-0304-1000-040321000403}" Id="#x02030030"/>
 		<MappingInfo Identifier="{00000000-0050-0304-1000-040350000403}" Id="#x02030020"/>
+		<MappingInfo Identifier="{08502002-0050-0304-0020-500850000403}" Id="#x02030050" Watchdog="00000000000000000000000000000000"/>
 		<MappingInfo Identifier="{05000010-2002-0850-1000-040301205008}" Id="#x02030080" Watchdog="14000000040000000400000004000000"/>
 		<MappingInfo Identifier="{03040050-0060-0304-5000-040360000403}" Id="#x02030010" Watchdog="14000000040000000400000004000000"/>
 		<MappingInfo Identifier="{03040060-0060-0304-6000-040360000403}" Id="#x02030060" Watchdog="04000000040000000400000004000000"/>
@@ -7004,6 +6992,11 @@ External Setpoint Generation:
 				<Link VarA="SerialComTask Outputs^IMU.fbStim300[2].stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 7" Size="8" OffsA="72"/>
 				<Link VarA="SerialComTask Outputs^IMU.fbStim300[2].stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 8" Size="8" OffsA="80"/>
 				<Link VarA="SerialComTask Outputs^IMU.fbStim300[2].stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 9" Size="8" OffsA="88"/>
+			</OwnerB>
+			<OwnerB Name="TIID^Device 5 (EtherCAT)^Drive3_Joint3(AX5106-0000-0210)">
+				<Link VarA="PlcTask Inputs^MAIN.robot.joints[2].fbTorqueControl.fTorqueFbkPerc" VarB="AT^Torque/force feedback value"/>
+				<Link VarA="PlcTask Inputs^MAIN.robot.joints[2].nVelocityControllerOutputTorque" VarB="AT^Velocity controller output"/>
+				<Link VarA="PlcTask Outputs^MAIN.robot.joints[2].nAdditiveTorquePerc" VarB="MDT^Additive torque/force command value"/>
 			</OwnerB>
 			<OwnerB Name="TINC^Main_NC_Task SAF^Axes^Axis1_Drive1_Joint1">
 				<Link VarA="PlcTask Inputs^MAIN.robot.joints[0].axis.NcToPlc" VarB="Outputs^ToPlc"/>

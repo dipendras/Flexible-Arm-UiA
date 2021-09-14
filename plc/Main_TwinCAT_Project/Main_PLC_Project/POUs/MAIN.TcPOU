@@ -11,7 +11,6 @@ VAR
 	bDelayStart : BOOL := FALSE;
 	fbDelayStart : TON := (PT := T#2S);
 	
-
 	
 	
 	t AT %Q* : LREAL;
@@ -45,21 +44,29 @@ VAR
 	bStop : BOOL;
 	
 	// IK Data
-	Vt AT %Q* : LREAL := 0.5;
-	radius AT %Q* : LREAL := 0.5;
-	p0 AT %Q* : ARRAY [0..1] OF LREAL := [1.5, 2.5];
-	L  AT %Q* : ARRAY [0..2] OF LREAL := [1.5, 1.5, 1.5];
+//	Vt AT %Q* : LREAL := 0.5;
+//	radius AT %Q* : LREAL := 0.5;
+//	p0 AT %Q* : ARRAY [0..1] OF LREAL := [1.5, 2.5];
+//	L  AT %Q* : ARRAY [0..2] OF LREAL := [1.5, 1.5, 1.5];
 
-	q_t  AT %I* : ARRAY [0..2] OF LREAL;
-	q  AT %I* : ARRAY [0..2] OF LREAL;
+//	q_t  AT %I* : ARRAY [0..2] OF LREAL;
+//	q  AT %I* : ARRAY [0..2] OF LREAL;
 	
 	
 	
-	q_t_DEG : ARRAY [0..2] OF LREAL;
-	q_DEG : ARRAY [0..2] OF LREAL;
+//	q_t_DEG : ARRAY [0..2] OF LREAL;
+//	q_DEG : ARRAY [0..2] OF LREAL;
 	
 	deflection : ARRAY [0..2] OF LREAL;
 	cumulativeAngle : LREAL;
+//	cumulativeVel : LREAL;
+	
+	//filters
+	fbGyroFilters : ARRAY [0..2] OF FB_LowPassFilter;
+	fGyroFilterCutoff : ARRAY [0..2] OF LREAL := [ 10.0, 10.0, 10.0 ];
+	fLinkGyroVelocity : ARRAY [0..2] OF LREAL;
+	stGyroFilterParams : ST_FilterParams;
+	bFirstRun : BOOL := TRUE;
 	
 END_VAR
 ]]></Declaration>
@@ -93,9 +100,25 @@ robot(
 	fJointCalibrationOffset := Parameters.fJointCalibrationOffset
 );
 
+IF bFirstRun THEN
+	bFirstRun := FALSE;
+	FOR j := 0 TO 2 DO
+		stGyroFilterParams.fCutoff := fGyroFilterCutoff[j];
+		stGyroFilterParams.fDeltaTime := Ts;
+		stGyroFilterParams.fInitialValue := 0.0;
+		fbGyroFilters[j].init(stParams := stGyroFilterParams);
+	END_FOR
+END_IF
 
 cumulativeAngle := 0.0;
+//cumulativeVel := 0.0;
 FOR j := 0 TO 2 DO
+	fbGyroFilters[j].update(IMU.fbStim300[j].ImuData.stGyro.x);
+	fLinkGyroVelocity[j] := fbGyroFilters[j].fOut;
+	IF j > 0 THEN
+		fLinkGyroVelocity[j] := fLinkGyroVelocity[j] - fbGyroFilters[j-1].fOut;
+	END_IF
+	
 	cumulativeAngle := cumulativeAngle + robot.q[j];
 	deflection[j] := IMU.fbStim300[j].fRollDegFiltered - cumulativeAngle;
 END_FOR
@@ -183,11 +206,25 @@ END_IF
       <LineId Id="1068" Count="0" />
       <LineId Id="1057" Count="4" />
       <LineId Id="229" Count="0" />
+      <LineId Id="1144" Count="0" />
       <LineId Id="1054" Count="0" />
+      <LineId Id="1145" Count="0" />
+      <LineId Id="1153" Count="0" />
+      <LineId Id="1150" Count="2" />
+      <LineId Id="1148" Count="0" />
+      <LineId Id="1154" Count="0" />
+      <LineId Id="1146" Count="0" />
       <LineId Id="734" Count="0" />
       <LineId Id="729" Count="0" />
+      <LineId Id="1160" Count="0" />
       <LineId Id="744" Count="0" />
-      <LineId Id="735" Count="0" />
+      <LineId Id="1157" Count="0" />
+      <LineId Id="1169" Count="0" />
+      <LineId Id="1163" Count="0" />
+      <LineId Id="1165" Count="0" />
+      <LineId Id="1167" Count="0" />
+      <LineId Id="1170" Count="0" />
+      <LineId Id="1164" Count="0" />
       <LineId Id="731" Count="1" />
       <LineId Id="222" Count="0" />
     </LineIds>
