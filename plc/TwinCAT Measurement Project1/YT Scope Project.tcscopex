@@ -25,7 +25,7 @@
   <IsTemplate>false</IsTemplate>
   <Layout>&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;Layout&gt;
-  &lt;Window Guid="9e35d069-7811-43c8-b398-d923eb4b75df" LastFocused="132760024417842542" DockedSize="200" PopupSize="0" FloatingLocation="-1, -1" FloatingSize="550, 400" LastOpenDockSituation="Document" LastFixedDockSituation="Document" LastFixedDockLocation="Right" LastFloatingWindowGuid="00000000-0000-0000-0000-000000000000" LastDockContainerCount="0" LastDockContainerIndex="0" DockedWorkingSize="250, 400" DockedWindowGroupGuid="00000000-0000-0000-0000-000000000000" DockedIndexInWindowGroup="0" DockedSplitPath="0" DocumentWorkingSize="250, 400" DocumentWindowGroupGuid="c4ba0d4e-7dbe-4f79-b4a6-ee0c86e4a93f" DocumentIndexInWindowGroup="0" DocumentSplitPath="0" FloatingWorkingSize="250, 400" FloatingWindowGroupGuid="00000000-0000-0000-0000-000000000000" FloatingIndexInWindowGroup="0" FloatingSplitPath="0" /&gt;
+  &lt;Window Guid="9e35d069-7811-43c8-b398-d923eb4b75df" LastFocused="132760894692828755" DockedSize="200" PopupSize="0" FloatingLocation="-1, -1" FloatingSize="550, 400" LastOpenDockSituation="Document" LastFixedDockSituation="Document" LastFixedDockLocation="Right" LastFloatingWindowGuid="00000000-0000-0000-0000-000000000000" LastDockContainerCount="0" LastDockContainerIndex="0" DockedWorkingSize="250, 400" DockedWindowGroupGuid="00000000-0000-0000-0000-000000000000" DockedIndexInWindowGroup="0" DockedSplitPath="0" DocumentWorkingSize="250, 400" DocumentWindowGroupGuid="c4ba0d4e-7dbe-4f79-b4a6-ee0c86e4a93f" DocumentIndexInWindowGroup="0" DocumentSplitPath="0" FloatingWorkingSize="250, 400" FloatingWindowGroupGuid="00000000-0000-0000-0000-000000000000" FloatingIndexInWindowGroup="0" FloatingSplitPath="0" /&gt;
   &lt;DocumentContainer Dock="5"&gt;
     &lt;SplitLayoutSystem WorkingSize="250, 400" SplitMode="0"&gt;
       &lt;ControlLayoutSystem WorkingSize="250, 400" Guid="c4ba0d4e-7dbe-4f79-b4a6-ee0c86e4a93f" Collapsed="0" SelectedControl="9e35d069-7811-43c8-b398-d923eb4b75df"&gt;
@@ -77,7 +77,7 @@
           <ForceOversampling>false</ForceOversampling>
           <Guid>a24d7fa6-b172-4f11-b95a-b892030ba0ed</Guid>
           <IndexGroup>16448</IndexGroup>
-          <IndexOffset>419648</IndexOffset>
+          <IndexOffset>419680</IndexOffset>
           <IsFileBased>false</IsFileBased>
           <IsHistorical>false</IsHistorical>
           <Name>fPitchDeg</Name>
@@ -159,7 +159,7 @@
           <ForceOversampling>false</ForceOversampling>
           <Guid>69d11b2c-04ea-4947-a66c-4af2c1778366</Guid>
           <IndexGroup>16448</IndexGroup>
-          <IndexOffset>419640</IndexOffset>
+          <IndexOffset>419672</IndexOffset>
           <IsFileBased>false</IsFileBased>
           <IsHistorical>false</IsHistorical>
           <Name>fRollDeg</Name>
@@ -241,7 +241,7 @@
           <ForceOversampling>false</ForceOversampling>
           <Guid>8baa9309-c2c9-4c8d-9a7a-f486ffad71be</Guid>
           <IndexGroup>16448</IndexGroup>
-          <IndexOffset>422384</IndexOffset>
+          <IndexOffset>422416</IndexOffset>
           <IsFileBased>false</IsFileBased>
           <IsHistorical>false</IsHistorical>
           <Name>fPitchDeg (1)</Name>
@@ -323,7 +323,7 @@
           <ForceOversampling>false</ForceOversampling>
           <Guid>bc1cb4b2-452f-4a2d-94e8-15352411c145</Guid>
           <IndexGroup>16448</IndexGroup>
-          <IndexOffset>422376</IndexOffset>
+          <IndexOffset>422408</IndexOffset>
           <IsFileBased>false</IsFileBased>
           <IsHistorical>false</IsHistorical>
           <Name>fRollDeg (1)</Name>
@@ -405,7 +405,7 @@
           <ForceOversampling>false</ForceOversampling>
           <Guid>eead5aa6-482c-47dc-aa41-52be2740115c</Guid>
           <IndexGroup>16448</IndexGroup>
-          <IndexOffset>425120</IndexOffset>
+          <IndexOffset>425152</IndexOffset>
           <IsFileBased>false</IsFileBased>
           <IsHistorical>false</IsHistorical>
           <Name>fPitchDeg (2)</Name>
@@ -487,7 +487,7 @@
           <ForceOversampling>false</ForceOversampling>
           <Guid>592a7e26-beb2-44b2-adb7-4aa1e0ccdb77</Guid>
           <IndexGroup>16448</IndexGroup>
-          <IndexOffset>425112</IndexOffset>
+          <IndexOffset>425144</IndexOffset>
           <IsFileBased>false</IsFileBased>
           <IsHistorical>false</IsHistorical>
           <Name>fRollDeg (2)</Name>
@@ -569,7 +569,7 @@
           <ForceOversampling>false</ForceOversampling>
           <Guid>74f59f94-afac-4335-b623-3580dc3e972f</Guid>
           <IndexGroup>16448</IndexGroup>
-          <IndexOffset>419040</IndexOffset>
+          <IndexOffset>419072</IndexOffset>
           <IsFileBased>false</IsFileBased>
           <IsHistorical>false</IsHistorical>
           <Name>deflection[0]</Name>
@@ -651,7 +651,7 @@
           <ForceOversampling>false</ForceOversampling>
           <Guid>f5ec2fa3-8ad6-457f-bdda-5eb53f50d64a</Guid>
           <IndexGroup>16448</IndexGroup>
-          <IndexOffset>419048</IndexOffset>
+          <IndexOffset>419080</IndexOffset>
           <IsFileBased>false</IsFileBased>
           <IsHistorical>false</IsHistorical>
           <Name>deflection[1]</Name>
@@ -733,7 +733,7 @@
           <ForceOversampling>false</ForceOversampling>
           <Guid>d8844874-c9d0-4a4e-b404-24a1b42bd426</Guid>
           <IndexGroup>16448</IndexGroup>
-          <IndexOffset>419056</IndexOffset>
+          <IndexOffset>419088</IndexOffset>
           <IsFileBased>false</IsFileBased>
           <IsHistorical>false</IsHistorical>
           <Name>deflection[2]</Name>
@@ -815,7 +815,7 @@
           <ForceOversampling>false</ForceOversampling>
           <Guid>ff737ad3-3806-4d43-9c15-06ff8213ce83</Guid>
           <IndexGroup>16448</IndexGroup>
-          <IndexOffset>419632</IndexOffset>
+          <IndexOffset>419664</IndexOffset>
           <IsFileBased>false</IsFileBased>
           <IsHistorical>false</IsHistorical>
           <Name>fRollDegFiltered</Name>
@@ -897,7 +897,7 @@
           <ForceOversampling>false</ForceOversampling>
           <Guid>cb3fb4f3-104e-41d8-9485-52fe77efa93e</Guid>
           <IndexGroup>16448</IndexGroup>
-          <IndexOffset>422368</IndexOffset>
+          <IndexOffset>422400</IndexOffset>
           <IsFileBased>false</IsFileBased>
           <IsHistorical>false</IsHistorical>
           <Name>fRollDegFiltered (1)</Name>
@@ -979,7 +979,7 @@
           <ForceOversampling>false</ForceOversampling>
           <Guid>a2166f37-6469-4b10-83d9-bac1ce31f56a</Guid>
           <IndexGroup>16448</IndexGroup>
-          <IndexOffset>425104</IndexOffset>
+          <IndexOffset>425136</IndexOffset>
           <IsFileBased>false</IsFileBased>
           <IsHistorical>false</IsHistorical>
           <Name>fRollDegFiltered (2)</Name>
@@ -1061,7 +1061,7 @@
           <ForceOversampling>false</ForceOversampling>
           <Guid>b501908a-81ab-4b2d-803a-afa6393b988d</Guid>
           <IndexGroup>16448</IndexGroup>
-          <IndexOffset>620064</IndexOffset>
+          <IndexOffset>389576</IndexOffset>
           <IsFileBased>false</IsFileBased>
           <IsHistorical>false</IsHistorical>
           <Name>fShaftTorqueRef[2]</Name>
@@ -1072,15 +1072,15 @@
               <Name>None</Name>
               <ScaleFactor>1</ScaleFactor>
               <SourceUnitPrefix>none</SourceUnitPrefix>
-              <SourceUnitString />
+              <SourceUnitString></SourceUnitString>
               <Symbol>1</Symbol>
-              <TargetUnitString />
+              <TargetUnitString></TargetUnitString>
               <TargetUnitValue>0</TargetUnitValue>
             </Transformation>
             <Unit>
-              <BaseUnitString />
+              <BaseUnitString></BaseUnitString>
               <BaseUnitValue>0</BaseUnitValue>
-              <NameExtension />
+              <NameExtension></NameExtension>
               <Offset>0</Offset>
               <Prefix>none</Prefix>
               <ReturnText> (None) </ReturnText>
@@ -1091,10 +1091,10 @@
             <UnitScaleResult>1</UnitScaleResult>
             <UserUnit>
               <BaseName>UnitOfOne</BaseName>
-              <BaseUnitString />
+              <BaseUnitString></BaseUnitString>
               <BaseUnitValue>0</BaseUnitValue>
               <Name>None</Name>
-              <NameExtension />
+              <NameExtension></NameExtension>
               <Offset>0</Offset>
               <Prefix>none</Prefix>
               <ScaleFactor>1</ScaleFactor>
@@ -1143,7 +1143,7 @@
           <ForceOversampling>false</ForceOversampling>
           <Guid>e9f2dc65-6533-4bbf-9881-3b46937481e7</Guid>
           <IndexGroup>16448</IndexGroup>
-          <IndexOffset>619960</IndexOffset>
+          <IndexOffset>389472</IndexOffset>
           <IsFileBased>false</IsFileBased>
           <IsHistorical>false</IsHistorical>
           <Name>tau[2]</Name>
@@ -1154,15 +1154,15 @@
               <Name>None</Name>
               <ScaleFactor>1</ScaleFactor>
               <SourceUnitPrefix>none</SourceUnitPrefix>
-              <SourceUnitString />
+              <SourceUnitString></SourceUnitString>
               <Symbol>1</Symbol>
-              <TargetUnitString />
+              <TargetUnitString></TargetUnitString>
               <TargetUnitValue>0</TargetUnitValue>
             </Transformation>
             <Unit>
-              <BaseUnitString />
+              <BaseUnitString></BaseUnitString>
               <BaseUnitValue>0</BaseUnitValue>
-              <NameExtension />
+              <NameExtension></NameExtension>
               <Offset>0</Offset>
               <Prefix>none</Prefix>
               <ReturnText> (None) </ReturnText>
@@ -1173,10 +1173,10 @@
             <UnitScaleResult>1</UnitScaleResult>
             <UserUnit>
               <BaseName>UnitOfOne</BaseName>
-              <BaseUnitString />
+              <BaseUnitString></BaseUnitString>
               <BaseUnitValue>0</BaseUnitValue>
               <Name>None</Name>
-              <NameExtension />
+              <NameExtension></NameExtension>
               <Offset>0</Offset>
               <Prefix>none</Prefix>
               <ScaleFactor>1</ScaleFactor>
@@ -2021,7 +2021,7 @@
                   </SubMember>
                   <Suffix>.svstyle</Suffix>
                   <Title>ChannelStyle_45</Title>
-                  <Visible>false</Visible>
+                  <Visible>true</Visible>
                 </ChannelStyle>
               </SubMember>
               <Suffix>.svchannel</Suffix>
@@ -2378,7 +2378,7 @@
                   </SubMember>
                   <Suffix>.svstyle</Suffix>
                   <Title>ChannelStyle_91</Title>
-                  <Visible>false</Visible>
+                  <Visible>true</Visible>
                 </ChannelStyle>
               </SubMember>
               <Suffix>.svchannel</Suffix>
@@ -2926,7 +2926,7 @@
                   </SubMember>
                   <Suffix>.svstyle</Suffix>
                   <Title>ChannelStyle_112</Title>
-                  <Visible>true</Visible>
+                  <Visible>false</Visible>
                 </ChannelStyle>
                 <AcquisitionInterpreter AssemblyName="TwinCAT.Measurement.Scope.API.Model">
                   <AcquisitionGUID>b501908a-81ab-4b2d-803a-afa6393b988d</AcquisitionGUID>
@@ -2943,15 +2943,15 @@
                       <Name>None</Name>
                       <ScaleFactor>1</ScaleFactor>
                       <SourceUnitPrefix>none</SourceUnitPrefix>
-                      <SourceUnitString />
+                      <SourceUnitString></SourceUnitString>
                       <Symbol>1</Symbol>
-                      <TargetUnitString />
+                      <TargetUnitString></TargetUnitString>
                       <TargetUnitValue>0</TargetUnitValue>
                     </Transformation>
                     <Unit>
-                      <BaseUnitString />
+                      <BaseUnitString></BaseUnitString>
                       <BaseUnitValue>0</BaseUnitValue>
-                      <NameExtension />
+                      <NameExtension></NameExtension>
                       <Offset>0</Offset>
                       <Prefix>none</Prefix>
                       <ReturnText> (None) </ReturnText>
@@ -2962,10 +2962,10 @@
                     <UnitScaleResult>1</UnitScaleResult>
                     <UserUnit>
                       <BaseName>UnitOfOne</BaseName>
-                      <BaseUnitString />
+                      <BaseUnitString></BaseUnitString>
                       <BaseUnitValue>0</BaseUnitValue>
                       <Name>None</Name>
-                      <NameExtension />
+                      <NameExtension></NameExtension>
                       <Offset>0</Offset>
                       <Prefix>none</Prefix>
                       <ScaleFactor>1</ScaleFactor>
@@ -3008,15 +3008,15 @@
                       <Name>None</Name>
                       <ScaleFactor>1</ScaleFactor>
                       <SourceUnitPrefix>none</SourceUnitPrefix>
-                      <SourceUnitString />
+                      <SourceUnitString></SourceUnitString>
                       <Symbol>1</Symbol>
-                      <TargetUnitString />
+                      <TargetUnitString></TargetUnitString>
                       <TargetUnitValue>0</TargetUnitValue>
                     </Transformation>
                     <Unit>
-                      <BaseUnitString />
+                      <BaseUnitString></BaseUnitString>
                       <BaseUnitValue>0</BaseUnitValue>
-                      <NameExtension />
+                      <NameExtension></NameExtension>
                       <Offset>0</Offset>
                       <Prefix>none</Prefix>
                       <ReturnText> (None) </ReturnText>
@@ -3027,10 +3027,10 @@
                     <UnitScaleResult>1</UnitScaleResult>
                     <UserUnit>
                       <BaseName>UnitOfOne</BaseName>
-                      <BaseUnitString />
+                      <BaseUnitString></BaseUnitString>
                       <BaseUnitValue>0</BaseUnitValue>
                       <Name>None</Name>
-                      <NameExtension />
+                      <NameExtension></NameExtension>
                       <Offset>0</Offset>
                       <Prefix>none</Prefix>
                       <ScaleFactor>1</ScaleFactor>
@@ -3097,7 +3097,7 @@
                   </SubMember>
                   <Suffix>.svstyle</Suffix>
                   <Title>ChannelStyle_129</Title>
-                  <Visible>true</Visible>
+                  <Visible>false</Visible>
                 </ChannelStyle>
               </SubMember>
               <Suffix>.svchannel</Suffix>

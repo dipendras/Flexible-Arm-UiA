@@ -27,6 +27,7 @@ VAR_OUTPUT
 	bError: BOOL;
 	nErrId: UDINT;
 	nMotorTempCelcius AT %I*: UINT;
+	bDisabled : BOOL := TRUE;
 END_VAR
 VAR
 	// Torque controller
@@ -36,7 +37,10 @@ VAR
 	// Trigger on change in setpoint
 	rTrigTorqueChange: R_Trig;
 	
-
+//	bEnable_last : BOOL := bEnable;
+	fbEnableFalling : F_TRIG;
+	fbReadDone 		: F_TRIG;
+	fbWriteDone 	: F_TRIG;
 
 	fTorqueCmdNm: LREAL; // Torque input in NM
 	fTorqueFbkNm: LREAL; // Torque output
@@ -75,8 +79,8 @@ VAR
 	//read  and write drive operation mode
 	fbMC_ReadDriveOperationMode : MC_ReadDriveOperationMode;
 	fbMC_WriteDriveOperationMode : MC_WriteDriveOperationMode;
-	bReadDriveOperationMode : BOOL := FALSE;
-	bWriteDriveOperationMode : BOOL := FALSE;
+//	bReadDriveOperationMode : BOOL := FALSE;
+//	bWriteDriveOperationMode : BOOL := FALSE;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -129,37 +133,58 @@ fShaftSetTorqueNm := fSetTorqueNm*fGearRatio;
 
 
 
+//IF bEnable THEN
+//	bReadDriveOperationMode := FALSE;
+//	bWriteDriveOperationMode := FALSE;
+//ELSE 
+//	bReadDriveOperationMode := TRUE;//to see if the drive operation mode is in velocity control mode
+//	bWriteDriveOperationMode := TRUE;	//to bring it to velocity control if the drive operation mode is not in velocity control mode
+//END_IF
+
 IF bEnable THEN
-	bReadDriveOperationMode := FALSE;
-	bWriteDriveOperationMode := FALSE;
-ELSE
-	bReadDriveOperationMode := TRUE;//to see if the drive operation mode is in velocity control mode
-	bWriteDriveOperationMode := TRUE;	//to bring it to velocity control if the drive operation mode is not in velocity control mode
+	bDisabled := FALSE;
 END_IF
 
-
+fbEnableFalling(CLK := bEnable);
+IF fbEnableFalling.Q OR fbWriteDone.Q THEN
+//	bReadDriveOperationMode := TRUE; // to see if the drive operation mode is in velocity control mode
+	fbMC_ReadDriveOperationMode.Execute := TRUE;
+END_IF
 
 fbMC_ReadDriveOperationMode(
-		Axis := axis,
-		Execute := bReadDriveOperationMode
+		Axis := axis
+//		Execute := bReadDriveOperationMode
 );
+//bReadDriveOperationMode := FALSE; // to see if the drive operation mode is in velocity control mode	
+fbMC_ReadDriveOperationMode.Execute := FALSE;
 
-
-IF (fbMC_ReadDriveOperationMode.Busy OR fbMC_ReadDriveOperationMode.Error) THEN 
-	bReadDriveOperationMode := FALSE;//attempt once again
+fbReadDone(CLK := fbMC_ReadDriveOperationMode.Busy);
+IF fbReadDone.Q AND NOT(bEnable) THEN
+	IF (fbMC_ReadDriveOperationMode.DriveOperationMode = E_DriveOperationMode.DriveOperationMode_Velo1) THEN
+		bDisabled := TRUE;
+	ELSE
+		fbMC_WriteDriveOperationMode.Execute := TRUE;
+//		bWriteDriveOperationMode := TRUE;
+	END_IF
 END_IF
 
-IF fbMC_ReadDriveOperationMode.DriveOperationMode <> E_DriveOperationMode.DriveOperationMode_Velo1 THEN
-	fbMC_WriteDriveOperationMode(
-		Axis := axis,
-		Execute := bWriteDriveOperationMode,
-		DriveOperationMode := E_DriveOperationMode.DriveOperationMode_Velo1
-);
-END_IF
+//IF (fbMC_ReadDriveOperationMode.Busy OR fbMC_ReadDriveOperationMode.Error) THEN 
+//	bReadDriveOperationMode := FALSE;//attempt once again
+//END_IF
 
-IF (fbMC_WriteDriveOperationMode.Busy OR fbMC_WriteDriveOperationMode.Error) THEN
-	bWriteDriveOperationMode := FALSE;//attempt once again
-END_IF]]></ST>
+//IF THEN
+//END_IF
+fbMC_WriteDriveOperationMode(
+	Axis := axis,
+	DriveOperationMode := E_DriveOperationMode.DriveOperationMode_Velo1
+);
+fbMC_WriteDriveOperationMode.Execute := FALSE;
+
+fbWriteDone(CLK := fbMC_WriteDriveOperationMode.Busy);
+
+//IF (fbMC_WriteDriveOperationMode.Busy OR fbMC_WriteDriveOperationMode.Error) THEN
+//	bWriteDriveOperationMode := FALSE;//attempt once again
+//END_IF]]></ST>
     </Implementation>
     <Method Name="readFeedback" Id="{3d3db19b-15f7-430b-8473-dd60671defc5}">
       <Declaration><![CDATA[METHOD readFeedback : BOOL
@@ -181,42 +206,10 @@ fShaftTorqueFbkNm:= fTorqueFbkNmFiltered * fGearRatio;]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="FB_TorqueController">
-      <LineId Id="3" Count="1" />
-      <LineId Id="200" Count="0" />
-      <LineId Id="197" Count="2" />
-      <LineId Id="111" Count="0" />
-      <LineId Id="110" Count="0" />
-      <LineId Id="5" Count="4" />
-      <LineId Id="357" Count="0" />
-      <LineId Id="10" Count="0" />
-      <LineId Id="356" Count="0" />
-      <LineId Id="11" Count="22" />
-      <LineId Id="201" Count="0" />
-      <LineId Id="208" Count="0" />
-      <LineId Id="196" Count="0" />
-      <LineId Id="36" Count="3" />
-      <LineId Id="209" Count="0" />
-      <LineId Id="225" Count="0" />
-      <LineId Id="224" Count="0" />
-      <LineId Id="249" Count="0" />
-      <LineId Id="257" Count="0" />
-      <LineId Id="272" Count="0" />
-      <LineId Id="274" Count="1" />
-      <LineId Id="277" Count="0" />
-      <LineId Id="258" Count="0" />
-      <LineId Id="245" Count="1" />
-      <LineId Id="253" Count="2" />
-      <LineId Id="237" Count="0" />
-      <LineId Id="256" Count="0" />
-      <LineId Id="262" Count="0" />
-      <LineId Id="259" Count="2" />
-      <LineId Id="240" Count="0" />
-      <LineId Id="236" Count="0" />
-      <LineId Id="40" Count="0" />
-      <LineId Id="266" Count="3" />
-      <LineId Id="264" Count="1" />
-      <LineId Id="243" Count="0" />
-      <LineId Id="270" Count="1" />
+      <LineId Id="571" Count="74" />
+      <LineId Id="647" Count="19" />
+      <LineId Id="671" Count="0" />
+      <LineId Id="667" Count="3" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_TorqueController.readFeedback">

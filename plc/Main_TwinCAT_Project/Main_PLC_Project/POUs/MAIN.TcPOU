@@ -8,7 +8,7 @@ VAR_INPUT
 	fVelInput : ARRAY [0..2] OF LREAL;
 END_VAR
 VAR
-	bDelayStart : BOOL := TRUE;
+	bDelayStart : BOOL := FALSE;
 	fbDelayStart : TON := (PT := T#2S);
 	
 
