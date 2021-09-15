@@ -11,6 +11,7 @@ VAR_INPUT
 	eRobotModeCmd : E_RobotMode;
 	fVelInput : ARRAY [0..2] OF LREAL;
 	fPosInput : ARRAY [0..2] OF LREAL;	
+	fShaftAdditiveTorque : ARRAY [0..2] OF LREAL; // [Nm]
 	bPositionModeExecute 	: BOOL;
 	fJointPositionOffset 	: ARRAY [0..2] OF LREAL;	
 	fJointCalibrationOffset : ARRAY [0..2] OF LREAL;
@@ -30,7 +31,7 @@ VAR
 	qRef : ARRAY [0..2] OF LREAL;
 	qRef_t : ARRAY [0..2] OF LREAL;
 	qRef_tt : ARRAY [0..2] OF LREAL;
-	fShaftAdditiveTorque : ARRAY [0..2] OF LREAL := [0.0, 0.0, 0.0]; // [Nm]
+	
 	
 	fShaftTorqueRef : ARRAY [0..2] OF LREAL;
 
