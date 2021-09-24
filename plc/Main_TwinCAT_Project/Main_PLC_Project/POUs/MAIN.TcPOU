@@ -14,15 +14,16 @@ VAR
 	
 	
 	
-	t AT %Q* : LREAL;
-	A : ARRAY [0..2] OF LREAL;
-	w : ARRAY [0..2] OF LREAL;
-	TT : ARRAY [0..2] OF LREAL;
-	q_Offset : ARRAY [0..2] OF LREAL;
-	phi_Offset : ARRAY [0..2] OF LREAL;
-	y : ARRAY [0..2] OF LREAL;
-	y_t : ARRAY [0..2] OF LREAL;
+//	t AT %Q* : LREAL;
+//	A : ARRAY [0..2] OF LREAL;
+//	w : ARRAY [0..2] OF LREAL;
+//	TT : ARRAY [0..2] OF LREAL;
+//	q_Offset : ARRAY [0..2] OF LREAL;
+//	phi_Offset : ARRAY [0..2] OF LREAL;
+//	y : ARRAY [0..2] OF LREAL;
+//	y_t : ARRAY [0..2] OF LREAL;
 	u : ARRAY [0..2] OF LREAL;
+	
 	j : USINT;
 //	i : USINT;
 	
@@ -81,6 +82,8 @@ VAR
 	q_t_Filtered : ARRAY [0..2] OF LREAL;
 	stJointVelFilterParams : ST_FilterParams;
 	
+	
+
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -162,7 +165,9 @@ robot(
 	fShaftAdditiveTorque := fShaftAdditiveTorque,
 	fJointPositionOffset := Parameters.fJointPositionOffset,
 	fJointCalibrationOffset := Parameters.fJointCalibrationOffset
-);]]></ST>
+);
+
+]]></ST>
     </Implementation>
     <Action Name="getSampleTime" Id="{503be4e8-d825-4f62-bfd8-9f7ff9c902be}">
       <Implementation>
@@ -279,8 +284,14 @@ END_IF
       <LineId Id="1266" Count="0" />
       <LineId Id="1269" Count="1" />
       <LineId Id="1267" Count="0" />
-      <LineId Id="1248" Count="12" />
+      <LineId Id="1248" Count="1" />
+      <LineId Id="1387" Count="0" />
+      <LineId Id="1391" Count="0" />
+      <LineId Id="1390" Count="0" />
+      <LineId Id="1253" Count="7" />
       <LineId Id="1246" Count="0" />
+      <LineId Id="1385" Count="0" />
+      <LineId Id="1384" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.getSampleTime">
       <LineId Id="5" Count="0" />

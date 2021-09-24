@@ -47,11 +47,27 @@ VAR
 	//Torque oontrol
 	Kp : ARRAY [0..2] OF LREAL := [20, 20, 20];
 	Kd : ARRAY [0..2] OF LREAL := [5, 5, 5];
-	fGravityTorque : ARRAY [0..2] OF LREAL := [0, 0, 0];//shouldnot be zero
+	fGravityTorque : ARRAY [0..2] OF LREAL := [0.0, 0.0, 0.0];//shouldnot be zero
+	fbPid : FB_CTRL_PID;
+	stPidParams : ST_CTRL_PID_PARAMS;
+	ePidMode : E_CTRL_MODE;
+	bInitPidControl : BOOL := TRUE;
 	
+	//filters for velocity feeback
+	fbJointVelFilters : ARRAY [0..2] OF FB_LowPassFilter;
+	fJointVelFilterCutoff : ARRAY [0..2] OF LREAL := [ 10.0, 10.0, 10.0 ];
+	q_t_Filtered : ARRAY [0..2] OF LREAL;
+	stJointVelFilterParams : ST_FilterParams;
+	bFirstRun : BOOL := TRUE;
 	
 
-
+	//trajectory generation
+	fbTrajectoryGenerator : ARRAY [0..2] OF FB_TrajectoryGenerator;
+	ft : ARRAY [0..2] OF LREAL := [0.0,0.0,0.0];
+	ftf : LREAL := 5.0;
+	fPosInputOld : ARRAY [0..2] OF LREAL;	
+	bExecuteReady : ARRAY [0..2] OF BOOL := [FALSE, FALSE, FALSE];	
+	
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -111,10 +127,10 @@ IF(eRobotMode = E_RobotMode.POSITION) THEN
 ELSIF(eRobotMode = E_RobotMode.VELOCITY) THEN
 	velocityMode();
 ELSIF(eRobotMode = E_RobotMode.TORQUE) THEN
-	torqueMode(); //calculate ref torque in all modes???
+//	torqueMode(); //calculate ref torque in all modes???
 END_IF
 
-//torqueMode(); //update referece torque all the time so that we don't receive too high command in the start
+torqueMode(); //update referece torque all the time so that we don't receive too high command in the start
 
 
 // Execute joints
@@ -137,8 +153,7 @@ FOR j:= 0 TO 2 DO
 	// Assign feedback data from joints
 	q[j] := joints[j].q;
 	q_t[j] := joints[j].q_t;
-	tau[j] := joints[j].tau;
-	
+	tau[j] := joints[j].tau;	
 END_FOR
 
 
@@ -169,14 +184,57 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[ 
+        <ST><![CDATA[IF bInitPidControl THEN
+	stPidParams.tCtrlCycleTime := T#10MS;
+	stPidParams.tTaskCycleTime := T#10MS;
+	stPidParams.fKp := 0.1;
+	stPidParams.tTn                    := T#1000MS; 
+	stPidParams.tTv                    := T#100MS; 
+	stPidParams.tTd                    := T#100MS; 
+	stPidParams.fOutMaxLimit           := 20; //Nm
+	stPidParams.fOutMinLimit           := -20; //NM
+	stPidParams.bPInTheFeedbackPath    := FALSE;
+	stPidParams.bDInTheFeedbackPath    := TRUE;
+	stPidParams.bARWOnIPartOnly        := FALSE;
+	
+	ePidMode := eCTRL_MODE_ACTIVE; 
+	bInitPidControl := FALSE;
+END_IF
+
+
+fbPid(fSetpointValue := fPosInput[2],
+		fActualValue := joints[2].q,
+		eMode := ePidMode,
+		stParams := stPidParams);
+
+
+IF bFirstRun THEN
+	bFirstRun := FALSE;
+	FOR i := 0 TO 2 DO
+		
+		//initialize JointVel Filters
+		stJointVelFilterParams.fCutoff := fJointVelFilterCutoff[i];
+		stJointVelFilterParams.fDeltaTime := Ts;
+		stJointVelFilterParams.fInitialValue := 0.0;
+		fbJointVelFilters[i].init(stParams := stJointVelFilterParams);
+		
+	END_FOR
+END_IF		
+		
+		
+fGravityTorque[2] := (RobotParams.fLinkMass[2]/2.0 + RobotParams.fPayloadMass)*RobotParams.fGravity*RobotParams.fLinkLength[2]*COS((joints[0].q + joints[1].q + joints[2].q)*CONSTANTS.DEG_TO_RAD);
+
 
 
 FOR i:= 0 TO 2 DO
 //	IF joints[i].bActive THEN		
-		// get input position from HMI
-		qRef[i] := fPosInput[i];	
-		fShaftTorqueRef[i] := Kp[i]*(qRef[i] - joints[i].q)* CONSTANTS.DEG_TO_RAD + Kd[i]*(0.0 - joints[i].q_t)*CONSTANTS.DEG_TO_RAD + fGravityTorque[i]; //add gravity torque here 
+		// get input position from HMI		
+		//calculate gravity torque
+		
+//		fShaftTorqueRef[i] :=  fbPid.fOut;
+		fbJointVelFilters[i].update(joints[i].q_t);
+		q_t_Filtered[i] := fbJointVelFilters[i].fOut;
+		fShaftTorqueRef[i] := fShaftAdditiveTorque[i] + Kp[i]*(fPosInput[i] - joints[i].q)* CONSTANTS.DEG_TO_RAD + Kd[i]*(0.0 - q_t_Filtered[i])*CONSTANTS.DEG_TO_RAD + fGravityTorque[i]; //add gravity torque here 
 		
 //	END_IF	
 END_FOR]]></ST>
@@ -191,14 +249,44 @@ END_VAR
         <ST><![CDATA[// Integrate position
 
 FOR i:= 0 TO 2 DO
-	qRef[i] := joints[i].q;
-	IF joints[i].bActive THEN		
-		// Set input based on velocity input u
-		qRef[i] := qRef[i] + fVelInput[i]*Ts;
-		qRef_t[i] := fVelInput[i];
-		qRef_tt[i] := (fVelInput[i]-fVelInputOld[i])/(Ts);
-		// Update old variable
-		fVelInputOld[i] := fVelInput[i];
+//	qRef[i] := joints[i].q;
+	IF joints[i].bActive THEN	
+/////	
+//		// Set input based on velocity input u
+//		qRef[i] := qRef[i] + fVelInput[i]*Ts;
+//		qRef_t[i] := fVelInput[i];
+//		qRef_tt[i] := (fVelInput[i]-fVelInputOld[i])/(Ts);
+//		// Update old variable
+//		fVelInputOld[i] := fVelInput[i];
+		
+/////		
+		
+			//traj
+			//check if the pos input is changed
+			IF bPositionModeExecute AND (NOT bExecuteReady[i]) THEN
+				ft[i] := 0.0;
+				fbTrajectoryGenerator[i].init(fqStartInit := joints[i].q, fqFinalInit := fPosInput[i], ftFinalInit := ftf);
+				bExecuteReady[i] := TRUE;
+			END_IF
+			IF bExecuteReady[i] THEN
+				fbTrajectoryGenerator[i].getTrajectory(ftTraj := ft[i]);
+				qRef[i] := fbTrajectoryGenerator[i].fqPos;
+				qRef_t[i]:= fbTrajectoryGenerator[i].fqVel;
+				qRef_tt[i] :=  fbTrajectoryGenerator[i].fqAcc;						 
+				ft[i] := ft[i]+Ts;
+			ELSE
+				qRef[i] := joints[i].q;
+				qRef_t[i]:= 0.0;
+				qRef_tt[i] :=  0.0;
+				ft[i] := 0.0;
+			END_IF
+			
+			IF (ft[i] > ftf) AND NOT bPositionModeExecute THEN
+				bExecuteReady[i] := FALSE;
+				ft[i] := 0.0;
+			END_IF
+
+		
 		
 		
 //	ELSE
@@ -236,7 +324,8 @@ END_FOR]]></ST>
       <LineId Id="1063" Count="2" />
       <LineId Id="1192" Count="0" />
       <LineId Id="1121" Count="0" />
-      <LineId Id="1066" Count="10" />
+      <LineId Id="1066" Count="6" />
+      <LineId Id="1074" Count="2" />
       <LineId Id="42" Count="0" />
     </LineIds>
     <LineIds Name="FB_Robot3R.positionMode">
@@ -247,17 +336,55 @@ END_FOR]]></ST>
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_Robot3R.torqueMode">
-      <LineId Id="15" Count="2" />
-      <LineId Id="6" Count="3" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="53" Count="9" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="63" Count="2" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="31" Count="1" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="71" Count="3" />
+      <LineId Id="80" Count="7" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="6" Count="2" />
+      <LineId Id="24" Count="1" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="88" Count="0" />
       <LineId Id="14" Count="0" />
       <LineId Id="11" Count="1" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_Robot3R.velocityMode">
-      <LineId Id="9" Count="9" />
+      <LineId Id="9" Count="4" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="14" Count="4" />
+      <LineId Id="57" Count="1" />
       <LineId Id="25" Count="0" />
-      <LineId Id="34" Count="0" />
-      <LineId Id="38" Count="0" />
+      <LineId Id="59" Count="12" />
+      <LineId Id="73" Count="0" />
+      <LineId Id="81" Count="0" />
+      <LineId Id="84" Count="1" />
+      <LineId Id="83" Count="0" />
+      <LineId Id="82" Count="0" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="80" Count="0" />
+      <LineId Id="75" Count="1" />
+      <LineId Id="89" Count="0" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="79" Count="0" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="44" Count="1" />
       <LineId Id="26" Count="4" />
       <LineId Id="19" Count="0" />
       <LineId Id="21" Count="0" />

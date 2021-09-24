@@ -8,7 +8,7 @@ VAR_INPUT
 	fTorqueScaling: LREAL:= 2.99;
 	fVelocityLimitHigh: LREAL:= 100; // [mm/s]
 	fVelocityLimitLow: LREAL:= 0; // [mm/s]
-	fTorqueRamp: LREAL:= 10.0; // // [%/s] 
+	fTorqueRamp: LREAL:= 100.0; // // [%/s] //10
 	fGearRatio: LREAL := 1000;
 	bStop: BOOL;
 	bRelative: BOOL:= FALSE; //it should be false, but DS doesn't know why it was true by default
@@ -81,17 +81,17 @@ VAR
 	fbMC_WriteDriveOperationMode : MC_WriteDriveOperationMode;
 //	bReadDriveOperationMode : BOOL := FALSE;
 //	bWriteDriveOperationMode : BOOL := FALSE;
+
+	
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[// Read torque feedback
  readFeedback();
-
-
-
-
-
+ 
 fTorqueCmdNm := fShaftTorqueCmdNm/fGearRatio;
+
+
 
 // Scale torque command in NM to percentage
 fTorqueCmdPercent:= RescaleRange(fTorqueCmdNm, -fTorqueScaling, fTorqueScaling, -100, 100);
@@ -206,7 +206,12 @@ fShaftTorqueFbkNm:= fTorqueFbkNmFiltered * fGearRatio;]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="FB_TorqueController">
-      <LineId Id="571" Count="74" />
+      <LineId Id="571" Count="1" />
+      <LineId Id="767" Count="0" />
+      <LineId Id="578" Count="0" />
+      <LineId Id="768" Count="0" />
+      <LineId Id="772" Count="0" />
+      <LineId Id="579" Count="66" />
       <LineId Id="647" Count="19" />
       <LineId Id="671" Count="0" />
       <LineId Id="667" Count="3" />

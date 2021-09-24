@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <GVL Name="RobotParams" Id="{6cf8f6ac-144a-4d81-a895-8d8d34fd0e54}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	fLinkLength : ARRAY [0..2] OF LREAL := [1.5, 1.5, 1.5];
+	fLinkMass : ARRAY [0..2] OF LREAL := [2.9809, 1.7982, 1.1138];
+	fHubMass : ARRAY [0..2] OF LREAL := [51.2960, 12.4690, 4.2810];
+	fPayloadMass : LREAL := 0.0;
+	fGravity : LREAL := 9.81;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

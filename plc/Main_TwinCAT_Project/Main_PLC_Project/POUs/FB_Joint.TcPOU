@@ -73,7 +73,24 @@ VAR
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[fbReadParameterSet(
+      <ST><![CDATA[//IF NOT fbReadParameterSet.Busy AND NOT fbReadParameterSet.Error THEN
+//	fbReadParameterSet(
+//		Axis := axis,
+//		Parameter := stAxisParameterSet,
+//		Execute := TRUE
+//	);
+	
+//ELSE
+//	fbReadParameterSet(
+//		Axis := axis,
+//		Parameter := stAxisParameterSet,
+//		Execute := FALSE
+//	);
+	
+//END_IF
+
+
+fbReadParameterSet(
 	Axis := axis,
 	Parameter := stAxisParameterSet,
 	Execute := bReadParameterSet AND NOT fbReadParameterSet.Busy
@@ -224,6 +241,8 @@ END_IF]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="FB_Joint">
+      <LineId Id="2784" Count="13" />
+      <LineId Id="2781" Count="2" />
       <LineId Id="2579" Count="61" />
       <LineId Id="2694" Count="1" />
       <LineId Id="2641" Count="8" />

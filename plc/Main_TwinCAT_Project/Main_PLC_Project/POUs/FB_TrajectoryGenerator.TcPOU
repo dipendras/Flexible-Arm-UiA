@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_TrajectoryGenerator" Id="{377b08c1-e10b-45e1-9414-82eb9ae2dc7f}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_TrajectoryGenerator
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+	fqPos : LREAL; //joint pos
+	fqVel : LREAL; //joint vel
+	fqAcc : LREAL; //joint acc
+END_VAR
+VAR
+	fqStart : LREAL; //start pos
+	fqFinal : LREAL; //goal ¨pos
+	ftFinal : LREAL; //final time	
+	
+
+	a0  : LREAL := 0.0;
+	a1  : LREAL := 0.0;
+	a2  : LREAL := 0.0;
+	a3  : LREAL := 0.0;
+	a4  : LREAL := 0.0;
+	a5  : LREAL := 0.0;
+	
+	
+END_VAR
+
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="getTrajectory" Id="{cc7013b5-a934-4a59-ac2a-2227b2ae72a9}">
+      <Declaration><![CDATA[METHOD getTrajectory : BOOL
+VAR_INPUT
+	ftTraj : LREAL; // traj point
+END_VAR
+
+
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+IF ftTraj <= ftFinal THEN
+	fqPos := a0 + a1*EXPT(ftTraj,1) +  a2*EXPT(ftTraj,2) + a3*EXPT(ftTraj,3) + a4*EXPT(ftTraj,4) + a5*EXPT(ftTraj,5);
+	fqVel := a1 +  2*a2*EXPT(ftTraj,1) + 3*a3*EXPT(ftTraj,2) + 4*a4*EXPT(ftTraj,3) + 5*a5*EXPT(ftTraj,4);
+	fqAcc := 2*a2 + 2*3*a3*EXPT(ftTraj,1) + 3*4*a4*EXPT(ftTraj,2) + 4*5*a5*EXPT(ftTraj,3);
+ELSE
+	fqPos := fqFinal;
+	fqVel := 0.0;
+	fqAcc := 0.0;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="init" Id="{d973b4a1-c418-4db1-97e2-1f7239ff7f26}">
+      <Declaration><![CDATA[METHOD init : BOOL
+VAR_INPUT
+	fqStartInit : LREAL; //start pos
+	fqFinalInit : LREAL; //goal ¨pos
+	ftFinalInit : LREAL; //final time	
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+fqStart := fqStartInit;
+fqFinal := fqFinalInit;
+ftFinal := ftFinalInit;
+
+a0 := fqStartInit;
+a1 := 0.0;
+a2 := 0.0;
+a3 := (10*(fqFinalInit - fqStartInit))/EXPT(ftFinalInit,3);
+a4 := -(15*(fqFinalInit - fqStartInit))/EXPT(ftFinalInit,4);
+a5 :=  (6*(fqFinalInit - fqStartInit))/EXPT(ftFinalInit,5);]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_TrajectoryGenerator">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TrajectoryGenerator.getTrajectory">
+      <LineId Id="19" Count="0" />
+      <LineId Id="9" Count="3" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="22" Count="1" />
+      <LineId Id="20" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_TrajectoryGenerator.init">
+      <LineId Id="26" Count="0" />
+      <LineId Id="28" Count="1" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="15" Count="4" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
