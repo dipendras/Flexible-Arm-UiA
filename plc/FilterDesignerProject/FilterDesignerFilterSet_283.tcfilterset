@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FilterDesignerFilterSet AssemblyName="TwinCAT.Measurement.FilterDesigner">
+  <Bandwidth>100</Bandwidth>
+  <Channels>1</Channels>
+  <Comment />
+  <CursorVisibility>None</CursorVisibility>
+  <CutOff>250</CutOff>
+  <DisplayColor>Orange</DisplayColor>
+  <Enabled>true</Enabled>
+  <EnablePLCOptions>false</EnablePLCOptions>
+  <EnableTerminalOptions>false</EnableTerminalOptions>
+  <FilterName>Butterworth</FilterName>
+  <FilterType>LowPass</FilterType>
+  <Guid>85ec67b2-8334-4b0e-94c3-9e29b2b53e74</Guid>
+  <ImpulseResponse>IIR</ImpulseResponse>
+  <ImpulseStepPoints>200</ImpulseStepPoints>
+  <IsFileBased>true</IsFileBased>
+  <LineColor>Orange</LineColor>
+  <LineWidth>1</LineWidth>
+  <MagnitudeMode>normalized</MagnitudeMode>
+  <Marks>false</Marks>
+  <Name>FilterDesignerFilterSet_283</Name>
+  <Order>2</Order>
+  <Oversamples>1</Oversamples>
+  <PassBandRipple>0.1</PassBandRipple>
+  <Precision>FixedPoint32Bit</Precision>
+  <SampleRate>10000</SampleRate>
+  <SettlingTimeTolerance>2</SettlingTimeTolerance>
+  <ShowMarker>None</ShowMarker>
+  <ShowTitle>true</ShowTitle>
+  <ShowValue>true</ShowValue>
+  <SortPriority>2</SortPriority>
+  <Suffix>.tcfilterset</Suffix>
+  <SupportPoints>512</SupportPoints>
+  <TerminalChannel>0</TerminalChannel>
+  <TerminalFilter>0</TerminalFilter>
+  <Title>Filter Set</Title>
+  <XAxisScale>Logarithmic</XAxisScale>
+</FilterDesignerFilterSet>

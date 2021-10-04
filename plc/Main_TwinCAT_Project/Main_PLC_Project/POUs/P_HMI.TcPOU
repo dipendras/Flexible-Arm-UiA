@@ -27,7 +27,7 @@ HmiToPlc.bVelocityMode := FALSE;
 
 IF HmiToPlc.bTorqueMode THEN
 	// Attempt to enable torque mode
-	MAIN.robot.eRobotModeCmd := E_RobotMode.TORQUE;	
+//	MAIN.robot.eRobotModeCmd := E_RobotMode.TORQUE;	
 END_IF
 HmiToPlc.bTorqueMode := FALSE;
 

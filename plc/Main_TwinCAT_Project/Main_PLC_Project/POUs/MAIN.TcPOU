@@ -75,15 +75,42 @@ VAR
 	Kt : ARRAY [0..2] OF LREAL := [0.0, 0.0, 0.0]; // gain for defelectuib compensation
 	bEnableDeflectionCompensation : BOOL := FALSE;
 	
+	// Additive velocity based on deflection measurement	
+	fShaftAdditiveVelocity : ARRAY [0..2] OF LREAL := [0.0, 0.0, 0.0]; // [Nm]
+	
 	//filters for velocity feeback
 	fbJointVelFilters : ARRAY [0..2] OF FB_LowPassFilter;
 	fJointVelFilterCutoff : ARRAY [0..2] OF LREAL := [ 10.0, 10.0, 10.0 ];
-	fElasticOscilationVelocity : ARRAY [0..2] OF LREAL;//differene between joint veocity and velocity measured by gyro
+	
 	q_t_Filtered : ARRAY [0..2] OF LREAL;
 	stJointVelFilterParams : ST_FilterParams;
 	
-	
+	fElasticOscilationVelocity : ARRAY [0..2] OF LREAL;//differene between joint veocity and velocity measured by gyro
+	fElasticOscilationVelocityFiltered : ARRAY [0..2] OF LREAL;//differene between joint veocity and velocity measured by gyro
+	fElasticOscilationVelocityLast : ARRAY [0..2] OF LREAL := [0.0, 0.0, 0.0];
 
+	fElasticOscilationAcceleration : ARRAY [0..2] OF LREAL;// d(Vel)/dt
+	
+	//filters for link oscillations feeback
+	fbElasticOscilationVelocityFilters : ARRAY [0..2] OF FB_LowPassFilter;
+	stElasticOscilationVelocityFilterParams : ARRAY [0..2] OF ST_FilterParams := [
+		(	
+			eOrder := E_FilterOrder.eSecond,
+			fCutoff := 10
+		),
+		(
+			eOrder := E_FilterOrder.eSecond,
+			fCutoff := 10
+		),
+		(
+			eOrder := E_FilterOrder.eSecond,
+			fCutoff := 10
+		)
+	];
+	
+//	nVelocityFeedbackRaw AT %I* : DINT;
+//	fVelocityFeedback : LREAL;
+	
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -120,6 +147,10 @@ IF bFirstRun THEN
 		stJointVelFilterParams.fInitialValue := 0.0;
 		fbJointVelFilters[j].init(stParams := stJointVelFilterParams);
 		
+		// filters for link oscillations feeback
+		stElasticOscilationVelocityFilterParams[j].fDeltaTime := Ts;
+		fbElasticOscilationVelocityFilters[j].init(stParams := stElasticOscilationVelocityFilterParams[j]);
+		
 	END_FOR
 END_IF
 
@@ -146,11 +177,17 @@ FOR j := 0 TO 2 DO
 	fbJointVelFilters[j].update(robot.q_t[j]);
 	q_t_Filtered[j] := fbJointVelFilters[j].fOut;
 	fElasticOscilationVelocity[j] := fLinkGyroVelocity[j] - q_t_Filtered[j];
+	fElasticOscilationVelocityFiltered[j] := fbElasticOscilationVelocityFilters[j].update(fElasticOscilationVelocity[j]);
+	
+	fElasticOscilationAcceleration[j] := (fElasticOscilationVelocityFiltered[j] - fElasticOscilationVelocityLast[j])/Ts;
+	fElasticOscilationVelocityLast[j] := fElasticOscilationVelocityFiltered[j];
 	
 	IF bEnableDeflectionCompensation THEN	
-		fShaftAdditiveTorque[j] := -Kt[j]*fElasticOscilationVelocity[j];
+//		fShaftAdditiveTorque[j] := -Kt[j]*fElasticOscilationVelocity[j];
+		fShaftAdditiveVelocity[j] := -Kt[j]*fElasticOscilationVelocityFiltered[j];
 	ELSE
-		fShaftAdditiveTorque[j] := 0.0;	
+//		fShaftAdditiveTorque[j] := 0.0;
+		fShaftAdditiveVelocity[j] := 0.0;	
 	END_IF		
 END_FOR
 
@@ -163,9 +200,17 @@ robot(
 	fVelInput:=fVelInput,//u
 	fPosInput := fPosInput,
 	fShaftAdditiveTorque := fShaftAdditiveTorque,
+	fShaftAdditiveVelocity := fShaftAdditiveVelocity,
 	fJointPositionOffset := Parameters.fJointPositionOffset,
 	fJointCalibrationOffset := Parameters.fJointCalibrationOffset
 );
+
+//fVelocityFeedback := TO_LREAL(nVelocityFeedbackRaw)/(CONSTANTS.VELOCITY_SCALING*CONSTANTS.GEAR_RATIO[2]);
+
+
+
+
+
 
 ]]></ST>
     </Implementation>
@@ -257,6 +302,8 @@ END_IF
       <LineId Id="1285" Count="2" />
       <LineId Id="1284" Count="0" />
       <LineId Id="1288" Count="0" />
+      <LineId Id="1546" Count="0" />
+      <LineId Id="1529" Count="2" />
       <LineId Id="1154" Count="0" />
       <LineId Id="1146" Count="0" />
       <LineId Id="1279" Count="2" />
@@ -280,18 +327,28 @@ END_IF
       <LineId Id="1294" Count="0" />
       <LineId Id="1291" Count="0" />
       <LineId Id="1295" Count="0" />
+      <LineId Id="1551" Count="0" />
+      <LineId Id="1557" Count="0" />
+      <LineId Id="1555" Count="1" />
       <LineId Id="1292" Count="0" />
       <LineId Id="1266" Count="0" />
-      <LineId Id="1269" Count="1" />
+      <LineId Id="1513" Count="0" />
+      <LineId Id="1269" Count="0" />
+      <LineId Id="1517" Count="0" />
+      <LineId Id="1270" Count="0" />
       <LineId Id="1267" Count="0" />
       <LineId Id="1248" Count="1" />
       <LineId Id="1387" Count="0" />
       <LineId Id="1391" Count="0" />
       <LineId Id="1390" Count="0" />
-      <LineId Id="1253" Count="7" />
+      <LineId Id="1253" Count="5" />
+      <LineId Id="1518" Count="0" />
+      <LineId Id="1259" Count="1" />
       <LineId Id="1246" Count="0" />
+      <LineId Id="1505" Count="0" />
       <LineId Id="1385" Count="0" />
-      <LineId Id="1384" Count="0" />
+      <LineId Id="1507" Count="5" />
+      <LineId Id="1506" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.getSampleTime">
       <LineId Id="5" Count="0" />

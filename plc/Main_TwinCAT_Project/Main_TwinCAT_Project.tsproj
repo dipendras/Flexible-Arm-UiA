@@ -2628,6 +2628,11 @@ External Setpoint Generation:
 							<Type>INT</Type>
 						</Var>
 						<Var>
+							<Name>MAIN.robot.joints[0].nAdditiveVelocity</Name>
+							<Comment><![CDATA[ rev/2^30 ms	]]></Comment>
+							<Type>DINT</Type>
+						</Var>
+						<Var>
 							<Name>MAIN.robot.joints[0].axis.PlcToNc</Name>
 							<Type GUID="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" Namespace="MC">PLCTONC_AXIS_REF</Type>
 						</Var>
@@ -2636,12 +2641,22 @@ External Setpoint Generation:
 							<Type>INT</Type>
 						</Var>
 						<Var>
+							<Name>MAIN.robot.joints[1].nAdditiveVelocity</Name>
+							<Comment><![CDATA[ rev/2^30 ms	]]></Comment>
+							<Type>DINT</Type>
+						</Var>
+						<Var>
 							<Name>MAIN.robot.joints[1].axis.PlcToNc</Name>
 							<Type GUID="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" Namespace="MC">PLCTONC_AXIS_REF</Type>
 						</Var>
 						<Var>
 							<Name>MAIN.robot.joints[2].nAdditiveTorquePerc</Name>
 							<Type>INT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.robot.joints[2].nAdditiveVelocity</Name>
+							<Comment><![CDATA[ rev/2^30 ms	]]></Comment>
+							<Type>DINT</Type>
 						</Var>
 						<Var>
 							<Name>MAIN.robot.joints[2].axis.PlcToNc</Name>
@@ -4874,8 +4889,8 @@ External Setpoint Generation:
 					<EtherCAT SlaveType="2" PdiType="#x0c08" MboxDataLinkLayer="true" StateMBoxPolling="true" CfgModeSafeOp="true" DownloadPdoCfg="true" CycleMBoxPollingTime="0" FoeType="1" SoeChannels="1" VendorId="#x00000002" ProductCode="#x13f26012" RevisionNo="#x00d20000" InfoDataAddr="true" InfoDataSoeDS401="true" InfoDataDcTimes="true" TimeoutStateChange3="10000" TimeoutStateChange4="500" AutoRestoreAfterWcOk="true" CheckRevisionNoType="4" PortPhys="12305" IdentificationAdo="308" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="AX5106-0000-0210 EtherCAT Drive (SoE, 1 Ch.)" Desc="AX5106-0000-0210" PortABoxInfo="#x01000003">
 						<SyncMan>001880002600010001000000800080008000001826010000</SyncMan>
 						<SyncMan>001a80002200010002000000800080008000001a22010000</SyncMan>
-						<SyncMan>00100a002400010003000000000000000000001024010000</SyncMan>
-						<SyncMan>00110a002200010004000000000000000000001122010000</SyncMan>
+						<SyncMan>00100e002400010003000000000000000000001024010000</SyncMan>
+						<SyncMan>00110e002200010004000000000000000000001122010000</SyncMan>
 						<SyncMan>002000002400010005000000000000000000002024010000</SyncMan>
 						<SyncMan>002400002000010006000000000000000000002420010000</SyncMan>
 						<Fmmu>0000000000000000001000020100000001000000000000000000000000000000</Fmmu>
@@ -4955,6 +4970,9 @@ External Setpoint Generation:
 							<Entry Name="Velocity controller output" BitLen="16" Index="#x81f9">
 								<Type>INT</Type>
 							</Entry>
+							<Entry Name="Velocity feedback 1 value" BitLen="32" Index="#x0028">
+								<Type>DINT</Type>
+							</Entry>
 						</Pdo>
 						<Pdo Name="MDT" Index="#x0018" InOut="1" Flags="#x0001" SyncMan="2">
 							<Entry Name="Master control word" BitLen="16" Index="#x0086" Flags="#x00000800">
@@ -4968,6 +4986,9 @@ External Setpoint Generation:
 							</Entry>
 							<Entry Name="Additive torque/force command value" BitLen="16" Index="#x0051">
 								<Type>INT</Type>
+							</Entry>
+							<Entry Name="Additive velocity command value" BitLen="32" Index="#x0025">
+								<Type>DINT</Type>
 							</Entry>
 						</Pdo>
 					</EtherCAT>
@@ -6997,6 +7018,7 @@ External Setpoint Generation:
 				<Link VarA="PlcTask Inputs^MAIN.robot.joints[2].fbTorqueControl.fTorqueFbkPerc" VarB="AT^Torque/force feedback value"/>
 				<Link VarA="PlcTask Inputs^MAIN.robot.joints[2].nVelocityControllerOutputTorque" VarB="AT^Velocity controller output"/>
 				<Link VarA="PlcTask Outputs^MAIN.robot.joints[2].nAdditiveTorquePerc" VarB="MDT^Additive torque/force command value"/>
+				<Link VarA="PlcTask Outputs^MAIN.robot.joints[2].nAdditiveVelocity" VarB="MDT^Additive velocity command value"/>
 			</OwnerB>
 			<OwnerB Name="TINC^Main_NC_Task SAF^Axes^Axis1_Drive1_Joint1">
 				<Link VarA="PlcTask Inputs^MAIN.robot.joints[0].axis.NcToPlc" VarB="Outputs^ToPlc"/>
