@@ -149,7 +149,8 @@ FOR j:= 0 TO 2 DO
 		fShaftAdditiveTorque := fShaftAdditiveTorque[j],
 		fShaftAdditiveVelocity := fShaftAdditiveVelocity[j],
 		fShaftTorqueRef  :=  fShaftTorqueRef[j],
-		fOffset := fJointPositionOffset[j] + fJointCalibrationOffset[j]
+		fOffset := fJointPositionOffset[j] + fJointCalibrationOffset[j],
+		Ts := Ts
 	);
 
 	// Assign feedback data from joints
@@ -326,7 +327,9 @@ END_FOR]]></ST>
       <LineId Id="1192" Count="0" />
       <LineId Id="1262" Count="0" />
       <LineId Id="1121" Count="0" />
-      <LineId Id="1066" Count="6" />
+      <LineId Id="1066" Count="0" />
+      <LineId Id="1332" Count="0" />
+      <LineId Id="1067" Count="5" />
       <LineId Id="1074" Count="2" />
       <LineId Id="42" Count="0" />
     </LineIds>

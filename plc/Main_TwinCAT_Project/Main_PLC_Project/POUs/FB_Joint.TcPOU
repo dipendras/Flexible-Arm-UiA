@@ -24,6 +24,7 @@ VAR_INPUT
 	fTotalVelocityRef : LREAL;
 	
 	fOffset : LREAL;
+	Ts : LREAL;
 END_VAR
 VAR_OUTPUT
 	// eRobotMode : E_RobotMode;
@@ -156,7 +157,7 @@ IF bActive AND fbExtSetPointGenEnable.Enabled THEN
 	//Feed extrernal setpoints to axis interface
 	MC_ExtSetPointGenFeed(
 		Axis := axis,
-		Position := LIMIT(stAxisParameterSet.fEncSoftEndMin, fOffset - qRef, stAxisParameterSet.fEncSoftEndMax),
+		Position := LIMIT(stAxisParameterSet.fEncSoftEndMin, fOffset - (qRef + fShaftAdditiveVelocity*Ts), stAxisParameterSet.fEncSoftEndMax),
 		Velocity := fTotalVelocityRef,
 		Acceleration := -qRef_tt,
 		Direction := getDirection(fTotalVelocityRef, -qRef_tt)

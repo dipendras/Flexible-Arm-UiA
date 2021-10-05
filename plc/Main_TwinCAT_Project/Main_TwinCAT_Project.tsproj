@@ -6802,17 +6802,15 @@ External Setpoint Generation:
 				<Link VarA="Term 5 (EK1200)^Term 15 (EL1904)^Module 1 (FSOES)^RxPDO^FSOE" VarB="ConnectionInputs^Message_9 TxPDO"/>
 				<Link VarA="Term 5 (EK1200)^Term 15 (EL1904)^Module 1 (FSOES)^TxPDO^FSOE" VarB="ConnectionOutputs^Message_9 RxPDO"/>
 			</OwnerB>
-			<OwnerB Name="TIID^Device 5 (EtherCAT)^Drive1_Joint1 (AX5106-0000-0210)^Term 10 (AX5805)">
-				<Link VarA="Term 5 (EK1200)^Term 14 (EL6900)^ConnectionInputs^Message_6 TxPDO" VarB="Module 1 (Safety Process Data, 1 axis)^Outputs (Controlword)^FSOE"/>
-				<Link VarA="Term 5 (EK1200)^Term 14 (EL6900)^ConnectionOutputs^Message_6 RxPDO" VarB="Module 1 (Safety Process Data, 1 axis)^Inputs (Statusword)^FSOE"/>
-			</OwnerB>
 			<OwnerB Name="TIID^Device 5 (EtherCAT)^Drive2_Joint2(AX5106-0000-0210)^Term 11 (AX5805)">
+				<Link VarA="Term 5 (EK1200)^Term 14 (EL6900)^ConnectionInputs^Message_7 TxPDO" VarB="Module 1 (Safety Process Data, 1 axis)^Outputs (Controlword)^FSOE"/>
 				<Link VarA="Term 5 (EK1200)^Term 14 (EL6900)^ConnectionOutputs^Message_7 RxPDO" VarB="Module 1 (Safety Process Data, 1 axis)^Inputs (Statusword)^FSOE"/>
 			</OwnerB>
 		</OwnerA>
 		<OwnerA Name="TIID^Device 5 (EtherCAT)">
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 5 (EK1200)^Term 14 (EL6900)">
-				<Link VarA="Drive2_Joint2(AX5106-0000-0210)^Term 11 (AX5805)^Module 1 (Safety Process Data, 1 axis)^Outputs (Controlword)^FSOE" VarB="ConnectionInputs^Message_7 TxPDO"/>
+				<Link VarA="Drive1_Joint1 (AX5106-0000-0210)^Term 10 (AX5805)^Module 1 (Safety Process Data, 1 axis)^Inputs (Statusword)^FSOE" VarB="ConnectionOutputs^Message_6 RxPDO"/>
+				<Link VarA="Drive1_Joint1 (AX5106-0000-0210)^Term 10 (AX5805)^Module 1 (Safety Process Data, 1 axis)^Outputs (Controlword)^FSOE" VarB="ConnectionInputs^Message_6 TxPDO"/>
 				<Link VarA="Drive3_Joint3(AX5106-0000-0210)^Term 12 (AX5805)^Module 1 (Safety Process Data, 1 axis)^Inputs (Statusword)^FSOE" VarB="ConnectionOutputs^Message_8 RxPDO"/>
 				<Link VarA="Drive3_Joint3(AX5106-0000-0210)^Term 12 (AX5805)^Module 1 (Safety Process Data, 1 axis)^Outputs (Controlword)^FSOE" VarB="ConnectionInputs^Message_8 TxPDO"/>
 			</OwnerB>
