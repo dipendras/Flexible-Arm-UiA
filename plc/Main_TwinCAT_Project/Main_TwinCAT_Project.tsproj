@@ -4758,9 +4758,6 @@ External Setpoint Generation:
 								<InitCmd DriveNo="0" IDN="32860" MotorDataLevel="1" DisableMode="0"/>
 								<InitCmd DriveNo="0" IDN="32861" MotorDataLevel="1" DisableMode="0"/>
 								<InitCmd DriveNo="0" IDN="32918" MotorDataLevel="1" DisableMode="0"/>
-								<InitCmd DriveNo="0" IDN="33088" MotorDataLevel="0" DisableMode="0">
-									<RetainData>24002400d2001500ca0002002b9d5b002b9d5b000000000000000000000000002260000000000000</RetainData>
-								</InitCmd>
 								<InitCmd DriveNo="0" IDN="33093" MotorDataLevel="0" DisableMode="0">
 									<RetainData>16001a004665622032362032303139202c2031313a30353a3236</RetainData>
 								</InitCmd>

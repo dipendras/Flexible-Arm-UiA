@@ -21,6 +21,8 @@ VAR_INPUT
 	fShaftAdditiveVelocity : LREAL; //deg/sec on shaft
 	fShaftTorqueRef : LREAL; //Nm initialize with holding torque??
 	
+//	fShaftAdditiveVelocityTest : LREAL; //deg/sec on shaft
+	
 	fTotalVelocityRef : LREAL;
 	
 	fOffset : LREAL;
@@ -150,19 +152,30 @@ fbExtSetPointGenEnable(
 
 IF bActive AND fbExtSetPointGenEnable.Enabled THEN		
 	fShaftAdditiveVelocity := LIMIT(-stAxisParameterSet.fVeloMaximum, fShaftAdditiveVelocity, stAxisParameterSet.fVeloMaximum);
-	//nAdditiveVelocity := -TO_DINT(fShaftAdditiveVelocity*fGearRatio*CONSTANTS.VELOCITY_SCALING);
+	
+	nAdditiveVelocity := -TO_DINT(fShaftAdditiveVelocity*fGearRatio*CONSTANTS.VELOCITY_SCALING);
 
-	fTotalVelocityRef := -qRef_t - fShaftAdditiveVelocity;
+//	nAdditiveVelocity := -TO_DINT(fShaftAdditiveVelocityTest*fGearRatio*CONSTANTS.VELOCITY_SCALING);
+	
+	fTotalVelocityRef := -qRef_t - fShaftAdditiveVelocity; //this is only used for direction
+//	fTotalVelocityRef := -qRef_t - fShaftAdditiveVelocityTest; //fShaftAdditiveVelocity;
+	
 	
 	//Feed extrernal setpoints to axis interface
+//	MC_ExtSetPointGenFeed(
+//		Axis := axis,
+//		Position := LIMIT(stAxisParameterSet.fEncSoftEndMin, fOffset - (qRef + fShaftAdditiveVelocity*Ts), stAxisParameterSet.fEncSoftEndMax),
+//		Velocity := fTotalVelocityRef,
+//		Acceleration := -qRef_tt,
+//		Direction := getDirection(fTotalVelocityRef, -qRef_tt)
+//	);
 	MC_ExtSetPointGenFeed(
 		Axis := axis,
-		Position := LIMIT(stAxisParameterSet.fEncSoftEndMin, fOffset - (qRef + fShaftAdditiveVelocity*Ts), stAxisParameterSet.fEncSoftEndMax),
-		Velocity := fTotalVelocityRef,
+		Position := LIMIT(stAxisParameterSet.fEncSoftEndMin, fOffset - qRef, stAxisParameterSet.fEncSoftEndMax),
+		Velocity := -qRef_t,
 		Acceleration := -qRef_tt,
 		Direction := getDirection(fTotalVelocityRef, -qRef_tt)
 	);
-	
 	fAdditiveTorque := fShaftAdditiveTorque / fGearRatio;
 	
 	nAdditiveTorquePerc := TO_INT(
@@ -256,12 +269,19 @@ END_IF]]></ST>
       <LineId Id="2784" Count="13" />
       <LineId Id="2781" Count="2" />
       <LineId Id="2579" Count="52" />
-      <LineId Id="2878" Count="1" />
+      <LineId Id="2878" Count="0" />
+      <LineId Id="2994" Count="0" />
+      <LineId Id="2879" Count="0" />
+      <LineId Id="2992" Count="0" />
       <LineId Id="2882" Count="0" />
+      <LineId Id="2993" Count="0" />
       <LineId Id="2877" Count="0" />
       <LineId Id="2883" Count="0" />
+      <LineId Id="2990" Count="1" />
       <LineId Id="2876" Count="0" />
-      <LineId Id="2633" Count="7" />
+      <LineId Id="2633" Count="6" />
+      <LineId Id="2984" Count="5" />
+      <LineId Id="2640" Count="0" />
       <LineId Id="2694" Count="1" />
       <LineId Id="2641" Count="8" />
       <LineId Id="2872" Count="0" />
@@ -270,7 +290,9 @@ END_IF]]></ST>
       <LineId Id="2710" Count="0" />
       <LineId Id="2650" Count="1" />
       <LineId Id="2884" Count="0" />
-      <LineId Id="2652" Count="40" />
+      <LineId Id="2652" Count="0" />
+      <LineId Id="2966" Count="0" />
+      <LineId Id="2654" Count="38" />
       <LineId Id="76" Count="0" />
     </LineIds>
     <LineIds Name="FB_Joint.getDirection">

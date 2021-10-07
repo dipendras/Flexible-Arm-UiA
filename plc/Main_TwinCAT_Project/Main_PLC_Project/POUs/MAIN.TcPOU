@@ -90,6 +90,7 @@ VAR
 	fElasticOscilationVelocityLast : ARRAY [0..2] OF LREAL := [0.0, 0.0, 0.0];
 
 	fElasticOscilationAcceleration : ARRAY [0..2] OF LREAL;// d(Vel)/dt
+	fElasticOscilationVeloHighPass : ARRAY [0..2] OF LREAL;
 	
 	//filters for link oscillations feeback
 	fbElasticOscilationVelocityFilters : ARRAY [0..2] OF FB_LowPassFilter;
@@ -110,7 +111,37 @@ VAR
 	
 //	nVelocityFeedbackRaw AT %I* : DINT;
 //	fVelocityFeedback : LREAL;
-	
+
+
+//	// implement integrator
+//	fVibrationFeedback : ARRAY [0..2] OF LREAL := [0.0, 0.0, 0.0];
+//	Kf : ARRAY [0..2] OF LREAL := [0.0, 0.0, 0.0]; // gain for defelectuib compensation
+//	fIntegrand : ARRAY [0..2] OF LREAL := [0.0, 0.0, 0.0];
+//	fIntegOut : ARRAY [0..2] OF LREAL := [0.0, 0.0, 0.0];
+//	fCompOut : ARRAY [0..2] OF LREAL := [0.0, 0.0, 0.0];
+
+
+//	// implement high pass filtering on deflection
+//filters for link oscillations feeback
+	fbDeflectionFilters : ARRAY [0..2] OF FB_LowPassFilter;
+	stDeflectionFilterParams : ARRAY [0..2] OF ST_FilterParams := [
+		(	
+			eOrder := E_FilterOrder.eSecond,
+			fCutoff := 1
+		),
+		(
+			eOrder := E_FilterOrder.eSecond,
+			fCutoff := 1
+		),
+		(
+			eOrder := E_FilterOrder.eSecond,
+			fCutoff := 1
+		)
+	];
+	fDeflectionHighPass : ARRAY [0..2] OF LREAL;
+	fDeflectionLowPassFiltered : ARRAY [0..2] OF LREAL;
+	fKf : ARRAY [0..2] OF LREAL := [0.0, 0.0, 0.0]; // gain for defelectuib compensation
+	fShaftAdditiveVelocityTest : ARRAY [0..2] OF LREAL := [0.0, 0.0, 0.0]; 
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -151,6 +182,11 @@ IF bFirstRun THEN
 		stElasticOscilationVelocityFilterParams[j].fDeltaTime := Ts;
 		fbElasticOscilationVelocityFilters[j].init(stParams := stElasticOscilationVelocityFilterParams[j]);
 		
+		//filters for deflection
+		stDeflectionFilterParams[j].fDeltaTime := Ts;
+		fbDeflectionFilters[j].init(stParams := stDeflectionFilterParams[j]);
+		
+		
 	END_FOR
 END_IF
 
@@ -182,11 +218,33 @@ FOR j := 0 TO 2 DO
 	fElasticOscilationAcceleration[j] := (fElasticOscilationVelocityFiltered[j] - fElasticOscilationVelocityLast[j])/Ts;
 	fElasticOscilationVelocityLast[j] := fElasticOscilationVelocityFiltered[j];
 	
+	fElasticOscilationVeloHighPass[j] := fElasticOscilationVelocity[j] - fElasticOscilationVelocityFiltered[j];
+
+(*	
+//	// integrator
+//	fVibrationFeedback[j] := fElasticOscilationVelocityFiltered[j];
+//	//
+//	fIntegOut[j] := fIntegOut[j] + q_t_Filtered[j]*fVibrationFeedback[j]*Ts;	
+//	fCompOut[j] := -Kf[j]*fVibrationFeedback[j]*fIntegOut[j]; //doesnot work and it is very dangerous to integrate
+*)
+
+	//high pass filtering on deflection and removing static deflection terms
+	fbDeflectionFilters[j].update(deflection[j]);
+	fDeflectionLowPassFiltered[j] := fbDeflectionFilters[j].fOut;
+	fDeflectionHighPass[j] := deflection[j] - fDeflectionLowPassFiltered[j];
+	fShaftAdditiveVelocityTest[j] := -fKf[j]*fDeflectionHighPass[j];
+	
+	
+	
 	IF bEnableDeflectionCompensation THEN	
 //		fShaftAdditiveTorque[j] := -Kt[j]*fElasticOscilationVelocity[j];
-		fShaftAdditiveVelocity[j] := -Kt[j]*fElasticOscilationVelocityFiltered[j];
+//		fShaftAdditiveVelocity[j] := -Kt[j]*fElasticOscilationVelocityFiltered[j];
+//		fShaftAdditiveVelocity[j] := -Kt[j]*fElasticOscilationVeloHighPass[j]; //doesnot work
+		
+		fShaftAdditiveVelocity[j] := fShaftAdditiveVelocityTest[j];
+
 	ELSE
-//		fShaftAdditiveTorque[j] := 0.0;
+		fShaftAdditiveTorque[j] := 0.0;
 		fShaftAdditiveVelocity[j] := 0.0;	
 	END_IF		
 END_FOR
@@ -303,7 +361,10 @@ END_IF
       <LineId Id="1284" Count="0" />
       <LineId Id="1288" Count="0" />
       <LineId Id="1546" Count="0" />
-      <LineId Id="1529" Count="2" />
+      <LineId Id="1529" Count="1" />
+      <LineId Id="1727" Count="1" />
+      <LineId Id="1531" Count="0" />
+      <LineId Id="1729" Count="2" />
       <LineId Id="1154" Count="0" />
       <LineId Id="1146" Count="0" />
       <LineId Id="1279" Count="2" />
@@ -330,9 +391,26 @@ END_IF
       <LineId Id="1551" Count="0" />
       <LineId Id="1557" Count="0" />
       <LineId Id="1555" Count="1" />
+      <LineId Id="1689" Count="0" />
+      <LineId Id="1692" Count="0" />
+      <LineId Id="1690" Count="0" />
+      <LineId Id="1669" Count="0" />
+      <LineId Id="1685" Count="1" />
+      <LineId Id="1673" Count="0" />
+      <LineId Id="1671" Count="1" />
+      <LineId Id="1695" Count="0" />
+      <LineId Id="1694" Count="0" />
+      <LineId Id="1696" Count="0" />
+      <LineId Id="1732" Count="0" />
+      <LineId Id="1697" Count="3" />
+      <LineId Id="1693" Count="0" />
       <LineId Id="1292" Count="0" />
       <LineId Id="1266" Count="0" />
       <LineId Id="1513" Count="0" />
+      <LineId Id="1691" Count="0" />
+      <LineId Id="1687" Count="0" />
+      <LineId Id="1735" Count="0" />
+      <LineId Id="1734" Count="0" />
       <LineId Id="1269" Count="0" />
       <LineId Id="1517" Count="0" />
       <LineId Id="1270" Count="0" />
