@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{61583da1-5f59-4024-9717-74c3c2999eb8}</ProjectGuid>
+    <AssemblyName>Bode Project</AssemblyName>
+    <Name>Bode Project</Name>
+    <RootNamespace>Bode Project</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="Bode Project.tcbodeproj">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+</Project>

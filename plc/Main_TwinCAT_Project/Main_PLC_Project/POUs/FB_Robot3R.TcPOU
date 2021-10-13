@@ -14,8 +14,14 @@ VAR_INPUT
 	fShaftAdditiveTorque : ARRAY [0..2] OF LREAL; // [Nm]
 	fShaftAdditiveVelocity : ARRAY [0..2] OF LREAL; // [deg/sec]
 	bPositionModeExecute 	: BOOL;
-	fJointPositionOffset 	: ARRAY [0..2] OF LREAL;	
-	fJointCalibrationOffset : ARRAY [0..2] OF LREAL;
+	bAddDeflection : BOOL := FALSE;
+	fDeflection : ARRAY [0..2] OF LREAL := [0.0,0.0,0.0];
+	fDeflectionGain : ARRAY [0..2] OF LREAL := [0.0,0.0,0.0];
+//	fJointPositionOffset 	: ARRAY [0..2] OF LREAL;	
+//	fJointCalibrationOffset : ARRAY [0..2] OF LREAL;
+//	fJointLimitMin : ARRAY [0..2] OF LREAL;	
+//	fJointLimitMax : ARRAY [0..2] OF LREAL;
+	stJointParams : ARRAY [0..2] OF ST_JointParameters;
 END_VAR
 VAR_OUTPUT
 	eRobotMode : E_RobotMode := E_RobotMode.STOP;
@@ -33,6 +39,7 @@ VAR
 	qRef_t : ARRAY [0..2] OF LREAL;
 	qRef_tt : ARRAY [0..2] OF LREAL;
 	
+	fLimitedPosInput : ARRAY [0..2] OF LREAL;
 	
 	fShaftTorqueRef : ARRAY [0..2] OF LREAL;
 
@@ -69,6 +76,14 @@ VAR
 	fPosInputOld : ARRAY [0..2] OF LREAL;	
 	bExecuteReady : ARRAY [0..2] OF BOOL := [FALSE, FALSE, FALSE];	
 	
+	
+	
+	
+	//PD control in position loop
+		//Torque oontrol
+	KpPos : ARRAY [0..2] OF LREAL := [0.2, 0.2, 0.2];
+	KdPos : ARRAY [0..2] OF LREAL := [0.0, 0.0, 0.0];
+	KffPos : ARRAY [0..2] OF LREAL := [1, 1, 1];
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -121,6 +136,14 @@ IF(eRobotMode = E_RobotMode.STOP) AND  NOT bAnyJointActive THEN
 	bEnable := FALSE;
 END_IF
 
+FOR i := 0 TO 2 DO
+	fLimitedPosInput[i] := LIMIT(
+		stJointParams[i].stPositionLimits.fMin,
+		fPosInput[i],
+		stJointParams[i].stPositionLimits.fMax
+	);	
+END_FOR
+
 // position mode
 IF(eRobotMode = E_RobotMode.POSITION) THEN
 	positionMode();
@@ -149,7 +172,8 @@ FOR j:= 0 TO 2 DO
 		fShaftAdditiveTorque := fShaftAdditiveTorque[j],
 		fShaftAdditiveVelocity := fShaftAdditiveVelocity[j],
 		fShaftTorqueRef  :=  fShaftTorqueRef[j],
-		fOffset := fJointPositionOffset[j] + fJointCalibrationOffset[j],
+//		fOffset := stJointParams[j].stOffsets.fCalibrationOffset + stJointParams[j].stOffsets.fPositionOffset, // fJointPositionOffset[j] + fJointCalibrationOffset[j],
+		stJointParams := stJointParams[j],
 		Ts := Ts
 	);
 
@@ -247,7 +271,10 @@ END_FOR]]></ST>
       <Declaration><![CDATA[METHOD PRIVATE velocityMode : BOOL
 VAR_INPUT
 END_VAR
-]]></Declaration>
+VAR
+	fPosThreshold : LREAL := 0.005;
+	fPosDiff : ARRAY [0..2] OF LREAL;
+END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[// Integrate position
 
@@ -262,20 +289,30 @@ FOR i:= 0 TO 2 DO
 //		// Update old variable
 //		fVelInputOld[i] := fVelInput[i];
 		
-///		
-		
+///	
+//-----------------------------------------------------------------------------------------------------------------------------------------		
 			//traj
 			//check if the pos input is changed
 			IF bPositionModeExecute AND (NOT bExecuteReady[i]) THEN
 				ft[i] := 0.0;
-				fbTrajectoryGenerator[i].init(fqStartInit := joints[i].q, fqFinalInit := fPosInput[i], ftFinalInit := ftf);
+				fbTrajectoryGenerator[i].init(fqStartInit := joints[i].q, fqFinalInit := fLimitedPosInput[i], ftFinalInit := ftf);
 				bExecuteReady[i] := TRUE;
 			END_IF
 			IF bExecuteReady[i] THEN
 				fbTrajectoryGenerator[i].getTrajectory(ftTraj := ft[i]);
-				qRef[i] := fbTrajectoryGenerator[i].fqPos;
-				qRef_t[i]:= fbTrajectoryGenerator[i].fqVel;
-				qRef_tt[i] :=  fbTrajectoryGenerator[i].fqAcc;						 
+				
+//				qRef[i] := fbTrajectoryGenerator[i].fqPos;
+//				qRef_t[i]:= fbTrajectoryGenerator[i].fqVel;
+//				qRef_tt[i] :=  fbTrajectoryGenerator[i].fqAcc;
+//-------------------------------------------------------------------------------------------------------------
+				fPosDiff[i] := (fbTrajectoryGenerator[i].fqPos - joints[i].q);
+				qRef[i] := fbTrajectoryGenerator[i].fqPos; // joints[i].q + qRef_t[i]*Ts;
+				IF bAddDeflection THEN
+					fPosDiff[i] := fPosDiff[i] + fDeflectionGain[i] *fDeflection[i];
+				END_IF	
+				qRef_t[i] := KffPos[i]*fbTrajectoryGenerator[i].fqVel + KpPos[i]*fPosDiff[i] + KdPos[i]*(0.0 - q_t_Filtered[i]);
+				qRef_tt[i] := fbTrajectoryGenerator[i].fqAcc;		
+//------------------------------------------------------------------------------------------------------------------------------------	 
 				ft[i] := ft[i]+Ts;
 			ELSE
 				qRef[i] := joints[i].q;
@@ -284,14 +321,24 @@ FOR i:= 0 TO 2 DO
 				ft[i] := 0.0;
 			END_IF
 			
-			IF (ft[i] > ftf) AND NOT bPositionModeExecute THEN
+			IF (ft[i] > ftf) AND (ABS(fPosDiff[i]) < fPosThreshold) AND NOT bPositionModeExecute THEN //(ft[i] > ftf) remove
 				bExecuteReady[i] := FALSE;
 				ft[i] := 0.0;
 			END_IF
 
+//-----------------------------------------------------------------------------------------------------------------------------------------
+
+////PD Control in position---------------------------------------------------------------------
 		
+//		qRef[i] := joints[i].q + qRef_t[i]*Ts;;
+//		qRef_t[i] := KpPos[i]*(fPosInput[i] - joints[i].q) + KdPos[i]*(0.0 - q_t_Filtered[i]);
+//		qRef_tt[i] :=  (qRef_t[i]-fVelInputOld[i])/(Ts);		
+//		fVelInputOld[i] := qRef_t[i];
+
+////--------------------------------------------------------------------------------------		
 	ELSE
 		bExecuteReady[i] := FALSE;
+		fbTrajectoryGenerator[i].init(fqStartInit := joints[i].q, fqFinalInit := fLimitedPosInput[i], ftFinalInit := ftf);
 		qRef[i] := joints[i].q;
 		qRef_t[i]:= 0.0;
 		qRef_tt[i] :=  0.0;	
@@ -317,7 +364,12 @@ END_FOR]]></ST>
       <LineId Id="1077" Count="0" />
       <LineId Id="1039" Count="0" />
       <LineId Id="1041" Count="0" />
-      <LineId Id="1043" Count="7" />
+      <LineId Id="1043" Count="0" />
+      <LineId Id="1420" Count="1" />
+      <LineId Id="1424" Count="2" />
+      <LineId Id="1428" Count="1" />
+      <LineId Id="1423" Count="0" />
+      <LineId Id="1044" Count="6" />
       <LineId Id="1123" Count="1" />
       <LineId Id="1051" Count="9" />
       <LineId Id="1080" Count="0" />
@@ -328,6 +380,7 @@ END_FOR]]></ST>
       <LineId Id="1262" Count="0" />
       <LineId Id="1121" Count="0" />
       <LineId Id="1066" Count="0" />
+      <LineId Id="1414" Count="0" />
       <LineId Id="1332" Count="0" />
       <LineId Id="1067" Count="5" />
       <LineId Id="1074" Count="2" />
@@ -376,7 +429,17 @@ END_FOR]]></ST>
       <LineId Id="14" Count="4" />
       <LineId Id="57" Count="1" />
       <LineId Id="25" Count="0" />
-      <LineId Id="59" Count="12" />
+      <LineId Id="59" Count="9" />
+      <LineId Id="118" Count="0" />
+      <LineId Id="69" Count="2" />
+      <LineId Id="116" Count="0" />
+      <LineId Id="124" Count="0" />
+      <LineId Id="115" Count="0" />
+      <LineId Id="125" Count="0" />
+      <LineId Id="127" Count="0" />
+      <LineId Id="126" Count="0" />
+      <LineId Id="113" Count="1" />
+      <LineId Id="117" Count="0" />
       <LineId Id="73" Count="0" />
       <LineId Id="81" Count="0" />
       <LineId Id="84" Count="1" />
@@ -387,10 +450,15 @@ END_FOR]]></ST>
       <LineId Id="75" Count="1" />
       <LineId Id="89" Count="0" />
       <LineId Id="77" Count="0" />
+      <LineId Id="100" Count="0" />
+      <LineId Id="102" Count="4" />
       <LineId Id="79" Count="0" />
+      <LineId Id="107" Count="0" />
       <LineId Id="52" Count="0" />
+      <LineId Id="110" Count="1" />
       <LineId Id="44" Count="0" />
       <LineId Id="96" Count="0" />
+      <LineId Id="120" Count="0" />
       <LineId Id="94" Count="1" />
       <LineId Id="93" Count="0" />
       <LineId Id="30" Count="0" />

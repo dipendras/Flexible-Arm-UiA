@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <DUT Name="ST_JointLimits" Id="{d81d9f29-f23e-4cb3-a237-80b99314523f}">
+    <Declaration><![CDATA[TYPE ST_JointLimits :
+STRUCT
+	fMin : LREAL;
+	fMax : LREAL;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

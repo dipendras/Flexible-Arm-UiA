@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<BodeProjectSerializable xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Title>Bode Project 1</Title>
+  <Name>Bode Project 1</Name>
+  <DisplayColorValue>-16777216</DisplayColorValue>
+  <SortPriority>0</SortPriority>
+  <ViewDetailLevel>Default</ViewDetailLevel>
+  <Version>1.0.0</Version>
+  <UseUserSettings>true</UseUserSettings>
+  <Plots>
+    <BodePlotSerializable>
+      <Title>Bode Plot</Title>
+      <Name>Bode Plot</Name>
+      <DisplayColorValue>-16777216</DisplayColorValue>
+      <SortPriority>0</SortPriority>
+      <ViewDetailLevel>Default</ViewDetailLevel>
+      <GUID>d2ff89a4-c120-4c02-bec0-b059ddd5e18a</GUID>
+      <Sets />
+      <TargetNetIdString>127.0.0.1.1.1</TargetNetIdString>
+      <AxisId>83951632</AxisId>
+      <MeasureTime>2.048</MeasureTime>
+      <CycleTime>2</CycleTime>
+      <MeasureSampleCount>16384</MeasureSampleCount>
+      <SignalAmplitudePosition>10</SignalAmplitudePosition>
+      <SignalAmplitudeVelocity>20</SignalAmplitudeVelocity>
+      <SignalAmplitudeTorque>10</SignalAmplitudeTorque>
+      <BaseAmplitudePosition>10</BaseAmplitudePosition>
+      <BaseAmplitudeVelocity>10</BaseAmplitudeVelocity>
+      <TorqueOffset>0</TorqueOffset>
+      <Oversampling>x16</Oversampling>
+      <RequestedOversampling>Suggested</RequestedOversampling>
+      <PositionMonitoringWindow>50</PositionMonitoringWindow>
+      <AdsTargetPort>501</AdsTargetPort>
+      <BodeObjectId>4294967295</BodeObjectId>
+      <DynContainerId>50987024</DynContainerId>
+      <TraceLevel>Warning</TraceLevel>
+      <SignalGenerator>Sinus</SignalGenerator>
+      <Mode>Velocity_1_DynContainer</Mode>
+      <BaseFrequency>0.9765625</BaseFrequency>
+      <SystemDeadTime>0</SystemDeadTime>
+      <UserDeadTime>0</UserDeadTime>
+      <PositionAmplitudeScalingMode>reciprocal_f</PositionAmplitudeScalingMode>
+      <VelocityAmplitudeScalingMode>reciprocal_10_at_1000Hz</VelocityAmplitudeScalingMode>
+      <TorqueAmplitudeScalingMode>constant</TorqueAmplitudeScalingMode>
+      <CheckDriveLimitations>true</CheckDriveLimitations>
+      <GainMin>-30</GainMin>
+      <GainMax>30</GainMax>
+      <PhaseMin>-270</PhaseMin>
+      <PhaseMax>90</PhaseMax>
+      <ShowTitles>true</ShowTitles>
+      <SignalChartVisibility>Auto</SignalChartVisibility>
+      <ShowLegend>true</ShowLegend>
+      <ProportionalGain>0.4</ProportionalGain>
+      <IntegralTime>0.01</IntegralTime>
+      <MinFrequency>10</MinFrequency>
+      <MaxFrequency>1000</MaxFrequency>
+      <MinFrequencyVelo>10</MinFrequencyVelo>
+      <MaxFrequencyVelo>1000</MaxFrequencyVelo>
+      <MinFrequencyTorque>20</MinFrequencyTorque>
+      <MaxFrequencyTorque>2000</MaxFrequencyTorque>
+      <MinFrequencyPosition>1</MinFrequencyPosition>
+      <MaxFrequencyPosition>500</MaxFrequencyPosition>
+      <FrequencySteps>20</FrequencySteps>
+      <VelocityUnitSymbol>NC/CNC vel. unit</VelocityUnitSymbol>
+      <PositionUnitSymbol>NC/CNC pos. unit</PositionUnitSymbol>
+      <TorqueUnitSymbol>%</TorqueUnitSymbol>
+    </BodePlotSerializable>
+  </Plots>
+</BodeProjectSerializable>

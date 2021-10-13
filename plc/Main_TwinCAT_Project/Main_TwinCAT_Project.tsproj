@@ -1889,6 +1889,49 @@ External Setpoint Generation:
 			</ArrayInfo>
 		</DataType>
 		<DataType>
+			<Name GUID="{D46F6451-58CF-4853-A5DB-DA36D1D59A28}" Namespace="IO" TcBaseType="true">ECAT_HEAD</Name>
+			<BitSize>80</BitSize>
+			<SubItem>
+				<Name>cmd</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000002}">USINT</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>0</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>idx</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000002}">USINT</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>8</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>addr</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000035}">UINTARR2</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>16</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>len</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>48</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>irq</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>64</BitOffs>
+			</SubItem>
+		</DataType>
+		<DataType>
+			<Name GUID="{18071995-0000-0000-0000-001300000100}" IecBaseType="true" AutoDeleteType="true" HideSubItems="true">ARRAY [0..255] OF BYTE</Name>
+			<BitSize>2048</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000001}">BYTE</BaseType>
+			<ArrayInfo>
+				<LBound>0</LBound>
+				<Elements>256</Elements>
+			</ArrayInfo>
+		</DataType>
+		<DataType>
 			<Name GUID="{B05FDAB7-3241-ACD3-D16C-0FDAF8825BC9}" AutoDeleteType="true">FSOE_7</Name>
 			<BitSize>56</BitSize>
 			<SubItem>
@@ -1992,6 +2035,9 @@ External Setpoint Generation:
 					<Name>SerialComTask</Name>
 				</Task>
 			</Tasks>
+			<Modules>
+				<AddClassFactory>TcNcObjects</AddClassFactory>
+			</Modules>
 		</System>
 		<Motion>
 			<NC>
@@ -2169,8 +2215,8 @@ External Setpoint Generation:
 					</AxisPara>
 					<Encoder Name="Enc" EncType="8">
 						<EncPara ScaleFactorNumerator="7.2" ScaleFactorDenominator="1048576" MaxCount="#xffffffff">
-							<SoftEndMinControl Enable="true" Range="-90"/>
-							<SoftEndMaxControl Enable="true" Range="90"/>
+							<SoftEndMinControl Enable="true" Range="-95"/>
+							<SoftEndMaxControl Enable="true" Range="95"/>
 						</EncPara>
 						<Vars VarGrpType="1">
 							<Name>Inputs</Name>
@@ -2320,8 +2366,8 @@ External Setpoint Generation:
 					</AxisPara>
 					<Encoder Name="Enc" EncType="8">
 						<EncPara ScaleFactorNumerator="10.285714" ScaleFactorDenominator="1048576" MaxCount="#xffffffff">
-							<SoftEndMinControl Enable="true" Range="-90"/>
-							<SoftEndMaxControl Enable="true" Range="100"/>
+							<SoftEndMinControl Enable="true" Range="-95"/>
+							<SoftEndMaxControl Enable="true" Range="95"/>
 						</EncPara>
 						<Vars VarGrpType="1">
 							<Name>Inputs</Name>
@@ -2441,7 +2487,11 @@ External Setpoint Generation:
 					</Drive>
 					<Controller Name="Ctrl" CtrType="1">
 						<CtrPara PriorControlFactor="1">
+							<PID PosTv="0.5" PosTd="0.1" VeloTv="0.2" VeloTd="0.08"/>
 							<Observer BandWidth="20"/>
+							<ParameterChanged>260</ParameterChanged>
+							<ParameterChanged>517</ParameterChanged>
+							<ParameterChanged>516</ParameterChanged>
 						</CtrPara>
 					</Controller>
 					<Vars VarGrpType="1" InsertType="1">
@@ -4758,6 +4808,9 @@ External Setpoint Generation:
 								<InitCmd DriveNo="0" IDN="32860" MotorDataLevel="1" DisableMode="0"/>
 								<InitCmd DriveNo="0" IDN="32861" MotorDataLevel="1" DisableMode="0"/>
 								<InitCmd DriveNo="0" IDN="32918" MotorDataLevel="1" DisableMode="0"/>
+								<InitCmd DriveNo="0" IDN="33088" MotorDataLevel="0" DisableMode="0">
+									<RetainData>24002400d2001500ca0002002b9d5b002b9d5b000000000000000000000000002260000000000000</RetainData>
+								</InitCmd>
 								<InitCmd DriveNo="0" IDN="33093" MotorDataLevel="0" DisableMode="0">
 									<RetainData>16001a004665622032362032303139202c2031313a30353a3236</RetainData>
 								</InitCmd>
@@ -4954,6 +5007,7 @@ External Setpoint Generation:
 						<MBoxUserCmdData>020005001800000011000000000000000000000000000000000000000000000003400282000000000c000c0001000000f401e803bc02000056656c6f63697479206f6273657276657200</MBoxUserCmdData>
 						<MBoxUserCmdData>020005000a00000014000000000000000000000000000000000000000000000003402e81000000001000446973706c61792076616c7565206c696e65203100</MBoxUserCmdData>
 						<MBoxUserCmdData>020005000a0000001a0000000000000000000000000000000000000000000000034021000000000001005365636f6e64617279206f7065726174696f6e206d6f6465203100</MBoxUserCmdData>
+						<MBoxUserCmdData>020005001800000013000000000000000000000000000000000000000000000003400d82000000000c000c00000000006400bc0200000000416374697665206c6f61642064616d70696e6700</MBoxUserCmdData>
 						<Pdo Name="AT" Index="#x0010" Flags="#x0001" SyncMan="3">
 							<Entry Name="Drive status word" BitLen="16" Index="#x0087" Flags="#x00000800">
 								<Type>UINT</Type>
@@ -5227,7 +5281,52 @@ External Setpoint Generation:
 						<EtherCAT CycleMBoxPollingTime="0" VendorId="#x00000002" ProductCode="#x23333050" InfoDataState="false" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="EL9011 End Terminal" Desc="EL9011" PortABoxInfo="#x01000006"/>
 					</Box>
 				</Box>
-				<EtherCAT DcSyncMode="3"/>
+				<EtherCAT DcSyncMode="3">
+					<EtherCATCmd Id="1" CmdType="1" CmdData="0c0100002009000100000000030000000f0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000">
+						<Name>Dyn Container</Name>
+						<ImageId>102</ImageId>
+						<Vars VarGrpType="1">
+							<Name>Inputs</Name>
+							<Var>
+								<Name>HEAD</Name>
+								<Type GUID="{D46F6451-58CF-4853-A5DB-DA36D1D59A28}" Namespace="IO">ECAT_HEAD</Type>
+								<BitOffs>1152</BitOffs>
+							</Var>
+							<Var>
+								<Name>DATA</Name>
+								<Type GUID="{18071995-0000-0000-0000-001300000100}">ARRAY [0..255] OF BYTE</Type>
+								<BitOffs>1232</BitOffs>
+							</Var>
+							<Var>
+								<Name>CNT</Name>
+								<Comment><![CDATA[Working counter
+After receiving]]></Comment>
+								<Type>UINT</Type>
+								<BitOffs>3280</BitOffs>
+							</Var>
+						</Vars>
+						<Vars VarGrpType="2">
+							<Name>Outputs</Name>
+							<Var>
+								<Name>HEAD</Name>
+								<Type GUID="{D46F6451-58CF-4853-A5DB-DA36D1D59A28}" Namespace="IO">ECAT_HEAD</Type>
+								<BitOffs>1152</BitOffs>
+							</Var>
+							<Var>
+								<Name>DATA</Name>
+								<Type GUID="{18071995-0000-0000-0000-001300000100}">ARRAY [0..255] OF BYTE</Type>
+								<BitOffs>1232</BitOffs>
+							</Var>
+							<Var>
+								<Name>CNT</Name>
+								<Comment><![CDATA[Working counter
+Before sending]]></Comment>
+								<Type>UINT</Type>
+								<BitOffs>3280</BitOffs>
+							</Var>
+						</Vars>
+					</EtherCATCmd>
+				</EtherCAT>
 			</Device>
 			<Device Id="1" DevType="111" DevFlags="#x0003" AmsPort="28673" AmsNetId="5.72.215.242.2.1" RemoteName="Device 1 (EtherCAT)" InfoImageId="4">
 				<Name>Device 1 (EtherCAT)</Name>
@@ -6803,13 +6902,15 @@ External Setpoint Generation:
 				<Link VarA="Term 5 (EK1200)^Term 14 (EL6900)^ConnectionInputs^Message_7 TxPDO" VarB="Module 1 (Safety Process Data, 1 axis)^Outputs (Controlword)^FSOE"/>
 				<Link VarA="Term 5 (EK1200)^Term 14 (EL6900)^ConnectionOutputs^Message_7 RxPDO" VarB="Module 1 (Safety Process Data, 1 axis)^Inputs (Statusword)^FSOE"/>
 			</OwnerB>
+			<OwnerB Name="TIID^Device 5 (EtherCAT)^Drive3_Joint3(AX5106-0000-0210)^Term 12 (AX5805)">
+				<Link VarA="Term 5 (EK1200)^Term 14 (EL6900)^ConnectionInputs^Message_8 TxPDO" VarB="Module 1 (Safety Process Data, 1 axis)^Outputs (Controlword)^FSOE"/>
+				<Link VarA="Term 5 (EK1200)^Term 14 (EL6900)^ConnectionOutputs^Message_8 RxPDO" VarB="Module 1 (Safety Process Data, 1 axis)^Inputs (Statusword)^FSOE"/>
+			</OwnerB>
 		</OwnerA>
 		<OwnerA Name="TIID^Device 5 (EtherCAT)">
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 5 (EK1200)^Term 14 (EL6900)">
 				<Link VarA="Drive1_Joint1 (AX5106-0000-0210)^Term 10 (AX5805)^Module 1 (Safety Process Data, 1 axis)^Inputs (Statusword)^FSOE" VarB="ConnectionOutputs^Message_6 RxPDO"/>
 				<Link VarA="Drive1_Joint1 (AX5106-0000-0210)^Term 10 (AX5805)^Module 1 (Safety Process Data, 1 axis)^Outputs (Controlword)^FSOE" VarB="ConnectionInputs^Message_6 TxPDO"/>
-				<Link VarA="Drive3_Joint3(AX5106-0000-0210)^Term 12 (AX5805)^Module 1 (Safety Process Data, 1 axis)^Inputs (Statusword)^FSOE" VarB="ConnectionOutputs^Message_8 RxPDO"/>
-				<Link VarA="Drive3_Joint3(AX5106-0000-0210)^Term 12 (AX5805)^Module 1 (Safety Process Data, 1 axis)^Outputs (Controlword)^FSOE" VarB="ConnectionInputs^Message_8 TxPDO"/>
 			</OwnerB>
 		</OwnerA>
 		<OwnerA Name="TINC^Main_NC_Task SAF^Axes^Axis1_Drive1_Joint1">

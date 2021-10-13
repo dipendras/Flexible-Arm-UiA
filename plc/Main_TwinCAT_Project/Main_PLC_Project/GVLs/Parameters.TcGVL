@@ -1,10 +1,71 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <GVL Name="Parameters" Id="{11109a4f-d22d-4ff0-beff-18bcb47d8d61}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 VAR_GLOBAL PERSISTENT
-	fJointPositionOffset 	: ARRAY [0..2] OF LREAL;	
-	fJointCalibrationOffset : ARRAY [0..2] OF LREAL;
+//	fJointPositionOffset 	: ARRAY [0..2] OF LREAL := [ 90.0, 0.0, 0.0 ];
+//	fJointCalibrationOffset : ARRAY [0..2] OF LREAL := [ -0.145, 1.69, -1.54 ];
+//	fJointLimitsMin : ARRAY [0..2] OF LREAL := [ 75.0, -90.0, -90.0 ]; //in robot coordinates
+//	fJointLimitsMax : ARRAY [0..2] OF LREAL := [ 105.0, 90.0, 90.0 ]; //in robot coordinates
+	stJointParams : ARRAY [0..2] OF ST_JointParameters := [
+		(	
+			stOffsets 				:= (
+				fPositionOffset 	:= 90.0,
+			    fCalibrationOffset  := -0.145
+			),
+			stPositionLimits 		:= (
+				fMin := 75.0,
+				fMax := 105.0
+			),
+			stVelocityLimits 		:= (
+				fMin := 0.0,
+				fMax := 0.0
+			),
+			stAccelerationLimits 	:= (
+				fMin := 0.0,
+				fMax := 0.0
+			)
+
+		),
+		(	
+			stOffsets 				:= (
+				fPositionOffset 	:= 0.0,
+			    fCalibrationOffset  := 1.69
+			),
+			stPositionLimits 		:= (
+				fMin := -90.0,
+				fMax := 90.0
+			),
+			stVelocityLimits 		:= (
+				fMin := 0.0,
+				fMax := 0.0
+			),
+			stAccelerationLimits 	:= (
+				fMin := 0.0,
+				fMax := 0.0
+			)
+
+		),
+		(	
+			stOffsets 				:= (
+				fPositionOffset 	:= 0.0,
+			    fCalibrationOffset  := -1.54
+			),
+			stPositionLimits 		:= (
+				fMin := -90.0,
+				fMax := 90.0
+			),
+			stVelocityLimits 		:= (
+				fMin := 0.0,
+				fMax := 0.0
+			),
+			stAccelerationLimits 	:= (
+				fMin := 0.0,
+				fMax := 0.0
+			)
+
+		)
+	];
 END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>

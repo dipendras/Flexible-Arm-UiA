@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <DUT Name="ST_JointOffsets" Id="{50e97681-f54f-4d6f-96bd-0edf55d97334}">
+    <Declaration><![CDATA[TYPE ST_JointOffsets :
+STRUCT
+	fPositionOffset 	: LREAL;
+	fCalibrationOffset 	: LREAL;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

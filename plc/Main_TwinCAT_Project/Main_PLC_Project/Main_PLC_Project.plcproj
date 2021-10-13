@@ -67,6 +67,15 @@
     <Compile Include="IMU\DUTs\ST_ImuData.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="IMU\DUTs\ST_JointLimits.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMU\DUTs\ST_JointOffsets.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMU\DUTs\ST_JointParameters.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="IMU\DUTs\ST_Vector3.TcDUT">
       <SubType>Code</SubType>
     </Compile>

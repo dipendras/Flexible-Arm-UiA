@@ -21,11 +21,12 @@ VAR_INPUT
 	fShaftAdditiveVelocity : LREAL; //deg/sec on shaft
 	fShaftTorqueRef : LREAL; //Nm initialize with holding torque??
 	
-//	fShaftAdditiveVelocityTest : LREAL; //deg/sec on shaft
+	fShaftAdditiveVelocityTest : LREAL; //deg/sec on shaft
 	
 	fTotalVelocityRef : LREAL;
 	
-	fOffset : LREAL;
+	stJointParams : ST_JointParameters;
+//	fOffset : LREAL;
 	Ts : LREAL;
 END_VAR
 VAR_OUTPUT
@@ -33,6 +34,8 @@ VAR_OUTPUT
 
 	bActive : BOOL;
 	bAxisStopped :BOOL;
+	
+	qRefLimited : LREAL;
 	
 	// Joint feedback
 	q : LREAL;
@@ -59,7 +62,7 @@ VAR
 	fDeceleration :LREAL := 100;
 	fJerk :LREAL := 300;
 
-	
+	fOffset : LREAL;
 	
 	// External setpoint	
 	fbExtSetPointGenEnable : MC_ExtSetPointGenEnable;
@@ -75,8 +78,14 @@ VAR
 
 	fbTorqueControl : FB_TorqueController;
 	
-
 	
+//	//check move velocity command
+//	fbMoveVelocity 	: MC_MoveVelocity;
+//	fbSetOverride 	: MC_SetOverride;
+//	bExecuteMoveVelocity : BOOL := FALSE;
+//	bExecuteOverride : BOOL := FALSE;
+//	fVelocityCmd : LREAL := 0.0;
+//	stDirection : MC_Direction;
 		
 END_VAR
 ]]></Declaration>
@@ -154,7 +163,6 @@ IF bActive AND fbExtSetPointGenEnable.Enabled THEN
 	fShaftAdditiveVelocity := LIMIT(-stAxisParameterSet.fVeloMaximum, fShaftAdditiveVelocity, stAxisParameterSet.fVeloMaximum);
 	
 	nAdditiveVelocity := -TO_DINT(fShaftAdditiveVelocity*fGearRatio*CONSTANTS.VELOCITY_SCALING);
-
 //	nAdditiveVelocity := -TO_DINT(fShaftAdditiveVelocityTest*fGearRatio*CONSTANTS.VELOCITY_SCALING);
 	
 	fTotalVelocityRef := -qRef_t - fShaftAdditiveVelocity; //this is only used for direction
@@ -169,9 +177,12 @@ IF bActive AND fbExtSetPointGenEnable.Enabled THEN
 //		Acceleration := -qRef_tt,
 //		Direction := getDirection(fTotalVelocityRef, -qRef_tt)
 //	);
+	qRefLimited := LIMIT(stJointParams.stPositionLimits.fMin, qRef, stJointParams.stPositionLimits.fMax);
+	fOffset := stJointParams.stOffsets.fCalibrationOffset + stJointParams.stOffsets.fPositionOffset;
+	
 	MC_ExtSetPointGenFeed(
 		Axis := axis,
-		Position := LIMIT(stAxisParameterSet.fEncSoftEndMin, fOffset - qRef, stAxisParameterSet.fEncSoftEndMax),
+		Position := fOffset - qRefLimited,
 		Velocity := -qRef_t,
 		Acceleration := -qRef_tt,
 		Direction := getDirection(fTotalVelocityRef, -qRef_tt)
@@ -213,6 +224,27 @@ fbAxisMoveAbsolute(
 
 
 
+////--------------------------------------------------------------------------------------------------------------------------
+////check move velocity command
+////position control
+//IF fVelocityCmd <= 0.0 THEN
+//	stDirection := MC_Direction.MC_Positive_Direction; //reverse due to our axis flip
+//ELSE
+//	stDirection := MC_Direction.MC_Negative_Direction; //reverse
+//END_IF
+
+//fbMoveVelocity(
+//	Axis := axis,
+//	Execute := bExecuteMoveVelocity AND (eRobotMode = E_RobotMode.POSITION) AND bActive,
+//	Velocity := ABS(fVelocityCmd),
+//	Direction := stDirection,
+//	BufferMode := MC_BufferMode.MC_Aborting
+//);
+//fbSetOverride(Enable:= bExecuteOverride, Axis := axis);
+
+////--------------------------------------------------------------------------------------------------------------------------
+
+
 // Update axis data
 axis();
 
@@ -229,6 +261,10 @@ fbTorqueControl(
 );
 
 // fbTorqueControl.readFeedback();
+
+
+
+
 
 
 
@@ -266,33 +302,7 @@ END_IF]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="FB_Joint">
-      <LineId Id="2784" Count="13" />
-      <LineId Id="2781" Count="2" />
-      <LineId Id="2579" Count="52" />
-      <LineId Id="2878" Count="0" />
-      <LineId Id="2994" Count="0" />
-      <LineId Id="2879" Count="0" />
-      <LineId Id="2992" Count="0" />
-      <LineId Id="2882" Count="0" />
-      <LineId Id="2993" Count="0" />
-      <LineId Id="2877" Count="0" />
-      <LineId Id="2883" Count="0" />
-      <LineId Id="2990" Count="1" />
-      <LineId Id="2876" Count="0" />
-      <LineId Id="2633" Count="6" />
-      <LineId Id="2984" Count="5" />
-      <LineId Id="2640" Count="0" />
-      <LineId Id="2694" Count="1" />
-      <LineId Id="2641" Count="8" />
-      <LineId Id="2872" Count="0" />
-      <LineId Id="2700" Count="0" />
-      <LineId Id="2702" Count="5" />
-      <LineId Id="2710" Count="0" />
-      <LineId Id="2650" Count="1" />
-      <LineId Id="2884" Count="0" />
-      <LineId Id="2652" Count="0" />
-      <LineId Id="2966" Count="0" />
-      <LineId Id="2654" Count="38" />
+      <LineId Id="3204" Count="185" />
       <LineId Id="76" Count="0" />
     </LineIds>
     <LineIds Name="FB_Joint.getDirection">

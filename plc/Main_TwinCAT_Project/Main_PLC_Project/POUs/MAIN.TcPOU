@@ -142,6 +142,8 @@ VAR
 	fDeflectionLowPassFiltered : ARRAY [0..2] OF LREAL;
 	fKf : ARRAY [0..2] OF LREAL := [0.0, 0.0, 0.0]; // gain for defelectuib compensation
 	fShaftAdditiveVelocityTest : ARRAY [0..2] OF LREAL := [0.0, 0.0, 0.0]; 
+	
+	fCalibrationOffset : ARRAY [0..2] OF LREAL;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -259,15 +261,21 @@ robot(
 	fPosInput := fPosInput,
 	fShaftAdditiveTorque := fShaftAdditiveTorque,
 	fShaftAdditiveVelocity := fShaftAdditiveVelocity,
-	fJointPositionOffset := Parameters.fJointPositionOffset,
-	fJointCalibrationOffset := Parameters.fJointCalibrationOffset
+	stJointParams := Parameters.stJointParams
+//	fJointPositionOffset := Parameters.fJointPositionOffset,
+//	fJointCalibrationOffset := Parameters.fJointCalibrationOffset
 );
+
+
 
 //fVelocityFeedback := TO_LREAL(nVelocityFeedbackRaw)/(CONSTANTS.VELOCITY_SCALING*CONSTANTS.GEAR_RATIO[2]);
 
-
-
-
+FOR j := 0 TO 2 DO
+	fCalibrationOffset[j] := IMU.fbStim300[j].fRollDegFiltered - robot.q[j];
+	IF (j <> 0) THEN
+		fCalibrationOffset[j] := fCalibrationOffset[j] - 90;
+	END_IF
+END_FOR
 
 
 ]]></ST>
@@ -421,11 +429,18 @@ END_IF
       <LineId Id="1390" Count="0" />
       <LineId Id="1253" Count="5" />
       <LineId Id="1518" Count="0" />
+      <LineId Id="1888" Count="0" />
       <LineId Id="1259" Count="1" />
       <LineId Id="1246" Count="0" />
+      <LineId Id="1880" Count="1" />
       <LineId Id="1505" Count="0" />
-      <LineId Id="1385" Count="0" />
-      <LineId Id="1507" Count="5" />
+      <LineId Id="1882" Count="0" />
+      <LineId Id="1509" Count="1" />
+      <LineId Id="1887" Count="0" />
+      <LineId Id="1883" Count="0" />
+      <LineId Id="1885" Count="1" />
+      <LineId Id="1884" Count="0" />
+      <LineId Id="1511" Count="1" />
       <LineId Id="1506" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.getSampleTime">

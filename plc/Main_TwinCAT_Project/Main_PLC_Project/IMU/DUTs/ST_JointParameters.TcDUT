@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <DUT Name="ST_JointParameters" Id="{6439c849-ec00-4972-b75a-cf2207cae1b8}">
+    <Declaration><![CDATA[TYPE ST_JointParameters :
+STRUCT
+	stOffsets 				: ST_JointOffsets;
+	stPositionLimits 		: ST_JointLimits;
+	stVelocityLimits 		: ST_JointLimits;
+	stAccelerationLimits 	: ST_JointLimits;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>
