@@ -16,15 +16,19 @@ VAR_INPUT
 	bPositionModeExecute 	: BOOL;
 	bAddDeflection : BOOL := FALSE;
 	fDeflection : ARRAY [0..2] OF LREAL := [0.0,0.0,0.0];
-	fDeflectionGain : ARRAY [0..2] OF LREAL := [0.0,0.0,0.0];
+	fDeflectionGain : ARRAY [0..2] OF LREAL := [0.0, 0.0,0.0];
 //	fJointPositionOffset 	: ARRAY [0..2] OF LREAL;	
 //	fJointCalibrationOffset : ARRAY [0..2] OF LREAL;
 //	fJointLimitMin : ARRAY [0..2] OF LREAL;	
 //	fJointLimitMax : ARRAY [0..2] OF LREAL;
 	stJointParams : ARRAY [0..2] OF ST_JointParameters;
+		fPosThreshold : LREAL := 0.005;
 END_VAR
 VAR_OUTPUT
 	eRobotMode : E_RobotMode := E_RobotMode.STOP;
+	
+	fPosDiff : ARRAY [0..2] OF LREAL;
+	fDeflectionCompensation : ARRAY [0..2] OF LREAL;
 	
 	// Robot feedback
 	q : ARRAY [0..2] OF LREAL;
@@ -272,13 +276,18 @@ END_FOR]]></ST>
 VAR_INPUT
 END_VAR
 VAR
-	fPosThreshold : LREAL := 0.005;
-	fPosDiff : ARRAY [0..2] OF LREAL;
+	
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[// Integrate position
 
 FOR i:= 0 TO 2 DO
+	IF bAddDeflection THEN
+		fDeflectionCompensation[i] :=  fDeflectionGain[i] *fDeflection[i];
+	ELSE			
+		fDeflectionCompensation[i] := 0.0;
+	END_IF
+	
 //	qRef[i] := joints[i].q;
 	IF joints[i].bActive THEN	
 ///	
@@ -295,7 +304,7 @@ FOR i:= 0 TO 2 DO
 			//check if the pos input is changed
 			IF bPositionModeExecute AND (NOT bExecuteReady[i]) THEN
 				ft[i] := 0.0;
-				fbTrajectoryGenerator[i].init(fqStartInit := joints[i].q, fqFinalInit := fLimitedPosInput[i], ftFinalInit := ftf);
+				fbTrajectoryGenerator[i].init(fqStartInit := joints[i].q + fDeflectionCompensation[i], fqFinalInit := fLimitedPosInput[i], ftFinalInit := ftf);
 				bExecuteReady[i] := TRUE;
 			END_IF
 			IF bExecuteReady[i] THEN
@@ -305,11 +314,8 @@ FOR i:= 0 TO 2 DO
 //				qRef_t[i]:= fbTrajectoryGenerator[i].fqVel;
 //				qRef_tt[i] :=  fbTrajectoryGenerator[i].fqAcc;
 //-------------------------------------------------------------------------------------------------------------
-				fPosDiff[i] := (fbTrajectoryGenerator[i].fqPos - joints[i].q);
-				qRef[i] := fbTrajectoryGenerator[i].fqPos; // joints[i].q + qRef_t[i]*Ts;
-				IF bAddDeflection THEN
-					fPosDiff[i] := fPosDiff[i] + fDeflectionGain[i] *fDeflection[i];
-				END_IF	
+				fPosDiff[i] := fbTrajectoryGenerator[i].fqPos - fDeflectionCompensation[i] - joints[i].q;
+				qRef[i] := fbTrajectoryGenerator[i].fqPos - fDeflectionCompensation[i]; // joints[i].q + qRef_t[i]*Ts;	
 				qRef_t[i] := KffPos[i]*fbTrajectoryGenerator[i].fqVel + KpPos[i]*fPosDiff[i] + KdPos[i]*(0.0 - q_t_Filtered[i]);
 				qRef_tt[i] := fbTrajectoryGenerator[i].fqAcc;		
 //------------------------------------------------------------------------------------------------------------------------------------	 
@@ -424,7 +430,13 @@ END_FOR]]></ST>
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_Robot3R.velocityMode">
-      <LineId Id="9" Count="4" />
+      <LineId Id="9" Count="2" />
+      <LineId Id="130" Count="1" />
+      <LineId Id="137" Count="0" />
+      <LineId Id="139" Count="0" />
+      <LineId Id="132" Count="0" />
+      <LineId Id="129" Count="0" />
+      <LineId Id="12" Count="1" />
       <LineId Id="56" Count="0" />
       <LineId Id="14" Count="4" />
       <LineId Id="57" Count="1" />
@@ -435,9 +447,6 @@ END_FOR]]></ST>
       <LineId Id="116" Count="0" />
       <LineId Id="124" Count="0" />
       <LineId Id="115" Count="0" />
-      <LineId Id="125" Count="0" />
-      <LineId Id="127" Count="0" />
-      <LineId Id="126" Count="0" />
       <LineId Id="113" Count="1" />
       <LineId Id="117" Count="0" />
       <LineId Id="73" Count="0" />

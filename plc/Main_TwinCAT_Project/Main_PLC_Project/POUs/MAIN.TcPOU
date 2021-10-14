@@ -60,7 +60,7 @@ VAR
 //	q_DEG : ARRAY [0..2] OF LREAL;
 	
 	deflection : ARRAY [0..2] OF LREAL;
-	cumulativeAngle : LREAL;
+	cumulativeAngle : ARRAY [0..2] OF LREAL;
 //	cumulativeVel : LREAL;
 	
 	//filters
@@ -196,17 +196,19 @@ END_IF
 
 
 
-cumulativeAngle := 0.0;
+// cumulativeAngle[0] := robot.q[0];
 //cumulativeVel := 0.0;
 FOR j := 0 TO 2 DO
 	fbGyroFilters[j].update(IMU.fbStim300[j].ImuData.stGyro.x);
 	fLinkGyroVelocity[j] := fbGyroFilters[j].fOut;
 	IF j > 0 THEN
 		fLinkGyroVelocity[j] := fLinkGyroVelocity[j] - fbGyroFilters[j-1].fOut;
+		cumulativeAngle[j] := cumulativeAngle[j-1] + robot.q[j];
+	ELSE
+		cumulativeAngle[j] := robot.q[j];
 	END_IF
 	
-	cumulativeAngle := cumulativeAngle + robot.q[j];
-	deflection[j] := IMU.fbStim300[j].fRollDegFiltered - cumulativeAngle;
+	deflection[j] := IMU.fbStim300[j].fRollDeg - cumulativeAngle[j];
 END_FOR
 
 
@@ -261,7 +263,8 @@ robot(
 	fPosInput := fPosInput,
 	fShaftAdditiveTorque := fShaftAdditiveTorque,
 	fShaftAdditiveVelocity := fShaftAdditiveVelocity,
-	stJointParams := Parameters.stJointParams
+	stJointParams := Parameters.stJointParams,
+	fDeflection := fDeflectionLowPassFiltered
 //	fJointPositionOffset := Parameters.fJointPositionOffset,
 //	fJointCalibrationOffset := Parameters.fJointCalibrationOffset
 );
@@ -385,9 +388,10 @@ END_IF
       <LineId Id="1169" Count="0" />
       <LineId Id="1163" Count="0" />
       <LineId Id="1165" Count="0" />
+      <LineId Id="1890" Count="0" />
+      <LineId Id="1892" Count="1" />
       <LineId Id="1167" Count="0" />
       <LineId Id="1170" Count="0" />
-      <LineId Id="1164" Count="0" />
       <LineId Id="731" Count="1" />
       <LineId Id="1244" Count="1" />
       <LineId Id="222" Count="0" />
@@ -429,7 +433,7 @@ END_IF
       <LineId Id="1390" Count="0" />
       <LineId Id="1253" Count="5" />
       <LineId Id="1518" Count="0" />
-      <LineId Id="1888" Count="0" />
+      <LineId Id="1888" Count="1" />
       <LineId Id="1259" Count="1" />
       <LineId Id="1246" Count="0" />
       <LineId Id="1880" Count="1" />

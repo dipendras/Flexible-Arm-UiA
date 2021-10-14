@@ -159,6 +159,12 @@ fbExtSetPointGenEnable(
 	Execute := (eRobotMode = E_RobotMode.VELOCITY) AND bActive
 );
 
+
+
+qRefLimited := LIMIT(stJointParams.stPositionLimits.fMin, qRef, stJointParams.stPositionLimits.fMax);
+fOffset := stJointParams.stOffsets.fCalibrationOffset + stJointParams.stOffsets.fPositionOffset;
+
+
 IF bActive AND fbExtSetPointGenEnable.Enabled THEN		
 	fShaftAdditiveVelocity := LIMIT(-stAxisParameterSet.fVeloMaximum, fShaftAdditiveVelocity, stAxisParameterSet.fVeloMaximum);
 	
@@ -177,8 +183,7 @@ IF bActive AND fbExtSetPointGenEnable.Enabled THEN
 //		Acceleration := -qRef_tt,
 //		Direction := getDirection(fTotalVelocityRef, -qRef_tt)
 //	);
-	qRefLimited := LIMIT(stJointParams.stPositionLimits.fMin, qRef, stJointParams.stPositionLimits.fMax);
-	fOffset := stJointParams.stOffsets.fCalibrationOffset + stJointParams.stOffsets.fPositionOffset;
+
 	
 	MC_ExtSetPointGenFeed(
 		Axis := axis,
@@ -217,7 +222,7 @@ END_IF
 fbAxisMoveAbsolute(
 	Axis := axis,
 	Execute := bPositionModeExecute AND (eRobotMode = E_RobotMode.POSITION) AND bActive,
-	Position := (fOffset - qRef), // (qRef - fOffset),
+	Position := (fOffset - qRefLimited), // (qRef - fOffset),
 	Velocity := qRef_t,
 	BufferMode := MC_BufferMode.MC_Aborting
 );
@@ -302,7 +307,12 @@ END_IF]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="FB_Joint">
-      <LineId Id="3204" Count="185" />
+      <LineId Id="3204" Count="67" />
+      <LineId Id="3390" Count="1" />
+      <LineId Id="3394" Count="1" />
+      <LineId Id="3392" Count="1" />
+      <LineId Id="3272" Count="18" />
+      <LineId Id="3292" Count="97" />
       <LineId Id="76" Count="0" />
     </LineIds>
     <LineIds Name="FB_Joint.getDirection">
