@@ -1,11 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <POU Name="FB_MapStim300" Id="{5f7fd0be-53b8-4cf8-b0c9-21f376e0f253}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_MapStim300
 VAR_INPUT
 	stFilterParams : ST_FilterParams;
 	
 	fbFilter : FB_LowPassFilter;
+	
+	fJointAccAtImuTangential : LREAL := 0.0;
+	fJointAccAtImuCentripetal : LREAL := 0.0;
+	
+	
 END_VAR
 VAR_OUTPUT
 	ImuData : ST_IMUData;
@@ -101,7 +106,7 @@ IF fbGetSerialData.NewData THEN
 		out := ImuData
 	);
 	
-	fbAccelerometer(fAx:=ImuData.stAcc.x,fAy:=ImuData.stAcc.y,fAz:=ImuData.stAcc.z);
+	fbAccelerometer(fAx:=ImuData.stAcc.x,fAy:=ImuData.stAcc.y + fJointAccAtImuCentripetal,fAz:=ImuData.stAcc.z - fJointAccAtImuTangential); //subtract joint induced acc in z axis
 	
 	IF bFirstSample THEN
 		bFirstSample := FALSE;

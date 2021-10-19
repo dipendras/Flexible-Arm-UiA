@@ -5,6 +5,7 @@
 VAR_GLOBAL CONSTANT
 	DEG_TO_RAD : LREAL := PI/180.0;
 	RAD_TO_DEG : LREAL := 180.0/PI;
+	GRAVITY : LREAL := 9.81;
 	GEAR_RATIO : ARRAY [0..2] OF LREAL := [61.0, 50.0, 35.0];
 	TORQUE_SCALING : ARRAY [0..2] OF LREAL := [30.84, 17.21, 2.99]; //converts Nm --> one-tenth of a per cent (‰)  in motor side
 	VELOCITY_SCALING : LREAL := EXPT(2.0,30.0)/(360.0*1000.0); //converts deg/s --> rev/2^30 ms  in motor side

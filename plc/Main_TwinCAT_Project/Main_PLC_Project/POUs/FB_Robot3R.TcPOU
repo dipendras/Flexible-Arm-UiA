@@ -32,8 +32,11 @@ VAR_OUTPUT
 	
 	// Robot feedback
 	q : ARRAY [0..2] OF LREAL;
-	q_t : ARRAY [0..2] OF LREAL;
+	q_t : ARRAY [0..2] OF LREAL;	
 	tau : ARRAY [0..2] OF LREAL;
+	//the following two lines is added to remove the joint acc from imu readings
+	q_t_old : ARRAY [0..2] OF LREAL := [0.0, 0.0, 0.0];
+	q_tt : ARRAY [0..2] OF LREAL;
 	
 	bAnyJointActive : BOOL;
 END_VAR
@@ -184,7 +187,11 @@ FOR j:= 0 TO 2 DO
 	// Assign feedback data from joints
 	q[j] := joints[j].q;
 	q_t[j] := joints[j].q_t;
-	tau[j] := joints[j].tau;	
+	tau[j] := joints[j].tau;
+	
+	q_tt[j] := (q_t[j] - q_t_old[j])/Ts;
+	q_t_old[j] := q_t[j];
+		
 END_FOR
 
 
@@ -389,6 +396,10 @@ END_FOR]]></ST>
       <LineId Id="1414" Count="0" />
       <LineId Id="1332" Count="0" />
       <LineId Id="1067" Count="5" />
+      <LineId Id="1525" Count="0" />
+      <LineId Id="1524" Count="0" />
+      <LineId Id="1526" Count="0" />
+      <LineId Id="1523" Count="0" />
       <LineId Id="1074" Count="2" />
       <LineId Id="42" Count="0" />
     </LineIds>
