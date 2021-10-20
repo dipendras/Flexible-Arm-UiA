@@ -176,6 +176,18 @@ VAR
 	];
 	fJointAccLowPassFiltered : ARRAY [0..2] OF LREAL;
 	
+	//Leica Readings
+	fLeicaRawH AT %I*: LREAL; //rad
+	fLeicaRawV AT %I*: LREAL; //rad
+	fLeicaRawD AT %I*: LREAL; //m
+	
+	
+	//Leica Readings
+	fXLeica : LREAL := 0.0; //m
+	fYLeica : LREAL := 0.0; //m
+	fZLeica : LREAL := 0.0; //m
+		
+
 	
 END_VAR
 ]]></Declaration>
@@ -294,7 +306,8 @@ FOR j := 0 TO 2 DO
 	fbDeflectionFilters[j].update(deflection[j]);
 	fDeflectionLowPassFiltered[j] := fbDeflectionFilters[j].fOut;
 	fDeflectionHighPass[j] := deflection[j] - fDeflectionLowPassFiltered[j];
-	fShaftAdditiveVelocityTest[j] := -fKf[j]*fDeflectionHighPass[j];
+	
+	fShaftAdditiveVelocityTest[j] := -fKf[j]*fDeflectionNewHighPass[j];
 	
 	
 	
@@ -324,7 +337,7 @@ robot(
 	fShaftAdditiveTorque := fShaftAdditiveTorque,
 	fShaftAdditiveVelocity := fShaftAdditiveVelocity,
 	stJointParams := Parameters.stJointParams,
-	fDeflection := fDeflectionLowPassFiltered
+	fDeflection := fDeflectionNewLowPassFiltered
 //	fJointPositionOffset := Parameters.fJointPositionOffset,
 //	fJointCalibrationOffset := Parameters.fJointCalibrationOffset
 );
@@ -346,7 +359,11 @@ FOR j := 0 TO 2 DO
 END_FOR
 
 
-]]></ST>
+
+//Leica Data
+fXLeica := fLeicaRawD*SIN(fLeicaRawV)*COS(fLeicaRawH);
+fYLeica := fLeicaRawD*SIN(fLeicaRawV)*SIN(fLeicaRawH);
+fZLeica := fLeicaRawD*COS(fLeicaRawV);]]></ST>
     </Implementation>
     <Action Name="getSampleTime" Id="{503be4e8-d825-4f62-bfd8-9f7ff9c902be}">
       <Implementation>
@@ -493,7 +510,9 @@ END_IF
       <LineId Id="1694" Count="0" />
       <LineId Id="1696" Count="0" />
       <LineId Id="1732" Count="0" />
-      <LineId Id="1697" Count="3" />
+      <LineId Id="1697" Count="0" />
+      <LineId Id="2293" Count="0" />
+      <LineId Id="1698" Count="2" />
       <LineId Id="2038" Count="1" />
       <LineId Id="1693" Count="0" />
       <LineId Id="1292" Count="0" />
@@ -530,8 +549,12 @@ END_IF
       <LineId Id="1883" Count="0" />
       <LineId Id="1885" Count="1" />
       <LineId Id="1884" Count="0" />
-      <LineId Id="1511" Count="1" />
+      <LineId Id="1511" Count="0" />
+      <LineId Id="2485" Count="1" />
+      <LineId Id="1512" Count="0" />
+      <LineId Id="2487" Count="0" />
       <LineId Id="1506" Count="0" />
+      <LineId Id="2488" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.getSampleTime">
       <LineId Id="5" Count="0" />

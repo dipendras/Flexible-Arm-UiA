@@ -2654,6 +2654,21 @@ External Setpoint Generation:
 							<Name>Safety.TS_I_Safety_EStopError</Name>
 							<Type>BOOL</Type>
 						</Var>
+						<Var>
+							<Name>MAIN.fLeicaRawH</Name>
+							<Comment><![CDATA[rad]]></Comment>
+							<Type>LREAL</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.fLeicaRawV</Name>
+							<Comment><![CDATA[rad]]></Comment>
+							<Type>LREAL</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.fLeicaRawD</Name>
+							<Comment><![CDATA[m]]></Comment>
+							<Type>LREAL</Type>
+						</Var>
 					</Vars>
 					<Vars VarGrpType="2" ContextId="1" AreaNo="17">
 						<Name>PlcTask Outputs</Name>
@@ -2769,6 +2784,9 @@ External Setpoint Generation:
 				</AddressInfo>
 				<Image Id="5" AddrType="9" ImageType="3">
 					<Name>Image</Name>
+				</Image>
+				<Image Id="7" AddrType="10" ImageType="3">
+					<Name>Image-2</Name>
 				</Image>
 				<Box Id="1" BoxType="9099" BoxFlags="#x00000020">
 					<Name>Drive1_Joint1 (AX5106-0000-0210)</Name>
@@ -5281,6 +5299,107 @@ External Setpoint Generation:
 						<EtherCAT CycleMBoxPollingTime="0" VendorId="#x00000002" ProductCode="#x23333050" InfoDataState="false" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="EL9011 End Terminal" Desc="EL9011" PortABoxInfo="#x01000006"/>
 					</Box>
 				</Box>
+				<Box Id="22" BoxType="9099" BoxFlags="#x00000020">
+					<Name>Box 22 (Leica-RT-Output)</Name>
+					<ImageId>3</ImageId>
+					<EtherCAT SlaveType="2" PdiType="#x3280" MboxDataLinkLayer="true" CycleMBoxPolling="true" CoeType="47" VendorId="#x00000604" ProductCode="#x00000001" RevisionNo="#x0010000a" InfoDataAddr="true" PortPhys="17" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="Leica RT Output" Desc="Leica-RT-Output" PortABoxInfo="#x01000005">
+						<SyncMan>001080002600010001000000000000008000001026010000</SyncMan>
+						<SyncMan>001480002200010002000000000000008000001422010000</SyncMan>
+						<SyncMan>00181c006400010003000000000000001c00001864010000</SyncMan>
+						<SyncMan>001c58002000010004000000000000005800001c20010000</SyncMan>
+						<Fmmu>0000000000000000001800020100000001000000000000000000000000000000</Fmmu>
+						<Fmmu>0000000000000000001c00010100000002000000000000000000000000000000</Fmmu>
+						<DcMode>4672656552756e0000000000000000004672656552756e00000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000</DcMode>
+						<DcMode>44432d53796e6368726f6e000000000044432d53796e6368726f6e000000000000000000000000000000000000000000000000000000000000000000000000030100000000000000000000000000000000000000000000000000000000000000</DcMode>
+						<Pdo Name="Cyclic Measurements" Index="#x1a00" Flags="#x0000" SyncMan="3">
+							<Entry Name="Status" Index="#x6000">
+								<Type>UDINT</Type>
+							</Entry>
+							<Entry Name="AngleHz" Index="#x6001">
+								<Type>LREAL</Type>
+							</Entry>
+							<Entry Name="AngleVt" Index="#x6002">
+								<Type>LREAL</Type>
+							</Entry>
+							<Entry Name="Distance" Index="#x6003">
+								<Type>LREAL</Type>
+							</Entry>
+							<Entry Name="Quaternion0" Index="#x6004">
+								<Type>LREAL</Type>
+							</Entry>
+							<Entry Name="Quaternion1" Index="#x6005">
+								<Type>LREAL</Type>
+							</Entry>
+							<Entry Name="Quaternion2" Index="#x6006">
+								<Type>LREAL</Type>
+							</Entry>
+							<Entry Name="Quaternion3" Index="#x6007">
+								<Type>LREAL</Type>
+							</Entry>
+							<Entry Name="TimeStamp" Index="#x6008">
+								<Type>ULINT</Type>
+							</Entry>
+						</Pdo>
+						<Pdo Name="CmdIF Response" Index="#x1a01" Flags="#x0000" SyncMan="3">
+							<Entry Name="Command_Version" Index="#x6009">
+								<Type>USINT</Type>
+							</Entry>
+							<Entry Name="Command_ID" Index="#x600a">
+								<Type>USINT</Type>
+							</Entry>
+							<Entry Name="Command_status" Index="#x600b">
+								<Type>USINT</Type>
+							</Entry>
+							<Entry Name="Command_jobID" Index="#x600c">
+								<Type>USINT</Type>
+							</Entry>
+							<Entry Name="Argument1" Index="#x600d">
+								<Type>UDINT</Type>
+							</Entry>
+							<Entry Name="Argument2" Index="#x600e">
+								<Type>UDINT</Type>
+							</Entry>
+							<Entry Name="Argument3" Index="#x600f">
+								<Type>UDINT</Type>
+							</Entry>
+							<Entry Name="Argument4" Index="#x6010">
+								<Type>UDINT</Type>
+							</Entry>
+						</Pdo>
+						<Pdo Name="CmdIF Request" Index="#x1600" InOut="1" Flags="#x0000" SyncMan="2">
+							<Entry Name="Command_Version" Index="#x6200">
+								<Type>USINT</Type>
+							</Entry>
+							<Entry Name="Command_ID" Index="#x6201">
+								<Type>USINT</Type>
+							</Entry>
+							<Entry Name="Command_Control" Index="#x6202">
+								<Type>USINT</Type>
+							</Entry>
+							<Entry Name="Command_jobID" Index="#x6203">
+								<Type>USINT</Type>
+							</Entry>
+							<Entry Name="Argument1" Index="#x6204">
+								<Type>UDINT</Type>
+							</Entry>
+							<Entry Name="Argument2" Index="#x6205">
+								<Type>UDINT</Type>
+							</Entry>
+							<Entry Name="Argument3" Index="#x6206">
+								<Type>UDINT</Type>
+							</Entry>
+							<Entry Name="Argument4" Index="#x6207">
+								<Type>UDINT</Type>
+							</Entry>
+							<Entry Name="Argument5" Index="#x6208">
+								<Type>UDINT</Type>
+							</Entry>
+							<Entry Name="Argument6" Index="#x6209">
+								<Type>UDINT</Type>
+							</Entry>
+						</Pdo>
+					</EtherCAT>
+				</Box>
 				<EtherCAT DcSyncMode="3">
 					<EtherCATCmd Id="1" CmdType="1" CmdData="0c0100002009000100000000030000000f0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000">
 						<Name>Dyn Container</Name>
@@ -5290,19 +5409,19 @@ External Setpoint Generation:
 							<Var>
 								<Name>HEAD</Name>
 								<Type GUID="{D46F6451-58CF-4853-A5DB-DA36D1D59A28}" Namespace="IO">ECAT_HEAD</Type>
-								<BitOffs>1152</BitOffs>
+								<BitOffs>792</BitOffs>
 							</Var>
 							<Var>
 								<Name>DATA</Name>
 								<Type GUID="{18071995-0000-0000-0000-001300000100}">ARRAY [0..255] OF BYTE</Type>
-								<BitOffs>1232</BitOffs>
+								<BitOffs>872</BitOffs>
 							</Var>
 							<Var>
 								<Name>CNT</Name>
 								<Comment><![CDATA[Working counter
 After receiving]]></Comment>
 								<Type>UINT</Type>
-								<BitOffs>3280</BitOffs>
+								<BitOffs>2920</BitOffs>
 							</Var>
 						</Vars>
 						<Vars VarGrpType="2">
@@ -5310,19 +5429,19 @@ After receiving]]></Comment>
 							<Var>
 								<Name>HEAD</Name>
 								<Type GUID="{D46F6451-58CF-4853-A5DB-DA36D1D59A28}" Namespace="IO">ECAT_HEAD</Type>
-								<BitOffs>1152</BitOffs>
+								<BitOffs>792</BitOffs>
 							</Var>
 							<Var>
 								<Name>DATA</Name>
 								<Type GUID="{18071995-0000-0000-0000-001300000100}">ARRAY [0..255] OF BYTE</Type>
-								<BitOffs>1232</BitOffs>
+								<BitOffs>872</BitOffs>
 							</Var>
 							<Var>
 								<Name>CNT</Name>
 								<Comment><![CDATA[Working counter
 Before sending]]></Comment>
 								<Type>UINT</Type>
-								<BitOffs>3280</BitOffs>
+								<BitOffs>2920</BitOffs>
 							</Var>
 						</Vars>
 					</EtherCATCmd>
@@ -6887,12 +7006,13 @@ Before sending]]></Comment>
 	<Mappings>
 		<MappingInfo Identifier="{00000000-2001-0850-0020-500830000403}" Id="#x02030040"/>
 		<MappingInfo Identifier="{00000000-2002-0850-0120-500861000403}" Id="#x02030070"/>
-		<MappingInfo Identifier="{00000000-0020-0304-1000-040321000403}" Id="#x02030030"/>
+		<MappingInfo Identifier="{00000000-2002-0850-0120-500871000403}" Id="#x02030030"/>
+		<MappingInfo Identifier="{00000000-0020-0304-1000-040322000403}" Id="#x02030090"/>
 		<MappingInfo Identifier="{00000000-0050-0304-1000-040350000403}" Id="#x02030020"/>
 		<MappingInfo Identifier="{08502002-0050-0304-0020-500850000403}" Id="#x02030050" Watchdog="00000000000000000000000000000000"/>
 		<MappingInfo Identifier="{05000010-2002-0850-1000-040301205008}" Id="#x02030080" Watchdog="14000000040000000400000004000000"/>
-		<MappingInfo Identifier="{03040050-0060-0304-5000-040360000403}" Id="#x02030010" Watchdog="14000000040000000400000004000000"/>
 		<MappingInfo Identifier="{03040060-0060-0304-6000-040360000403}" Id="#x02030060" Watchdog="04000000040000000400000004000000"/>
+		<MappingInfo Identifier="{03040070-0060-0304-7000-040360000403}" Id="#x02030010" Watchdog="04000000040000000400000004000000"/>
 		<OwnerA Name="TIID^Device 1 (EtherCAT)">
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 5 (EK1200)^Term 14 (EL6900)">
 				<Link VarA="Term 5 (EK1200)^Term 15 (EL1904)^Module 1 (FSOES)^RxPDO^FSOE" VarB="ConnectionInputs^Message_9 TxPDO"/>
@@ -7109,6 +7229,11 @@ Before sending]]></Comment>
 				<Link VarA="SerialComTask Outputs^IMU.fbStim300[2].stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 7" Size="8" OffsA="72"/>
 				<Link VarA="SerialComTask Outputs^IMU.fbStim300[2].stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 8" Size="8" OffsA="80"/>
 				<Link VarA="SerialComTask Outputs^IMU.fbStim300[2].stOut_EL6022" VarB="COM Outputs Channel 1^Data Out 9" Size="8" OffsA="88"/>
+			</OwnerB>
+			<OwnerB Name="TIID^Device 5 (EtherCAT)^Box 22 (Leica-RT-Output)">
+				<Link VarA="PlcTask Inputs^MAIN.fLeicaRawD" VarB="Cyclic Measurements^Distance"/>
+				<Link VarA="PlcTask Inputs^MAIN.fLeicaRawH" VarB="Cyclic Measurements^AngleHz"/>
+				<Link VarA="PlcTask Inputs^MAIN.fLeicaRawV" VarB="Cyclic Measurements^AngleVt"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 5 (EtherCAT)^Drive3_Joint3(AX5106-0000-0210)">
 				<Link VarA="PlcTask Inputs^MAIN.robot.joints[2].fbTorqueControl.fTorqueFbkPerc" VarB="AT^Torque/force feedback value"/>
