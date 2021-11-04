@@ -2647,14 +2647,6 @@ External Setpoint Generation:
 							<Type>DINT</Type>
 						</Var>
 						<Var>
-							<Name>Safety.TS_I_Safety_EStopOK</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>Safety.TS_I_Safety_EStopError</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
 							<Name>MAIN.fLeicaRawH</Name>
 							<Comment><![CDATA[rad]]></Comment>
 							<Type>LREAL</Type>
@@ -2668,6 +2660,14 @@ External Setpoint Generation:
 							<Name>MAIN.fLeicaRawD</Name>
 							<Comment><![CDATA[m]]></Comment>
 							<Type>LREAL</Type>
+						</Var>
+						<Var>
+							<Name>Safety.TS_I_Safety_EStopOK</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>Safety.TS_I_Safety_EStopError</Name>
+							<Type>BOOL</Type>
 						</Var>
 					</Vars>
 					<Vars VarGrpType="2" ContextId="1" AreaNo="17">
@@ -2784,9 +2784,6 @@ External Setpoint Generation:
 				</AddressInfo>
 				<Image Id="5" AddrType="9" ImageType="3">
 					<Name>Image</Name>
-				</Image>
-				<Image Id="7" AddrType="10" ImageType="3">
-					<Name>Image-2</Name>
 				</Image>
 				<Box Id="1" BoxType="9099" BoxFlags="#x00000020">
 					<Name>Drive1_Joint1 (AX5106-0000-0210)</Name>
@@ -5299,7 +5296,7 @@ External Setpoint Generation:
 						<EtherCAT CycleMBoxPollingTime="0" VendorId="#x00000002" ProductCode="#x23333050" InfoDataState="false" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="EL9011 End Terminal" Desc="EL9011" PortABoxInfo="#x01000006"/>
 					</Box>
 				</Box>
-				<Box Id="22" BoxType="9099" BoxFlags="#x00000020">
+				<Box Id="22" Disabled="true" BoxType="9099" BoxFlags="#x00000020">
 					<Name>Box 22 (Leica-RT-Output)</Name>
 					<ImageId>3</ImageId>
 					<EtherCAT SlaveType="2" PdiType="#x3280" MboxDataLinkLayer="true" CycleMBoxPolling="true" CoeType="47" VendorId="#x00000604" ProductCode="#x00000001" RevisionNo="#x0010000a" InfoDataAddr="true" PortPhys="17" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="Leica RT Output" Desc="Leica-RT-Output" PortABoxInfo="#x01000005">
@@ -5409,19 +5406,19 @@ External Setpoint Generation:
 							<Var>
 								<Name>HEAD</Name>
 								<Type GUID="{D46F6451-58CF-4853-A5DB-DA36D1D59A28}" Namespace="IO">ECAT_HEAD</Type>
-								<BitOffs>792</BitOffs>
+								<BitOffs>1152</BitOffs>
 							</Var>
 							<Var>
 								<Name>DATA</Name>
 								<Type GUID="{18071995-0000-0000-0000-001300000100}">ARRAY [0..255] OF BYTE</Type>
-								<BitOffs>872</BitOffs>
+								<BitOffs>1232</BitOffs>
 							</Var>
 							<Var>
 								<Name>CNT</Name>
 								<Comment><![CDATA[Working counter
 After receiving]]></Comment>
 								<Type>UINT</Type>
-								<BitOffs>2920</BitOffs>
+								<BitOffs>3280</BitOffs>
 							</Var>
 						</Vars>
 						<Vars VarGrpType="2">
@@ -5429,19 +5426,19 @@ After receiving]]></Comment>
 							<Var>
 								<Name>HEAD</Name>
 								<Type GUID="{D46F6451-58CF-4853-A5DB-DA36D1D59A28}" Namespace="IO">ECAT_HEAD</Type>
-								<BitOffs>792</BitOffs>
+								<BitOffs>1152</BitOffs>
 							</Var>
 							<Var>
 								<Name>DATA</Name>
 								<Type GUID="{18071995-0000-0000-0000-001300000100}">ARRAY [0..255] OF BYTE</Type>
-								<BitOffs>872</BitOffs>
+								<BitOffs>1232</BitOffs>
 							</Var>
 							<Var>
 								<Name>CNT</Name>
 								<Comment><![CDATA[Working counter
 Before sending]]></Comment>
 								<Type>UINT</Type>
-								<BitOffs>2920</BitOffs>
+								<BitOffs>3280</BitOffs>
 							</Var>
 						</Vars>
 					</EtherCATCmd>
@@ -7006,31 +7003,28 @@ Before sending]]></Comment>
 	<Mappings>
 		<MappingInfo Identifier="{00000000-2001-0850-0020-500830000403}" Id="#x02030040"/>
 		<MappingInfo Identifier="{00000000-2002-0850-0120-500861000403}" Id="#x02030070"/>
-		<MappingInfo Identifier="{00000000-2002-0850-0120-500871000403}" Id="#x02030030"/>
-		<MappingInfo Identifier="{00000000-0020-0304-1000-040322000403}" Id="#x02030090"/>
+		<MappingInfo Identifier="{00000000-0020-0304-1000-040321000403}" Id="#x02030030"/>
 		<MappingInfo Identifier="{00000000-0050-0304-1000-040350000403}" Id="#x02030020"/>
 		<MappingInfo Identifier="{08502002-0050-0304-0020-500850000403}" Id="#x02030050" Watchdog="00000000000000000000000000000000"/>
 		<MappingInfo Identifier="{05000010-2002-0850-1000-040301205008}" Id="#x02030080" Watchdog="14000000040000000400000004000000"/>
+		<MappingInfo Identifier="{03040050-0060-0304-5000-040360000403}" Id="#x02030010" Watchdog="14000000040000000400000004000000"/>
 		<MappingInfo Identifier="{03040060-0060-0304-6000-040360000403}" Id="#x02030060" Watchdog="04000000040000000400000004000000"/>
-		<MappingInfo Identifier="{03040070-0060-0304-7000-040360000403}" Id="#x02030010" Watchdog="04000000040000000400000004000000"/>
 		<OwnerA Name="TIID^Device 1 (EtherCAT)">
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 5 (EK1200)^Term 14 (EL6900)">
 				<Link VarA="Term 5 (EK1200)^Term 15 (EL1904)^Module 1 (FSOES)^RxPDO^FSOE" VarB="ConnectionInputs^Message_9 TxPDO"/>
 				<Link VarA="Term 5 (EK1200)^Term 15 (EL1904)^Module 1 (FSOES)^TxPDO^FSOE" VarB="ConnectionOutputs^Message_9 RxPDO"/>
 			</OwnerB>
-			<OwnerB Name="TIID^Device 5 (EtherCAT)^Drive2_Joint2(AX5106-0000-0210)^Term 11 (AX5805)">
-				<Link VarA="Term 5 (EK1200)^Term 14 (EL6900)^ConnectionInputs^Message_7 TxPDO" VarB="Module 1 (Safety Process Data, 1 axis)^Outputs (Controlword)^FSOE"/>
-				<Link VarA="Term 5 (EK1200)^Term 14 (EL6900)^ConnectionOutputs^Message_7 RxPDO" VarB="Module 1 (Safety Process Data, 1 axis)^Inputs (Statusword)^FSOE"/>
-			</OwnerB>
-			<OwnerB Name="TIID^Device 5 (EtherCAT)^Drive3_Joint3(AX5106-0000-0210)^Term 12 (AX5805)">
-				<Link VarA="Term 5 (EK1200)^Term 14 (EL6900)^ConnectionInputs^Message_8 TxPDO" VarB="Module 1 (Safety Process Data, 1 axis)^Outputs (Controlword)^FSOE"/>
-				<Link VarA="Term 5 (EK1200)^Term 14 (EL6900)^ConnectionOutputs^Message_8 RxPDO" VarB="Module 1 (Safety Process Data, 1 axis)^Inputs (Statusword)^FSOE"/>
+			<OwnerB Name="TIID^Device 5 (EtherCAT)^Drive1_Joint1 (AX5106-0000-0210)^Term 10 (AX5805)">
+				<Link VarA="Term 5 (EK1200)^Term 14 (EL6900)^ConnectionOutputs^Message_6 RxPDO" VarB="Module 1 (Safety Process Data, 1 axis)^Inputs (Statusword)^FSOE"/>
 			</OwnerB>
 		</OwnerA>
 		<OwnerA Name="TIID^Device 5 (EtherCAT)">
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 5 (EK1200)^Term 14 (EL6900)">
-				<Link VarA="Drive1_Joint1 (AX5106-0000-0210)^Term 10 (AX5805)^Module 1 (Safety Process Data, 1 axis)^Inputs (Statusword)^FSOE" VarB="ConnectionOutputs^Message_6 RxPDO"/>
 				<Link VarA="Drive1_Joint1 (AX5106-0000-0210)^Term 10 (AX5805)^Module 1 (Safety Process Data, 1 axis)^Outputs (Controlword)^FSOE" VarB="ConnectionInputs^Message_6 TxPDO"/>
+				<Link VarA="Drive2_Joint2(AX5106-0000-0210)^Term 11 (AX5805)^Module 1 (Safety Process Data, 1 axis)^Inputs (Statusword)^FSOE" VarB="ConnectionOutputs^Message_7 RxPDO"/>
+				<Link VarA="Drive2_Joint2(AX5106-0000-0210)^Term 11 (AX5805)^Module 1 (Safety Process Data, 1 axis)^Outputs (Controlword)^FSOE" VarB="ConnectionInputs^Message_7 TxPDO"/>
+				<Link VarA="Drive3_Joint3(AX5106-0000-0210)^Term 12 (AX5805)^Module 1 (Safety Process Data, 1 axis)^Inputs (Statusword)^FSOE" VarB="ConnectionOutputs^Message_8 RxPDO"/>
+				<Link VarA="Drive3_Joint3(AX5106-0000-0210)^Term 12 (AX5805)^Module 1 (Safety Process Data, 1 axis)^Outputs (Controlword)^FSOE" VarB="ConnectionInputs^Message_8 TxPDO"/>
 			</OwnerB>
 		</OwnerA>
 		<OwnerA Name="TINC^Main_NC_Task SAF^Axes^Axis1_Drive1_Joint1">

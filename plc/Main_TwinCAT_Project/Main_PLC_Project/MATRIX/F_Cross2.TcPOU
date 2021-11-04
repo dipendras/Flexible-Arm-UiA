@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="F_Cross2" Id="{30e6cefd-6e9b-40af-87e8-662b84e961d0}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_Cross2 : BOOL
+VAR_INPUT
+	vecA 	: REFERENCE TO FB_Vector3;
+	vecB 	: REFERENCE TO FB_Vector3;
+	res 	: REFERENCE TO FB_Vector3;
+END_VAR
+VAR
+	cross_AB : ARRAY[0..1] OF POINTER TO Matrix := [ADR(vecA), ADR(vecB)];
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[Vector_CrossProduct(res, cross_AB);]]></ST>
+    </Implementation>
+    <LineIds Name="F_Cross2">
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

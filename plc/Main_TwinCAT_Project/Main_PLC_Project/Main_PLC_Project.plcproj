@@ -104,6 +104,24 @@
     <Compile Include="IMU\POUs\FB_MapStim300.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MATRIX\AccelerometerReadings.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MATRIX\FB_Matrix3x3.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MATRIX\FB_Matrix4x4.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MATRIX\FB_Vector3.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MATRIX\F_Cross2.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MATRIX\F_DH.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="PlcTask.TcTTO">
       <SubType>Code</SubType>
     </Compile>
@@ -148,6 +166,7 @@
     <Folder Include="IMU\GVLs" />
     <Folder Include="IMU\DUTs" />
     <Folder Include="IMU\POUs" />
+    <Folder Include="MATRIX" />
     <Folder Include="VISUs" />
     <Folder Include="POUs" />
   </ItemGroup>
@@ -212,6 +231,11 @@
     <PlaceholderResolution Include="Tc3_Module">
       <Resolution>Tc3_Module, * (Beckhoff Automation GmbH)</Resolution>
     </PlaceholderResolution>
+  </ItemGroup>
+  <ItemGroup>
+    <LibraryReference Include="TcMatrix,1.3.0,Burks Engineering">
+      <Namespace>TcMatrix</Namespace>
+    </LibraryReference>
   </ItemGroup>
   <ProjectExtensions>
     <PlcProjectOptions>

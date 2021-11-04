@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="F_DH" Id="{dee419d7-6482-4789-b74f-e082a72f92a1}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_DH : BOOL
+VAR_INPUT
+	theta : LREAL;
+	d : LREAL;
+	a : LREAL;
+	alpha : LREAL;
+	F_DH_OUT : REFERENCE TO FB_Matrix4x4;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+F_DH_OUT.SetRC(0, 0, COS(theta));
+F_DH_OUT.SetRC(0, 1, -SIN(theta)*COS(alpha));
+F_DH_OUT.SetRC(0, 2, SIN(theta)*SIN(alpha));
+F_DH_OUT.SetRC(0, 3, a*COS(theta));
+
+F_DH_OUT.SetRC(1, 0, SIN(theta));
+F_DH_OUT.SetRC(1, 1, COS(theta)*COS(alpha));
+F_DH_OUT.SetRC(1, 2, -COS(theta)*SIN(alpha));
+F_DH_OUT.SetRC(1, 3, a*SIN(theta));
+
+
+F_DH_OUT.SetRC(2, 0, 0);
+F_DH_OUT.SetRC(2, 1, SIN(alpha));
+F_DH_OUT.SetRC(2, 2, COS(alpha));
+F_DH_OUT.SetRC(2, 3, d);
+
+F_DH_OUT.SetRC(3, 0, 0);
+F_DH_OUT.SetRC(3, 1, 0);
+F_DH_OUT.SetRC(3, 2, 0);
+F_DH_OUT.SetRC(3, 3, 1);]]></ST>
+    </Implementation>
+    <LineIds Name="F_DH">
+      <LineId Id="19" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="21" Count="1" />
+      <LineId Id="24" Count="3" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="29" Count="4" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="35" Count="3" />
+      <LineId Id="34" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_Matrix3x3" Id="{7e99dc28-6959-4ab0-85f6-32f3e8c27c91}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK PUBLIC FB_Matrix3x3 EXTENDS ExternalStaticMatrix
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	data_array : ARRAY [0..8] OF LREAL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="FB_init" Id="{bce5eccb-ee0f-4cb2-8c24-901f0874fd6f}">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
+VAR_INPUT
+	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+END_VAR
+VAR
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Init(ADR(data_array), 3, 3);
+Clear();]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_Matrix3x3">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Matrix3x3.FB_init">
+      <LineId Id="7" Count="0" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

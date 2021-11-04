@@ -1,0 +1,289 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="AccelerometerReadings" Id="{976375c1-9358-45cc-b0bb-504490b4c614}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION AccelerometerReadings : BOOL
+VAR_INPUT
+	q : ARRAY [0..2] OF LREAL;
+	qdot : ARRAY [0..2] OF LREAL;
+	qddot : ARRAY [0..2] OF LREAL;
+	L : ARRAY [0..2] OF LREAL;
+	Tip_to_IMU : REFERENCE TO ARRAY [0..2] OF FB_Vector3;
+	AccelerometerReadingsOut : REFERENCE TO ARRAY [0..2] OF FB_Vector3;
+	gravity_vector : REFERENCE TO FB_Vector3;
+	
+END_VAR
+VAR
+	
+	z0 : FB_Vector3 := (X := 0, Y := 0, Z := 1);
+	
+	T_from_i_1_to_i : FB_Matrix4x4;
+	Rot : FB_Matrix3x3;
+	Rot_Trans : TransposeMatrixAccessor;
+	Rot_IMU_Joint : FB_Matrix3x3;
+	w : ARRAY [0..2] OF FB_Vector3;
+	wdot : ARRAY [0..2] OF FB_Vector3;
+	vdot : ARRAY [0..2] OF FB_Vector3;
+	vIMUdot : ARRAY [0..2] OF FB_Vector3;	
+
+	p : FB_Vector3; 
+
+	i : USINT;
+	
+	
+	prod_z0_qdot : FB_Vector3;	
+	
+
+	tmp : SubMatrixAccessor;
+	
+	prod_z0_qddot : FB_Vector3;	
+
+		
+		
+	prod_Rottrans_grav : FB_Vector3;
+	cross_wdot_p : FB_Vector3;
+	cross_w_p : FB_Vector3;
+	cross_w_w_p : FB_Vector3;
+	
+	cross_wdot_imu : FB_Vector3;
+	cross_w_imu : FB_Vector3;
+	cross_w_w_imu : FB_Vector3;
+
+	sum_w_prod_z0_qdot : FB_Vector3;
+	
+	sum_wdot_prod_z0_qddot_cross_w_prod_z0_qdot : FB_Vector3;
+	cross_w_prod_z0_qdot : FB_Vector3;
+	
+	prod_Rottrans_vdot : FB_Vector3;
+
+	
+	
+	
+END_VAR
+
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+//gravity_vector.SetI(0, 0);
+//gravity_vector.SetI(1, 9.8*1);
+//gravity_vector.SetI(2, 0);
+
+
+//z0.SetI(0,0);
+//z0.SetI(1,0);
+//z0.SetI(2,1);
+
+Rot_IMU_Joint.SetRC(0,0,0);
+Rot_IMU_Joint.SetRC(0,1,0);
+Rot_IMU_Joint.SetRC(0,2,1);
+Rot_IMU_Joint.SetRC(1,0,1);
+Rot_IMU_Joint.SetRC(1,1,0);
+Rot_IMU_Joint.SetRC(1,2,0);
+Rot_IMU_Joint.SetRC(2,0,0);
+Rot_IMU_Joint.SetRC(2,1,1);
+Rot_IMU_Joint.SetRC(2,2,0);
+
+FOR i:=0 TO 2 DO
+	
+   	F_DH(theta:= q[i],d:=0,a:=L[i],alpha:=0,T_from_i_1_to_i);
+	tmp := T_from_i_1_to_i.GetSubMatrixAccessor(RowStart:=0,RowCount:=3,ColStart:=0,ColCount:=3);
+	tmp.CopyTo(Rot);
+	Rot_Trans := Rot.GetTransposeMatrixAccessor();
+	
+	p.SetI(0,L[i]);
+	p.SetI(1,0);
+	p.SetI(2,0);
+	
+	IF i > 0 THEN
+//        w(:, i) =  R'*(w(:, i-1) + z0.*qdot(i));
+		z0.CopyTo(prod_z0_qdot); 								// z0.*qdot(i)
+		prod_z0_qdot.Scale(qdot[i]);
+		prod_z0_qdot.CopyTo(sum_w_prod_z0_qdot);
+		sum_w_prod_z0_qdot.ElementSum(w[i-1]);
+		Matrix_Product(Rot_Trans,sum_w_prod_z0_qdot,w[i]); 
+
+
+
+//        wdot(:, i) = R'*(wdot(:, i-1) +  z0.*qddot(i) + ...
+//            cross(w(:, i-1), z0.*qdot(i)));
+		z0.CopyTo(prod_z0_qddot); 								
+		prod_z0_qddot.Scale(qddot[i]);		
+		F_Cross2(w[i-1],prod_z0_qdot,cross_w_prod_z0_qdot);		
+		
+		wdot[i-1].CopyTo(sum_wdot_prod_z0_qddot_cross_w_prod_z0_qdot);
+		sum_wdot_prod_z0_qddot_cross_w_prod_z0_qdot.ElementSum(prod_z0_qddot);
+		sum_wdot_prod_z0_qddot_cross_w_prod_z0_qdot.ElementSum(cross_w_prod_z0_qdot);
+		Matrix_Product(Rot_Trans,sum_wdot_prod_z0_qddot_cross_w_prod_z0_qdot,wdot[i]); 
+
+//        vdot(:,i) = R'*vdot(:,i-1) + cross(wdot(:,i), p) + ...
+//            cross(w(:,i), cross(w(:,i),p));-----------------------------------------------------------------
+			
+		Matrix_Product(Rot_Trans,vdot[i-1],prod_Rottrans_vdot); 				
+		F_Cross2(wdot[i],p,cross_wdot_p);
+		F_Cross2(w[i],p,cross_w_p);
+		F_Cross2(w[i],cross_w_p,cross_w_w_p);
+		
+		prod_Rottrans_vdot.CopyTo(vdot[i]);
+		vdot[i].ElementSum(cross_wdot_p);
+		vdot[i].ElementSum(cross_w_w_p);
+		
+		
+
+		
+		
+
+
+//        vIMUdot(:,i) = vdot(:,i) + cross(wdot(:,i),Tip_to_IMU(:,i)) + ...
+//            cross(w(:,i),cross(w(:,i),Tip_to_IMU(:,i)));
+
+		F_Cross2(wdot[i],Tip_to_IMU[i],cross_wdot_imu);
+		F_Cross2(w[i],Tip_to_IMU[i],cross_w_imu);
+		F_Cross2(w[i],cross_w_p,cross_w_w_imu);
+		
+		
+		vdot[i].CopyTo(vIMUdot[i]);
+		vIMUdot[i].ElementSum(cross_wdot_imu);
+		vIMUdot[i].ElementSum(cross_w_w_imu);
+
+
+
+
+
+	ELSE		
+//		        w(:, i) =  R'*(z0.*qdot(i));
+		z0.CopyTo(prod_z0_qdot); 								// z0.*qdot(i)
+		prod_z0_qdot.Scale(qdot[i]);
+		Matrix_Product(Rot_Trans,prod_z0_qdot,w[i]); // R'*(z0.*qdot(i));
+
+//        wdot(:, i) = R'*(z0.*qddot(i));
+		z0.CopyTo(prod_z0_qddot); 								
+		prod_z0_qddot.Scale(qddot[i]);									
+		Matrix_Product(Rot_Trans,prod_z0_qddot,wdot[i]); // R'*(z0.*qddot(i));	
+
+
+//        vdot(:,i) = R'*grav + cross(wdot(:,i), p) + ...
+//            cross(w(:,i), cross(w(:,i),p));
+		Matrix_Product(Rot_Trans,gravity_vector,prod_Rottrans_grav);
+		F_Cross2(wdot[i],p,cross_wdot_p);
+		F_Cross2(w[i],p,cross_w_p);
+		F_Cross2(w[i],cross_w_p,cross_w_w_p);
+		
+		
+		prod_Rottrans_grav.CopyTo(vdot[i]);
+		vdot[i].ElementSum(cross_wdot_p);
+		vdot[i].ElementSum(cross_w_w_p);
+
+
+//        vIMUdot(:,i) = vdot(:,i) + cross(wdot(:,i),Tip_to_IMU(:,i)) + ...
+//            cross(w(:,i),cross(w(:,i),Tip_to_IMU(:,i)));
+
+		F_Cross2(wdot[i],Tip_to_IMU[i],cross_wdot_imu);
+		F_Cross2(w[i],Tip_to_IMU[i],cross_w_imu);
+		F_Cross2(w[i],cross_w_p,cross_w_w_imu);
+		
+		
+		vdot[i].CopyTo(vIMUdot[i]);
+		vIMUdot[i].ElementSum(cross_wdot_imu);
+		vIMUdot[i].ElementSum(cross_w_w_imu);
+
+
+
+	END_IF	
+	Matrix_Product(Rot_IMU_Joint,vIMUdot[i],AccelerometerReadingsOut[i]);	
+	
+END_FOR;
+
+
+
+
+
+
+
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="AccelerometerReadings">
+      <LineId Id="31" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="35" Count="1" />
+      <LineId Id="38" Count="1" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="40" Count="1" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="44" Count="7" />
+      <LineId Id="66" Count="1" />
+      <LineId Id="121" Count="0" />
+      <LineId Id="68" Count="0" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="120" Count="0" />
+      <LineId Id="134" Count="0" />
+      <LineId Id="76" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="77" Count="3" />
+      <LineId Id="185" Count="0" />
+      <LineId Id="196" Count="3" />
+      <LineId Id="195" Count="0" />
+      <LineId Id="193" Count="1" />
+      <LineId Id="192" Count="0" />
+      <LineId Id="186" Count="1" />
+      <LineId Id="205" Count="1" />
+      <LineId Id="217" Count="0" />
+      <LineId Id="216" Count="0" />
+      <LineId Id="207" Count="1" />
+      <LineId Id="221" Count="0" />
+      <LineId Id="204" Count="0" />
+      <LineId Id="200" Count="0" />
+      <LineId Id="188" Count="1" />
+      <LineId Id="225" Count="1" />
+      <LineId Id="228" Count="0" />
+      <LineId Id="240" Count="1" />
+      <LineId Id="237" Count="0" />
+      <LineId Id="242" Count="1" />
+      <LineId Id="238" Count="1" />
+      <LineId Id="229" Count="0" />
+      <LineId Id="232" Count="0" />
+      <LineId Id="222" Count="2" />
+      <LineId Id="190" Count="1" />
+      <LineId Id="119" Count="0" />
+      <LineId Id="250" Count="7" />
+      <LineId Id="249" Count="0" />
+      <LineId Id="245" Count="3" />
+      <LineId Id="244" Count="0" />
+      <LineId Id="83" Count="0" />
+      <LineId Id="108" Count="0" />
+      <LineId Id="114" Count="0" />
+      <LineId Id="153" Count="0" />
+      <LineId Id="115" Count="0" />
+      <LineId Id="113" Count="0" />
+      <LineId Id="109" Count="0" />
+      <LineId Id="124" Count="0" />
+      <LineId Id="154" Count="0" />
+      <LineId Id="141" Count="0" />
+      <LineId Id="123" Count="0" />
+      <LineId Id="116" Count="0" />
+      <LineId Id="110" Count="1" />
+      <LineId Id="143" Count="0" />
+      <LineId Id="158" Count="1" />
+      <LineId Id="161" Count="1" />
+      <LineId Id="144" Count="1" />
+      <LineId Id="163" Count="1" />
+      <LineId Id="146" Count="0" />
+      <LineId Id="142" Count="0" />
+      <LineId Id="112" Count="0" />
+      <LineId Id="107" Count="0" />
+      <LineId Id="177" Count="7" />
+      <LineId Id="168" Count="2" />
+      <LineId Id="166" Count="0" />
+      <LineId Id="84" Count="0" />
+      <LineId Id="262" Count="0" />
+      <LineId Id="260" Count="0" />
+      <LineId Id="55" Count="2" />
+      <LineId Id="65" Count="0" />
+      <LineId Id="64" Count="0" />
+      <LineId Id="60" Count="1" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="52" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

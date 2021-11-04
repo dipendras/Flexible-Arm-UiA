@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_Vector3" Id="{451d287b-3f5c-4ee8-81d1-8c7b4ee0b84c}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK PUBLIC FB_Vector3 EXTENDS ExternalStaticMatrix
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	data_array : ARRAY [0..2] OF LREAL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="FB_init" Id="{98e9d8da-9aa5-408d-bb08-73efd9a04a3e}">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
+VAR_INPUT
+	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+END_VAR
+VAR
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Init(ADR(data_array), 3, 1);
+Clear();]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="X" Id="{148ce7f6-8faf-47c9-a468-0eed359e82ce}">
+      <Declaration><![CDATA[PROPERTY PUBLIC X : LREAL]]></Declaration>
+      <Get Name="Get" Id="{8cba302a-763f-48ad-bb0c-36801daf1f68}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[X := GetI(0);]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{2c9693eb-4139-4ea9-a8ec-a834c5e634dd}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[SetI(0, X);]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="Y" Id="{87c9e8a4-dd3b-4c10-93f8-e58f46effca9}">
+      <Declaration><![CDATA[PROPERTY PUBLIC Y : LREAL]]></Declaration>
+      <Get Name="Get" Id="{4b160276-4b07-4657-903f-7c1e45a9a03b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Y := GetI(1);]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{13f78087-e5c4-4679-a23a-c48d92ac0da9}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[SetI(1, Y);]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="Z" Id="{18afd8ba-4aa8-4180-bc7b-cda30301f6b1}">
+      <Declaration><![CDATA[PROPERTY PUBLIC Z : LREAL]]></Declaration>
+      <Get Name="Get" Id="{9af28f71-6afa-4482-af94-3a7c7276df86}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Z := GetI(2);]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{6dd386f6-8894-4825-b5c6-cad0d7bf6850}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[SetI(2, Z);]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <LineIds Name="FB_Vector3">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Vector3.FB_init">
+      <LineId Id="7" Count="0" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Vector3.X.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Vector3.X.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Vector3.Y.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Vector3.Y.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Vector3.Z.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Vector3.Z.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
