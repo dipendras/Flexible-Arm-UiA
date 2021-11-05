@@ -199,6 +199,11 @@ VAR
 	gravity_vector : FB_Vector3 := (X := 0, Y := 9.81, Z := 0);
 	
 	
+	gravity_vector_zero : FB_Vector3 := (X := 0, Y := 0, Z := 0);
+	AccelerometerReadingsOutWithoutGravity : ARRAY [0..2] OF FB_Vector3;
+	fGainAccXYZ : ARRAY [0..2] OF LREAL := [1.0,1.0,1.0];
+	
+	
 	
 	
 END_VAR
@@ -380,23 +385,29 @@ fZLeica := fLeicaRawD*COS(fLeicaRawV);
 
 
 //Accelerometer Readings Compensation
-Tip_to_IMU[0].X := 0;
-Tip_to_IMU[0].Y := -0.1;
-Tip_to_IMU[0].Z := -0.0198;
+Tip_to_IMU[0].X := -0.063;
+Tip_to_IMU[0].Y := 0.025;
+Tip_to_IMU[0].Z := 0.0198;
 
-Tip_to_IMU[1].X := 0;
-Tip_to_IMU[1].Y := -0.1;
-Tip_to_IMU[1].Z := -0.0198;
+Tip_to_IMU[1].X := -0.063;
+Tip_to_IMU[1].Y := 0.025;
+Tip_to_IMU[1].Z := 0.0198;
 
-Tip_to_IMU[2].X := 0;
-Tip_to_IMU[2].Y := -0.1;
-Tip_to_IMU[2].Z := -0.0198;
+Tip_to_IMU[2].X := -0.063;
+Tip_to_IMU[2].Y := 0.025;
+Tip_to_IMU[2].Z := 0.0198;
 
 FOR j := 0 TO 2 DO
 	q_rad[j] :=  robot.q[j]*CONSTANTS.DEG_TO_RAD;	
-	qdot_rad[j] :=  q_t_Filtered[j]*CONSTANTS.DEG_TO_RAD;	
-	qddot_rad[j] :=  fJointAccLowPassFiltered[j]*CONSTANTS.DEG_TO_RAD;	 
+	qdot_rad[j] :=  q_t_Filtered[j]*CONSTANTS.DEG_TO_RAD;	//robot.q_t[j]*CONSTANTS.DEG_TO_RAD; //q_t_Filtered[j]*CONSTANTS.DEG_TO_RAD;	
+	qddot_rad[j] :=  fJointAccLowPassFiltered[j]*CONSTANTS.DEG_TO_RAD; //robot.q_tt[j]*CONSTANTS.DEG_TO_RAD;	 //fJointAccLowPassFiltered[j]*CONSTANTS.DEG_TO_RAD;	 
 END_FOR
+
+//FOR j := 0 TO 2 DO
+//	q_rad[j] :=  robot.qRef[j]*CONSTANTS.DEG_TO_RAD;	
+//	qdot_rad[j] :=  robot.qRef_t[j]*CONSTANTS.DEG_TO_RAD;	//robot.q_t[j]*CONSTANTS.DEG_TO_RAD; //q_t_Filtered[j]*CONSTANTS.DEG_TO_RAD;	
+//	qddot_rad[j] :=  robot.qRef_tt[j]*CONSTANTS.DEG_TO_RAD; //robot.q_tt[j]*CONSTANTS.DEG_TO_RAD;	 //fJointAccLowPassFiltered[j]*CONSTANTS.DEG_TO_RAD;	 
+//END_FOR
 
 AccelerometerReadings(
 	q:=q_rad,
@@ -406,6 +417,16 @@ AccelerometerReadings(
 	Tip_to_IMU:=Tip_to_IMU,
 	AccelerometerReadingsOut := AccelerometerReadingsOut,
 	gravity_vector := gravity_vector
+);
+
+AccelerometerReadings(
+	q:=q_rad,
+	qdot:=qdot_rad,
+	qddot:=qddot_rad,
+	L:=L,
+	Tip_to_IMU:=Tip_to_IMU,
+	AccelerometerReadingsOut := AccelerometerReadingsOutWithoutGravity,
+	gravity_vector := gravity_vector_zero
 );]]></ST>
     </Implementation>
     <Action Name="getSampleTime" Id="{503be4e8-d825-4f62-bfd8-9f7ff9c902be}">
@@ -607,9 +628,13 @@ END_IF
       <LineId Id="2930" Count="0" />
       <LineId Id="2929" Count="0" />
       <LineId Id="2922" Count="0" />
+      <LineId Id="3353" Count="4" />
+      <LineId Id="3352" Count="0" />
       <LineId Id="2921" Count="0" />
       <LineId Id="2712" Count="7" />
       <LineId Id="2711" Count="0" />
+      <LineId Id="3137" Count="8" />
+      <LineId Id="3136" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.getSampleTime">
       <LineId Id="5" Count="0" />

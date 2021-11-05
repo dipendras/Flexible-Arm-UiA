@@ -39,12 +39,13 @@ VAR_OUTPUT
 	q_tt : ARRAY [0..2] OF LREAL;
 	
 	bAnyJointActive : BOOL;
-END_VAR
-VAR
 	// Setpoints
 	qRef : ARRAY [0..2] OF LREAL;
 	qRef_t : ARRAY [0..2] OF LREAL;
 	qRef_tt : ARRAY [0..2] OF LREAL;
+END_VAR
+VAR
+
 	
 	fLimitedPosInput : ARRAY [0..2] OF LREAL;
 	

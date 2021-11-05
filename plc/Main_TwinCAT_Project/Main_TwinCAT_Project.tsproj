@@ -2557,6 +2557,29 @@ External Setpoint Generation:
 					<Vars VarGrpType="1" ContextId="1" AreaNo="16">
 						<Name>PlcTask Inputs</Name>
 						<Var>
+							<Name>MAIN.fLeicaRawH</Name>
+							<Comment><![CDATA[rad]]></Comment>
+							<Type>LREAL</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.fLeicaRawV</Name>
+							<Comment><![CDATA[rad]]></Comment>
+							<Type>LREAL</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.fLeicaRawD</Name>
+							<Comment><![CDATA[m]]></Comment>
+							<Type>LREAL</Type>
+						</Var>
+						<Var>
+							<Name>Safety.TS_I_Safety_EStopOK</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>Safety.TS_I_Safety_EStopError</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
 							<Name>MAIN.robot.joints[0].nVelocityControllerOutputTorque</Name>
 							<Type>INT</Type>
 						</Var>
@@ -2646,32 +2669,25 @@ External Setpoint Generation:
 							<Name>MAIN.robot.joints[2].fbTorqueControl.nVelFbk</Name>
 							<Type>DINT</Type>
 						</Var>
-						<Var>
-							<Name>MAIN.fLeicaRawH</Name>
-							<Comment><![CDATA[rad]]></Comment>
-							<Type>LREAL</Type>
-						</Var>
-						<Var>
-							<Name>MAIN.fLeicaRawV</Name>
-							<Comment><![CDATA[rad]]></Comment>
-							<Type>LREAL</Type>
-						</Var>
-						<Var>
-							<Name>MAIN.fLeicaRawD</Name>
-							<Comment><![CDATA[m]]></Comment>
-							<Type>LREAL</Type>
-						</Var>
-						<Var>
-							<Name>Safety.TS_I_Safety_EStopOK</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>Safety.TS_I_Safety_EStopError</Name>
-							<Type>BOOL</Type>
-						</Var>
 					</Vars>
 					<Vars VarGrpType="2" ContextId="1" AreaNo="17">
 						<Name>PlcTask Outputs</Name>
+						<Var>
+							<Name>Safety.TS_Q_Safety_GroupPort_ErrAck</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>Safety.TS_Q_Safety_EStopRestart</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>Safety.TS_Q_Safety_GroupPort_RunStop</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>Safety.TS_Q_Safety_Drive_Axis_ErrReset</Name>
+							<Type>BOOL</Type>
+						</Var>
 						<Var>
 							<Name>MAIN.robot.joints[0].nAdditiveTorquePerc</Name>
 							<Type>INT</Type>
@@ -2710,22 +2726,6 @@ External Setpoint Generation:
 						<Var>
 							<Name>MAIN.robot.joints[2].axis.PlcToNc</Name>
 							<Type GUID="{63A84524-72E3-41C8-BEAB-4CCE44690A13}" Namespace="MC">PLCTONC_AXIS_REF</Type>
-						</Var>
-						<Var>
-							<Name>Safety.TS_Q_Safety_GroupPort_ErrAck</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>Safety.TS_Q_Safety_EStopRestart</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>Safety.TS_Q_Safety_GroupPort_RunStop</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>Safety.TS_Q_Safety_Drive_Axis_ErrReset</Name>
-							<Type>BOOL</Type>
 						</Var>
 					</Vars>
 					<Contexts>

@@ -4,15 +4,14 @@
     <Declaration><![CDATA[PROGRAM BackgroundCOM
 VAR
 	i : DINT;
-	fJointToImuDistance : ARRAY [0..2] OF LREAL := [1.5, 1.5, 1.44];
-	fJointAccGain : ARRAY [0..2] OF LREAL := [1.0, 1.0, 1.0];
-	fJointVelGain : ARRAY [0..2] OF LREAL := [1.0, 1.0, 1.0];
+	
+
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[FOR i := 0 TO 2 DO
-//	IMU.fbStim300[i](fJointAccAtImu := MAIN.robot.q_tt[i]*fJointToImuDistance[i]*fJointAccGain[i]);
-	IMU.fbStim300[i](fJointAccAtImuTangential := MAIN.fJointAccLowPassFiltered[i]*CONSTANTS.DEG_TO_RAD/CONSTANTS.GRAVITY*fJointToImuDistance[i]*fJointAccGain[i],//MAIN.robot.q_tt[i]*CONSTANTS.DEG_TO_RAD/CONSTANTS.GRAVITY*fJointToImuDistance[i]*fJointAccGain[i],//MAIN.fJointAccLowPassFiltered[i]*CONSTANTS.DEG_TO_RAD/CONSTANTS.GRAVITY*fJointToImuDistance[i]*fJointAccGain[i], //represent in terms of 9ravuty constant
-					fJointAccAtImuCentripetal := EXPT(MAIN.q_t_Filtered[i]*CONSTANTS.DEG_TO_RAD,2.0)/CONSTANTS.GRAVITY*fJointToImuDistance[i]*fJointVelGain[i]);
+	IMU.fbStim300[i](fJointAccAtImuX := MAIN.fGainAccXYZ[0]*MAIN.AccelerometerReadingsOutWithoutGravity[i].X/CONSTANTS.GRAVITY,//represent in terms of Gravuty constant
+					fJointAccAtImuY := MAIN.fGainAccXYZ[1]*MAIN.AccelerometerReadingsOutWithoutGravity[i].Y/CONSTANTS.GRAVITY,
+					fJointAccAtImuZ := MAIN.fGainAccXYZ[2]*MAIN.AccelerometerReadingsOutWithoutGravity[i].Z/CONSTANTS.GRAVITY);
 END_FOR
 
 
@@ -20,9 +19,9 @@ END_FOR
     </Implementation>
     <LineIds Name="BackgroundCOM">
       <LineId Id="147" Count="0" />
-      <LineId Id="158" Count="0" />
       <LineId Id="151" Count="0" />
       <LineId Id="164" Count="0" />
+      <LineId Id="172" Count="0" />
       <LineId Id="152" Count="0" />
       <LineId Id="148" Count="0" />
       <LineId Id="145" Count="0" />

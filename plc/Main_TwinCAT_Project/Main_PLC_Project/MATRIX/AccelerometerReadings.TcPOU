@@ -107,7 +107,7 @@ FOR i:=0 TO 2 DO
 //            cross(w(:, i-1), z0.*qdot(i)));
 		z0.CopyTo(prod_z0_qddot); 								
 		prod_z0_qddot.Scale(qddot[i]);		
-		F_Cross2(w[i-1],prod_z0_qdot,cross_w_prod_z0_qdot);		
+		F_Cross2(w[i-1],prod_z0_qdot,cross_w_prod_z0_qdot);	    
 		
 		wdot[i-1].CopyTo(sum_wdot_prod_z0_qddot_cross_w_prod_z0_qdot);
 		sum_wdot_prod_z0_qddot_cross_w_prod_z0_qdot.ElementSum(prod_z0_qddot);
@@ -137,7 +137,7 @@ FOR i:=0 TO 2 DO
 
 		F_Cross2(wdot[i],Tip_to_IMU[i],cross_wdot_imu);
 		F_Cross2(w[i],Tip_to_IMU[i],cross_w_imu);
-		F_Cross2(w[i],cross_w_p,cross_w_w_imu);
+		F_Cross2(w[i],cross_w_imu,cross_w_w_imu); //cross_w_p --> cross_w_imu 
 		
 		
 		vdot[i].CopyTo(vIMUdot[i]);
@@ -150,9 +150,9 @@ FOR i:=0 TO 2 DO
 
 	ELSE		
 //		        w(:, i) =  R'*(z0.*qdot(i));
-		z0.CopyTo(prod_z0_qdot); 								// z0.*qdot(i)
+		z0.CopyTo(prod_z0_qdot); 								
 		prod_z0_qdot.Scale(qdot[i]);
-		Matrix_Product(Rot_Trans,prod_z0_qdot,w[i]); // R'*(z0.*qdot(i));
+		Matrix_Product(Rot_Trans,prod_z0_qdot,w[i]); 
 
 //        wdot(:, i) = R'*(z0.*qddot(i));
 		z0.CopyTo(prod_z0_qddot); 								
@@ -178,7 +178,7 @@ FOR i:=0 TO 2 DO
 
 		F_Cross2(wdot[i],Tip_to_IMU[i],cross_wdot_imu);
 		F_Cross2(w[i],Tip_to_IMU[i],cross_w_imu);
-		F_Cross2(w[i],cross_w_p,cross_w_w_imu);
+		F_Cross2(w[i],cross_w_imu,cross_w_w_imu); //cross_w_p --> cross_w_imu 
 		
 		
 		vdot[i].CopyTo(vIMUdot[i]);
