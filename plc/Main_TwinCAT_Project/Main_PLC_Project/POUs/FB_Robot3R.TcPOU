@@ -16,7 +16,7 @@ VAR_INPUT
 	bPositionModeExecute 	: BOOL;
 	bAddDeflection : BOOL := FALSE;
 	fDeflection : ARRAY [0..2] OF LREAL := [0.0,0.0,0.0];
-	fDeflectionGain : ARRAY [0..2] OF LREAL := [0.0, 0.0,0.0];
+	fDeflectionGain : ARRAY [0..2] OF LREAL := [1.0, 1.0,1.0];
 //	fJointPositionOffset 	: ARRAY [0..2] OF LREAL;	
 //	fJointCalibrationOffset : ARRAY [0..2] OF LREAL;
 //	fJointLimitMin : ARRAY [0..2] OF LREAL;	

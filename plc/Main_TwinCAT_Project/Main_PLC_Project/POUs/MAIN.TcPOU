@@ -130,16 +130,16 @@ VAR
 	fbDeflectionFilters : ARRAY [0..2] OF FB_LowPassFilter;
 	stDeflectionFilterParams : ARRAY [0..2] OF ST_FilterParams := [
 		(	
-			eOrder := E_FilterOrder.eSecond,
-			fCutoff := 1
+			eOrder := E_FilterOrder.eFirst,
+			fCutoff := 0.1
 		),
 		(
-			eOrder := E_FilterOrder.eSecond,
-			fCutoff := 1
+			eOrder := E_FilterOrder.eFirst,
+			fCutoff := 0.1
 		),
 		(
-			eOrder := E_FilterOrder.eSecond,
-			fCutoff := 1
+			eOrder := E_FilterOrder.eFirst,
+			fCutoff := 0.1
 		)
 	];
 	fDeflectionHighPass : ARRAY [0..2] OF LREAL;
@@ -377,20 +377,20 @@ END_FOR
 
 
 
-//Leica Data
+//Leica Data : is in Left Hand Coordinate System. Flip the y coordinates to negative to change it to right hand coordinate system
 fXLeica := fLeicaRawD*SIN(fLeicaRawV)*COS(fLeicaRawH);
-fYLeica := fLeicaRawD*SIN(fLeicaRawV)*SIN(fLeicaRawH);
+fYLeica := -fLeicaRawD*SIN(fLeicaRawV)*SIN(fLeicaRawH); //Converting LEFT hand  to right hand coordinate system
 fZLeica := fLeicaRawD*COS(fLeicaRawV);
 
 
 
 //Accelerometer Readings Compensation
-Tip_to_IMU[0].X := -0.063;
-Tip_to_IMU[0].Y := 0.025;
+Tip_to_IMU[0].X := -0.185;
+Tip_to_IMU[0].Y := 0.035;
 Tip_to_IMU[0].Z := 0.0198;
 
-Tip_to_IMU[1].X := -0.063;
-Tip_to_IMU[1].Y := 0.025;
+Tip_to_IMU[1].X := -0.160;
+Tip_to_IMU[1].Y := 0.030;
 Tip_to_IMU[1].Z := 0.0198;
 
 Tip_to_IMU[2].X := -0.063;
@@ -402,6 +402,12 @@ FOR j := 0 TO 2 DO
 	qdot_rad[j] :=  q_t_Filtered[j]*CONSTANTS.DEG_TO_RAD;	//robot.q_t[j]*CONSTANTS.DEG_TO_RAD; //q_t_Filtered[j]*CONSTANTS.DEG_TO_RAD;	
 	qddot_rad[j] :=  fJointAccLowPassFiltered[j]*CONSTANTS.DEG_TO_RAD; //robot.q_tt[j]*CONSTANTS.DEG_TO_RAD;	 //fJointAccLowPassFiltered[j]*CONSTANTS.DEG_TO_RAD;	 
 END_FOR
+
+//FOR j := 0 TO 2 DO
+//	q_rad[j] :=  robot.q[j]*CONSTANTS.DEG_TO_RAD + fDeflectionNewLowPassFiltered[j]*CONSTANTS.DEG_TO_RAD;	
+//	qdot_rad[j] :=  q_t_Filtered[j]*CONSTANTS.DEG_TO_RAD;	//robot.q_t[j]*CONSTANTS.DEG_TO_RAD; //q_t_Filtered[j]*CONSTANTS.DEG_TO_RAD;	
+//	qddot_rad[j] :=  fJointAccLowPassFiltered[j]*CONSTANTS.DEG_TO_RAD; //robot.q_tt[j]*CONSTANTS.DEG_TO_RAD;	 //fJointAccLowPassFiltered[j]*CONSTANTS.DEG_TO_RAD;	 
+//END_FOR
 
 //FOR j := 0 TO 2 DO
 //	q_rad[j] :=  robot.qRef[j]*CONSTANTS.DEG_TO_RAD;	
@@ -628,6 +634,9 @@ END_IF
       <LineId Id="2930" Count="0" />
       <LineId Id="2929" Count="0" />
       <LineId Id="2922" Count="0" />
+      <LineId Id="3564" Count="0" />
+      <LineId Id="3566" Count="3" />
+      <LineId Id="3565" Count="0" />
       <LineId Id="3353" Count="4" />
       <LineId Id="3352" Count="0" />
       <LineId Id="2921" Count="0" />
